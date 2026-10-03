@@ -1,0 +1,793 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#eaf8ff">
+<meta name="description" content="Imphal Connect — discover Imphal and Manipur. Food, stays, shopping, events, local makers, experiences and businesses.">
+<link rel="manifest" href="manifest.json">
+<title>Imphal Connect — Your City. Your People.</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap');
+:root{--bg:#f2fbff;--card:#fff;--blue:#0879d1;--cyan:#5bd7f7;--navy:#07365d;--ink:#09263b;--muted:#71899a;--line:#dceef5;--green:#0ca978;--gold:#e9a72d;--danger:#d64a5c;--shadow:0 18px 50px rgba(24,101,133,.11);--r:24px}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font-family:"DM Sans",system-ui,sans-serif}button,input,textarea,select{font:inherit}button{cursor:pointer;border:0}a{text-decoration:none;color:inherit}
+.app{max-width:1220px;margin:auto;padding:0 16px 105px}header{position:sticky;top:0;z-index:50;background:linear-gradient(var(--bg) 78%,transparent);padding:15px 2px 10px}.top{display:flex;align-items:center;justify-content:space-between}.brand{display:flex;gap:10px;align-items:center}.logo{width:43px;height:43px;border-radius:14px;background:linear-gradient(145deg,#0879d1,#5bd7f7);display:grid;place-items:center;color:#fff;font:800 16px Manrope;box-shadow:0 10px 25px #0879d135}.brand b{font:800 18px Manrope;letter-spacing:-.6px}.brand small{display:block;color:var(--muted);font-size:9px;font-weight:700;letter-spacing:.7px}.head-actions{display:flex;gap:7px}.icon{width:43px;height:43px;border-radius:15px;background:#fff;border:1px solid var(--line);color:var(--navy);font-size:18px;box-shadow:0 8px 20px #196c8f12}
+.loc{display:flex;gap:6px;align-items:center;color:var(--muted);font-size:11px;margin-top:12px}.loc b{color:var(--navy);font-size:12px}
+.view{display:none}.view.active{display:block}.hero{margin-top:8px;border-radius:32px;min-height:350px;padding:32px 23px;position:relative;overflow:hidden;background:radial-gradient(circle at 88% 20%,#fff9 0 10%,transparent 28%),linear-gradient(135deg,#b8edff,#f1fbff 62%,#d8f5ff);box-shadow:var(--shadow)}.hero:before{content:"";position:absolute;width:310px;height:310px;border-radius:50%;right:-120px;bottom:-160px;background:#48c7f533}.hero>*{position:relative;z-index:2}.eyebrow,.pill{display:inline-flex;align-items:center;gap:6px;padding:7px 10px;border-radius:99px;background:#ffffffb8;color:#176187;font-size:9px;font-weight:800;letter-spacing:.5px}.live{width:6px;height:6px;border-radius:50%;background:#12ae79;box-shadow:0 0 0 5px #12ae791b}.hero h1{font:800 clamp(36px,8vw,64px)/.98 Manrope;letter-spacing:-3px;color:var(--navy);margin:17px 0 12px}.hero p{max-width:560px;color:#42697d;font-size:13px;line-height:1.6}.search{height:58px;background:#fff;border-radius:19px;display:flex;align-items:center;padding:0 8px 0 16px;box-shadow:0 14px 32px #19749a1c;margin-top:20px}.search span{font-size:20px;color:#7794a4}.search input{border:0;outline:0;flex:1;padding:0 11px;color:var(--ink);background:transparent;font-size:13px}.search button{width:43px;height:43px;border-radius:14px;background:var(--navy);color:#fff;font-size:17px}
+.section{padding-top:28px}.section-head{display:flex;justify-content:space-between;align-items:end;margin-bottom:14px}.section-head h2{font:800 20px Manrope;letter-spacing:-.7px;margin:0;color:#0b3450}.section-head button,.section-head a{color:var(--blue);font-size:11px;font-weight:800;background:none}
+.chips{display:flex;gap:9px;overflow:auto;scrollbar-width:none}.chips::-webkit-scrollbar{display:none}.chip{min-width:max-content;padding:11px 14px;border-radius:15px;background:#fff;border:1px solid var(--line);color:#416276;font-size:11px;font-weight:800}.chip.active{background:var(--blue);color:#fff;border-color:var(--blue);box-shadow:0 8px 20px #0879d12b}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.card{background:#fff;border:1px solid var(--line);border-radius:22px;overflow:hidden;box-shadow:0 10px 26px #196c8f0e;transition:.22s}.card:active{transform:scale(.975)}.thumb{height:142px;background:#d8edf4 center/cover;position:relative}.badge{position:absolute;top:9px;left:9px;padding:6px 8px;background:#ffffffe8;border-radius:9px;color:#07588e;font-size:8px;font-weight:900}.heart{position:absolute;right:9px;top:9px;width:34px;height:34px;border-radius:11px;background:#ffffffe8;color:#476577;font-size:16px}.body{padding:11px}.body h3{font:800 14px Manrope;margin:0 0 4px}.meta{font-size:9px;color:var(--muted);line-height:1.5}.rating{font-size:9px;font-weight:800;margin-top:8px}.stars{color:#f3aa25}
+.feature{display:flex;gap:12px;padding:11px;background:#fff;border:1px solid var(--line);border-radius:22px;box-shadow:0 10px 26px #196c8f0e}.feature-img{width:105px;height:105px;min-width:105px;border-radius:17px;background:center/cover}.feature h3{font:800 15px Manrope;margin:6px 0}.feature p{font-size:10px;line-height:1.5;color:var(--muted);margin:0}.link{color:var(--blue);font-size:9px;font-weight:900}
+.story-row{display:flex;gap:12px;overflow:auto;scrollbar-width:none}.story-row::-webkit-scrollbar{display:none}.story{min-width:76px;text-align:center}.story-img{width:68px;height:68px;border-radius:50%;padding:3px;margin:auto;background:linear-gradient(135deg,var(--blue),var(--cyan))}.story-img img{width:100%;height:100%;object-fit:cover;border-radius:50%;border:3px solid white}.story label{display:block;font-size:9px;font-weight:800;color:#496579;margin-top:6px}
+.quick{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.quick button{background:#fff;border:1px solid var(--line);border-radius:18px;padding:12px 4px;color:#234d66;font-size:18px;box-shadow:0 8px 20px #196c8f0a}.quick span{display:block;font-size:8px;font-weight:900;margin-top:5px}
+.event{background:linear-gradient(135deg,#063b63,#0879d1);color:#fff;border-radius:25px;padding:20px;min-height:175px;position:relative;overflow:hidden}.event:after{content:"✦";position:absolute;right:18px;top:8px;font-size:100px;color:#fff1}.event h3{font:800 20px Manrope;max-width:390px;margin:8px 0}.event p{font-size:10px;opacity:.75}.event button,.darkbtn{background:#fff;color:#07588e;border-radius:11px;padding:10px 13px;font-size:10px;font-weight:900}
+.map{height:270px;border-radius:25px;overflow:hidden;position:relative;background:#bfeaf5;border:1px solid var(--line);background-image:linear-gradient(28deg,transparent 45%,#fff9 46% 49%,transparent 50%),linear-gradient(115deg,transparent 48%,#fff9 49% 52%,transparent 53%),repeating-linear-gradient(65deg,transparent 0 46px,#57a8be2d 47px 49px,transparent 50px 85px)}.map .pin{position:absolute;width:42px;height:42px;border-radius:50% 50% 50% 7px;background:var(--blue);transform:rotate(-45deg);display:grid;place-items:center;box-shadow:0 10px 20px #0879d150}.map .pin i{font-style:normal;color:#fff;transform:rotate(45deg)}.p1{left:25%;top:30%}.p2{left:57%;top:53%}.p3{left:75%;top:23%}.maplabel{position:absolute;bottom:12px;left:12px;padding:9px 12px;background:#ffffffe8;border-radius:12px;font-size:9px;font-weight:900}
+.ai{background:#073b61;color:#fff;border-radius:25px;padding:20px;overflow:hidden}.ai h3{font:800 19px Manrope;margin:7px 0}.ai p{font-size:10px;line-height:1.55;opacity:.75}.ai input{width:100%;height:46px;border:0;border-radius:14px;padding:0 13px;outline:0}.ai button{margin-top:8px;background:var(--cyan);color:#063b61;border-radius:11px;padding:10px 13px;font-size:10px;font-weight:900}
+.offer{display:flex;gap:12px;align-items:center;padding:12px;background:linear-gradient(135deg,#fff,#e8f8ff);border:1px solid var(--line);border-radius:24px}.offer-img{width:84px;height:84px;min-width:84px;border-radius:17px;background:center/cover}.offer h3{font:800 15px Manrope;margin:5px 0}.offer p{font-size:10px;color:var(--muted);margin:0 0 7px}.price{font-size:10px;color:var(--blue);font-weight:900}
+.money-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}.money-card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:14px;box-shadow:0 8px 20px #196c8f0a}.money-card b{display:block;font:800 13px Manrope;margin:6px 0 3px}.money-card small{font-size:9px;color:var(--muted);line-height:1.4}.money-card .ico{font-size:20px}
+.plans{display:grid;grid-template-columns:1fr;gap:10px}.plan{background:#fff;border:1px solid var(--line);border-radius:22px;padding:16px}.plan.featured{border:2px solid var(--blue);background:#f4fbff}.plan h3{font:800 16px Manrope;margin:7px 0}.plan strong{font:800 25px Manrope;color:var(--navy)}.plan small{font-size:9px;color:var(--muted)}.plan ul{padding:0;list-style:none;font-size:10px;color:#506d7c;line-height:1.7}.plan button{width:100%;padding:11px;border-radius:12px;background:var(--blue);color:#fff;font-size:10px;font-weight:900}
+.statbar{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.stat{background:#fff;border:1px solid var(--line);border-radius:17px;padding:12px}.stat b{font:800 17px Manrope;color:var(--navy)}.stat span{display:block;font-size:8px;color:var(--muted);margin-top:3px}
+.business{background:#fff;border:1px solid var(--line);border-radius:25px;padding:18px;display:flex;justify-content:space-between;gap:12px;align-items:center}.business h3{font:800 16px Manrope;margin:0 0 4px}.business p{font-size:9px;color:var(--muted);margin:0}.business button{background:var(--blue);color:#fff;border-radius:12px;padding:11px 12px;font-size:9px;font-weight:900;white-space:nowrap}
+.shop-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.product{background:#fff;border:1px solid var(--line);border-radius:21px;overflow:hidden}.product-img{height:145px;background:center/cover}.product-body{padding:11px}.product-body h3{font:800 13px Manrope;margin:0 0 4px}.product-body p{font-size:9px;color:var(--muted);margin:0}.product-row{display:flex;align-items:center;justify-content:space-between;margin-top:9px}.product-row b{color:var(--blue);font-size:12px}.add{width:31px;height:31px;border-radius:10px;background:#eaf8ff;color:var(--blue);font-weight:900}
+.bottom{position:fixed;z-index:60;bottom:11px;left:50%;transform:translateX(-50%);width:min(540px,calc(100% - 22px));height:69px;background:#fafdffeb;backdrop-filter:blur(24px);border:1px solid #b9d8e5aa;border-radius:23px;box-shadow:0 20px 50px #0d4a6b25;display:flex;padding:5px}.nav{flex:1;border-radius:18px;background:none;color:#78909f;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:18px}.nav span{font-size:8px;font-weight:900}.nav.active{color:var(--blue);background:#e8f7ff}
+.toast{position:fixed;z-index:100;left:50%;bottom:94px;transform:translate(-50%,18px);opacity:0;pointer-events:none;background:#082e4c;color:#fff;padding:12px 16px;border-radius:14px;font-size:11px;font-weight:800;white-space:nowrap;transition:.25s}.toast.show{opacity:1;transform:translate(-50%,0)}
+.modal{position:fixed;inset:0;background:#04223680;backdrop-filter:blur(7px);z-index:90;display:none;align-items:flex-end}.modal.open{display:flex}.sheet{background:#f7fcff;border-radius:28px 28px 0 0;width:100%;max-height:88vh;overflow:auto;padding:18px}.grab{height:4px;width:38px;background:#bfd4df;border-radius:5px;margin:0 auto 17px}.sheet h2{font:800 23px Manrope;margin:0 0 8px}.sheet p{font-size:12px;line-height:1.6;color:var(--muted)}.sheet input,.sheet select,.sheet textarea{width:100%;border:1px solid var(--line);background:#fff;border-radius:13px;padding:12px;outline:0;margin:5px 0 9px}.sheet .primary{width:100%;background:var(--blue);color:#fff;padding:14px;border-radius:13px;font-weight:900}
+.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.empty{text-align:center;padding:30px;color:var(--muted);font-size:11px}.hidden{display:none!important}.toastlink{color:var(--blue);font-weight:900}
+@media(min-width:760px){.app{padding-left:24px;padding-right:24px}.grid{grid-template-columns:repeat(4,1fr)}.shop-grid{grid-template-columns:repeat(4,1fr)}.money-grid{grid-template-columns:repeat(4,1fr)}.plans{grid-template-columns:repeat(3,1fr)}.hero{padding:50px}.section{padding-top:36px}.feature{max-width:700px}.bottom{bottom:20px}}
+
+/* ===== IMPHI 3D FLUFFY AI MASCOT ===== */
+.imphi-mascot{
+  width:112px;height:112px;position:relative;display:block;cursor:pointer;
+  filter:drop-shadow(0 18px 22px rgba(0,100,190,.25));
+  animation:imphiFloat 3.8s ease-in-out infinite;
+  transform-style:preserve-3d;
+}
+.imphi-body{
+  position:absolute;inset:16px 10px 7px;border-radius:48% 48% 43% 43%;
+  background:
+    radial-gradient(circle at 35% 22%,#fff 0 7%,transparent 8%),
+    radial-gradient(circle at 65% 28%,rgba(255,255,255,.8) 0 8%,transparent 9%),
+    radial-gradient(circle at 50% 38%,#dff8ff 0 18%,#91ddf7 42%,#49a9ed 74%,#2075c9 100%);
+  box-shadow:inset 7px 10px 15px rgba(255,255,255,.72),inset -9px -12px 18px rgba(8,75,150,.3),0 4px 0 rgba(255,255,255,.5);
+  border:2px solid rgba(255,255,255,.7);
+}
+.imphi-ear{position:absolute;width:40px;height:44px;top:8px;border-radius:75% 30% 70% 35%;background:linear-gradient(145deg,#eafcff,#73c8f2 58%,#2679cb);z-index:-1;box-shadow:inset 4px 4px 7px rgba(255,255,255,.7),inset -4px -5px 7px rgba(18,79,142,.28)}
+.imphi-ear:after{content:"";position:absolute;inset:8px 9px 9px;border-radius:70% 35% 65% 35%;background:linear-gradient(145deg,#ffd9ed,#ff9fc7);opacity:.8}
+.imphi-ear.left{left:4px;transform:rotate(-28deg)} .imphi-ear.right{right:4px;transform:scaleX(-1) rotate(-28deg)}
+.imphi-eye{position:absolute;top:39px;width:22px;height:27px;border-radius:50%;background:radial-gradient(circle at 62% 22%,#fff 0 15%,transparent 16%),linear-gradient(#173d78,#071c48);border:2px solid #fff;box-shadow:0 2px 5px rgba(0,30,90,.3)}
+.imphi-eye:after{content:"";position:absolute;width:7px;height:7px;border-radius:50%;background:#fff;left:4px;top:4px;opacity:.9}
+.imphi-eye.left{left:28px}.imphi-eye.right{right:28px}
+.imphi-cheek{position:absolute;top:68px;width:19px;height:10px;border-radius:50%;background:rgba(255,135,185,.48);filter:blur(2px)}
+.imphi-cheek.left{left:16px}.imphi-cheek.right{right:16px}
+.imphi-muzzle{position:absolute;left:50%;top:65px;width:34px;height:28px;transform:translateX(-50%);border-radius:50%;background:rgba(255,255,255,.8);box-shadow:inset 0 3px 6px rgba(255,255,255,.9)}
+.imphi-mouth{position:absolute;left:50%;top:73px;width:12px;height:9px;transform:translateX(-50%);border-radius:3px 3px 9px 9px;background:#6c1c53}
+.imphi-nose{position:absolute;left:50%;top:68px;width:8px;height:6px;transform:translateX(-50%);border-radius:55% 55% 65% 65%;background:#703a6b}
+.imphi-paw{position:absolute;width:25px;height:32px;top:70px;border-radius:55% 55% 45% 45%;background:linear-gradient(145deg,#e9fbff,#8ad7f5,#3f99e4);box-shadow:inset 3px 4px 5px rgba(255,255,255,.7),0 4px 8px rgba(30,110,180,.2)}
+.imphi-paw.left{left:2px;transform:rotate(25deg);animation:imphiWave 2.6s ease-in-out infinite}
+.imphi-paw.right{right:2px;transform:rotate(-20deg)}
+.imphi-paw:after{content:"•••";position:absolute;color:rgba(34,105,173,.45);font-size:8px;letter-spacing:2px;left:5px;top:12px}
+.imphi-tail{position:absolute;right:-3px;bottom:13px;width:29px;height:38px;border-radius:65% 55% 65% 45%;background:linear-gradient(145deg,#dffaff,#6ec6f1,#287dce);transform:rotate(32deg);box-shadow:inset 3px 4px 6px rgba(255,255,255,.7)}
+.imphi-fur{position:absolute;inset:7px 4px 4px;border-radius:50%;pointer-events:none;opacity:.65;background:radial-gradient(circle at 15% 35%,#fff 0 2px,transparent 3px),radial-gradient(circle at 82% 42%,#fff 0 2px,transparent 3px),radial-gradient(circle at 25% 72%,#fff 0 2px,transparent 3px),radial-gradient(circle at 74% 75%,#fff 0 2px,transparent 3px),radial-gradient(circle at 48% 12%,#fff 0 2px,transparent 3px)}
+.imphi-badge{position:absolute;right:5px;bottom:3px;width:27px;height:27px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(145deg,#fff,#d9f7ff);border:2px solid #fff;box-shadow:0 4px 12px rgba(0,100,180,.25);font-size:14px}
+.imphi-label{position:absolute;left:50%;bottom:-22px;transform:translateX(-50%);font-size:11px;font-weight:800;color:#0b5ea8;background:rgba(255,255,255,.82);padding:4px 9px;border-radius:999px;white-space:nowrap;backdrop-filter:blur(8px)}
+@keyframes imphiFloat{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-8px) rotate(1deg)}}
+@keyframes imphiWave{0%,100%{transform:rotate(25deg)}50%{transform:rotate(7deg) translate(-2px,-4px)}}
+.imphi-hero-wrap{position:fixed;right:20px;bottom:90px;z-index:90;pointer-events:auto}
+.imphi-hero-wrap .imphi-mascot{transform:scale(1.18);transform-origin:bottom right}
+.imphi-sparkle{position:absolute;width:7px;height:7px;background:#fff;border-radius:50%;box-shadow:0 0 12px #7de5ff;animation:imphiSpark 2.5s infinite}
+.imphi-sparkle.s1{left:2px;top:25px}.imphi-sparkle.s2{right:2px;top:45px;animation-delay:.8s}.imphi-sparkle.s3{left:25px;top:-4px;animation-delay:1.3s}
+@keyframes imphiSpark{0%,100%{opacity:0;transform:scale(.4)}45%{opacity:1;transform:scale(1)}}
+@media(max-width:700px){.imphi-hero-wrap{right:10px;bottom:78px}.imphi-hero-wrap .imphi-mascot{transform:scale(.92)}}
+
+
+/* ===== COMPACT ADORABLE IMPHI OVERRIDE ===== */
+.imphi-hero-wrap{
+  right:12px !important;
+  bottom:76px !important;
+  width:62px !important;
+  height:62px !important;
+  z-index:90 !important;
+}
+.imphi-hero-wrap .imphi-mascot{
+  width:62px !important;
+  height:62px !important;
+  transform:scale(1) !important;
+  transform-origin:center !important;
+  filter:drop-shadow(0 8px 12px rgba(0,100,190,.20)) !important;
+}
+.imphi-body{inset:9px 5px 4px !important;border-width:1px !important}
+.imphi-ear{width:23px !important;height:27px !important;top:4px !important}
+.imphi-ear.left{left:2px !important}.imphi-ear.right{right:2px !important}
+.imphi-ear:after{inset:5px 5px 6px !important}
+.imphi-eye{top:22px !important;width:13px !important;height:16px !important;border-width:1px !important}
+.imphi-eye.left{left:15px !important}.imphi-eye.right{right:15px !important}
+.imphi-eye:after{width:4px !important;height:4px !important;left:3px !important;top:2px !important}
+.imphi-cheek{top:39px !important;width:11px !important;height:6px !important}
+.imphi-cheek.left{left:8px !important}.imphi-cheek.right{right:8px !important}
+.imphi-muzzle{top:37px !important;width:20px !important;height:16px !important}
+.imphi-mouth{top:42px !important;width:7px !important;height:6px !important}
+.imphi-nose{top:39px !important;width:5px !important;height:4px !important}
+.imphi-paw{width:14px !important;height:18px !important;top:40px !important}
+.imphi-paw.left{left:0 !important}.imphi-paw.right{right:0 !important}
+.imphi-paw:after{font-size:5px !important;letter-spacing:1px !important;left:3px !important;top:7px !important}
+.imphi-tail{right:-2px !important;bottom:7px !important;width:17px !important;height:22px !important}
+.imphi-badge{right:1px !important;bottom:0 !important;width:15px !important;height:15px !important;border-width:1px !important;font-size:8px !important}
+.imphi-label{
+  bottom:-17px !important;
+  font-size:8px !important;
+  padding:2px 6px !important;
+  box-shadow:0 3px 10px rgba(0,80,150,.10);
+}
+.imphi-sparkle{width:4px !important;height:4px !important}
+.imphi-sparkle.s1{left:0 !important;top:13px !important}
+.imphi-sparkle.s2{right:0 !important;top:26px !important}
+.imphi-sparkle.s3{left:14px !important;top:0 !important}
+
+/* A tiny friendly pulse around Imphi, rather than a large floating orb */
+#aiFab{
+  width:70px !important;
+  height:70px !important;
+  min-width:70px !important;
+  min-height:70px !important;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  padding:0 !important;
+}
+#aiFab:hover .imphi-mascot{animation-duration:2.2s}
+#aiFab:active .imphi-mascot{transform:scale(.93) !important}
+
+@media(max-width:700px){
+  .imphi-hero-wrap{right:8px !important;bottom:68px !important}
+  #aiFab{width:66px !important;height:66px !important}
+}
+
+/* Extra adorable micro-expression on hover */
+.imphi-mascot:hover .imphi-eye{transform:scaleY(.82)}
+.imphi-mascot:hover .imphi-cheek{opacity:.9}
+
+</style>
+
+<style>
+/* ===== IMPhAL CONNECT: CINEMATIC AI LAYER ===== */
+:root{--ai:#075bff;--ai2:#55e4ff}
+body{overflow-x:hidden}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:999;background:radial-gradient(circle at 20% 10%,rgba(91,215,247,.08),transparent 28%),radial-gradient(circle at 90% 70%,rgba(8,121,209,.06),transparent 30%);mix-blend-mode:multiply}
+.hero{isolation:isolate}
+.hero:after{content:"";position:absolute;inset:-30%;z-index:0;background:conic-gradient(from 0deg,transparent,rgba(255,255,255,.55),transparent 25%,rgba(91,215,247,.16),transparent 50%);animation:heroSpin 18s linear infinite;pointer-events:none}
+.hero .hero-content,.hero>*{z-index:2}
+@keyframes heroSpin{to{transform:rotate(360deg)}}
+.card,.feature,.offer,.event,.money-card,.plan,.product,.business{will-change:transform;transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .35s ease}
+.card:hover,.feature:hover,.offer:hover,.money-card:hover,.plan:hover,.product:hover{transform:translateY(-5px);box-shadow:0 22px 55px rgba(24,101,133,.16)}
+.ai-orb{width:54px;height:54px;border-radius:50%;position:relative;background:radial-gradient(circle at 35% 30%,#fff 0 5%,#7eeeff 12%,#168cff 48%,#07365d 100%);box-shadow:0 0 0 8px rgba(91,215,247,.08),0 0 42px rgba(8,121,209,.5);animation:orbFloat 3.5s ease-in-out infinite}
+.ai-orb:before,.ai-orb:after{content:"";position:absolute;inset:-8px;border:1px solid rgba(91,215,247,.38);border-radius:50%;animation:orbRing 3s linear infinite}
+.ai-orb:after{inset:-15px;opacity:.45;animation-duration:5s;animation-direction:reverse}
+@keyframes orbFloat{50%{transform:translateY(-5px) scale(1.04)}}
+@keyframes orbRing{to{transform:rotate(360deg)}}
+.ai-fab{position:fixed;right:18px;bottom:94px;z-index:75;border:0;background:rgba(255,255,255,.88);backdrop-filter:blur(18px);border:1px solid rgba(91,215,247,.55);border-radius:999px;padding:7px 12px 7px 7px;display:flex;align-items:center;gap:8px;color:#07365d;font-weight:900;box-shadow:0 18px 45px rgba(7,54,93,.22);animation:fabIn .7s cubic-bezier(.2,.8,.2,1)}
+.ai-fab span{font-size:10px}
+@keyframes fabIn{from{transform:translateY(20px);opacity:0}to{transform:none;opacity:1}}
+.ai-modal{position:fixed;inset:0;z-index:120;background:rgba(3,24,40,.42);backdrop-filter:blur(16px);display:none;align-items:flex-end}
+.ai-modal.open{display:flex}
+.ai-panel{width:100%;max-height:92vh;overflow:hidden;background:linear-gradient(180deg,#f8fdff,#eefaff);border-radius:32px 32px 0 0;box-shadow:0 -30px 90px rgba(3,36,59,.25);display:flex;flex-direction:column}
+.ai-head{padding:16px 18px 12px;border-bottom:1px solid #d9edf5;display:flex;align-items:center;justify-content:space-between}
+.ai-brand{display:flex;align-items:center;gap:11px}.ai-brand b{font:800 16px Manrope;color:#07365d}.ai-brand small{display:block;color:#71899a;font-size:9px;margin-top:2px}
+.ai-close{width:38px;height:38px;border-radius:13px;background:#fff;border:1px solid #dceef5;color:#315a70}
+.ai-messages{padding:16px;overflow:auto;min-height:300px;max-height:56vh}
+.ai-msg{display:flex;gap:9px;margin:10px 0;animation:msgIn .35s ease both}
+.ai-msg.user{justify-content:flex-end}.ai-bubble{max-width:82%;padding:12px 14px;border-radius:18px;background:#fff;border:1px solid #dceef5;color:#183d53;font-size:12px;line-height:1.55;box-shadow:0 8px 22px rgba(27,108,143,.06)}
+.ai-msg.user .ai-bubble{background:#07365d;color:#fff;border-color:#07365d;border-bottom-right-radius:6px}
+.ai-msg.bot .ai-bubble{border-bottom-left-radius:6px}
+@keyframes msgIn{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+.ai-suggestions{display:flex;gap:7px;overflow:auto;padding:0 16px 10px;scrollbar-width:none}.ai-suggestions button{white-space:nowrap;background:#fff;border:1px solid #d6edf6;border-radius:999px;padding:9px 11px;font-size:10px;font-weight:800;color:#175879}
+.ai-compose{display:flex;gap:8px;padding:10px 14px calc(12px + env(safe-area-inset-bottom));background:#ffffffde;border-top:1px solid #d9edf5}
+.ai-compose input{flex:1;height:48px;border:1px solid #d5eaf3;border-radius:16px;padding:0 14px;outline:none;background:#fff;font-size:12px}.ai-compose button{width:48px;border-radius:15px;background:#07365d;color:#fff;font-size:17px}
+.typing{display:inline-flex;gap:4px;align-items:center}.typing i{width:5px;height:5px;border-radius:50%;background:#76a0b3;animation:typing 1s infinite}.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}@keyframes typing{50%{transform:translateY(-4px);opacity:.5}}
+.video-stage{height:210px;border-radius:26px;overflow:hidden;position:relative;background:#07365d;margin-top:18px;box-shadow:var(--shadow)}
+.video-stage video{width:100%;height:100%;object-fit:cover;display:block;filter:saturate(1.05) contrast(1.02)}
+.video-stage:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 45%,rgba(3,31,50,.5));pointer-events:none}
+.video-caption{position:absolute;left:16px;bottom:14px;color:#fff;z-index:2;font:800 16px Manrope;text-shadow:0 3px 18px #0008}
+.motion-line{height:1px;background:linear-gradient(90deg,transparent,#5bd7f7,transparent);margin:22px 0;animation:scan 3s ease-in-out infinite}
+@keyframes scan{50%{opacity:.35;transform:scaleX(.65)}}
+@media(min-width:760px){.ai-modal{align-items:center;padding:30px}.ai-panel{max-width:620px;border-radius:30px}.video-stage{height:300px}}
+@media(prefers-reduced-motion:reduce){.hero:after,.ai-orb,.ai-fab,.motion-line{animation:none!important}}
+</style>
+
+<style>
+/* ===== PREMIUM BRAND + MOTION SYSTEM ===== */
+.logo-mark{width:46px;height:46px;display:grid;place-items:center;filter:drop-shadow(0 10px 24px rgba(8,121,209,.25));position:relative}
+.logo-mark svg{width:100%;height:100%;animation:logoBreath 4s ease-in-out infinite}
+.logo-mark:after{content:"";position:absolute;inset:2px;border-radius:16px;background:linear-gradient(120deg,transparent,rgba(255,255,255,.7),transparent);transform:translateX(-120%);animation:logoSweep 5s ease-in-out infinite}
+@keyframes logoBreath{50%{transform:translateY(-2px) rotate(1deg) scale(1.035)}}
+@keyframes logoSweep{45%,100%{transform:translateX(120%)}}
+.ambient-orbs{position:fixed;inset:0;pointer-events:none;z-index:-1;overflow:hidden}
+.ambient-orbs i{position:absolute;width:180px;height:180px;border-radius:50%;filter:blur(38px);opacity:.18;animation:drift 14s ease-in-out infinite}
+.ambient-orbs i:nth-child(1){background:#5bd7f7;left:-70px;top:18%;animation-delay:-2s}
+.ambient-orbs i:nth-child(2){background:#0879d1;right:-90px;top:48%;animation-delay:-7s}
+.ambient-orbs i:nth-child(3){background:#9eeaff;left:45%;bottom:-100px;animation-delay:-10s}
+@keyframes drift{50%{transform:translate(55px,-35px) scale(1.2)}}
+.hero,.video-stage{animation:sectionIn .8s cubic-bezier(.2,.8,.2,1) both}
+@keyframes sectionIn{from{opacity:0;transform:translateY(14px) scale(.99)}to{opacity:1;transform:none}}
+.shimmer-btn{position:relative;overflow:hidden}
+.shimmer-btn:after{content:"";position:absolute;top:-80%;left:-35%;width:35%;height:260%;background:#fff6;transform:rotate(25deg);animation:buttonShine 4.5s ease-in-out infinite}
+@keyframes buttonShine{0%,60%{left:-45%}82%,100%{left:125%}}
+.instant-studio{background:linear-gradient(145deg,#062f50,#0879d1 65%,#5bd7f7);color:#fff;border-radius:28px;padding:20px;position:relative;overflow:hidden;box-shadow:0 22px 60px rgba(8,121,209,.22)}
+.instant-studio:before{content:"";position:absolute;width:260px;height:260px;border-radius:50%;right:-120px;top:-120px;border:1px solid #fff4;box-shadow:0 0 0 25px #fff1,0 0 0 50px #fff08;animation:studioPulse 5s ease-in-out infinite}
+@keyframes studioPulse{50%{transform:scale(1.12);opacity:.7}}
+.instant-studio>*{position:relative;z-index:2}
+.studio-top{display:flex;justify-content:space-between;gap:15px;align-items:flex-start}
+.studio-top h3{font:800 21px Manrope;margin:5px 0}.studio-top p{font-size:10px;opacity:.75;margin:0;line-height:1.5}
+.studio-badge{padding:7px 9px;border:1px solid #fff3;background:#fff1;border-radius:999px;font-size:8px;font-weight:900;white-space:nowrap}
+.story-strip{display:flex;gap:11px;overflow:auto;padding:14px 0 4px;scrollbar-width:none}.story-strip::-webkit-scrollbar{display:none}
+.story-bubble{min-width:70px;text-align:center}.story-ring{width:62px;height:62px;border-radius:50%;padding:2px;margin:auto;background:conic-gradient(#5bd7f7,#fff,#0879d1,#5bd7f7);animation:ringSpin 7s linear infinite}
+.story-ring img{width:100%;height:100%;object-fit:cover;border-radius:50%;border:3px solid #063b61}.story-bubble label{display:block;font-size:8px;margin-top:5px;font-weight:800;white-space:nowrap}
+@keyframes ringSpin{to{transform:rotate(360deg)}}
+.item-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin-top:13px}
+.instant-item{background:#ffffff16;border:1px solid #ffffff24;border-radius:17px;overflow:hidden;position:relative}
+.instant-item img{width:100%;height:105px;object-fit:cover;display:block}.instant-item .ii-body{padding:9px}.instant-item b{display:block;font:800 11px Manrope}.instant-item span{font-size:9px;opacity:.75}.ii-price{color:#fff;font-weight:900;margin-top:5px}
+.owner-tools{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.owner-tools button{border-radius:13px;padding:11px 8px;font-size:9px;font-weight:900;background:#fff;color:#07588e}
+.owner-tools button.primary-owner{background:#5bd7f7;color:#063b61}
+.plan-locked{opacity:.82;font-size:9px;margin-top:9px}
+.upload-preview{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:8px 0}.upload-preview img{width:100%;height:74px;object-fit:cover;border-radius:10px}
+@media(min-width:760px){.item-grid{grid-template-columns:repeat(4,1fr)}.instant-item img{height:140px}}
+</style>
+</head>
+<body><div class="ambient-orbs"><i></i><i></i><i></i></div>
+<div class="app">
+<header>
+ <div class="top">
+  <div class="brand"><div class="logo-mark" aria-label="Imphal Connect logo">
+<svg viewBox="0 0 64 64" role="img">
+ <defs><linearGradient id="icg" x1="8" y1="56" x2="58" y2="8"><stop stop-color="#0879d1"/><stop offset=".55" stop-color="#2abcf0"/><stop offset="1" stop-color="#7ef2ff"/></linearGradient></defs>
+ <path d="M32 5c15 0 27 11 27 26 0 18-17 26-27 28C22 57 5 49 5 31 5 16 17 5 32 5Z" fill="url(#icg)"/>
+ <path d="M20 39V23h5v11l7-11h6v16h-5V29l-7 10h-6Zm20 0V23h5v16h-5Z" fill="#fff"/>
+ <circle cx="32" cy="13" r="3" fill="#fff" opacity=".9"/>
+</svg></div><div><b>Imphal Connect</b><small>YOUR CITY. YOUR PEOPLE.</small></div></div>
+  <div class="head-actions"><button class="icon" onclick="openSheet('notifications')">♢</button><button class="icon" onclick="openSheet('profile')">◎</button></div>
+ </div>
+ <div class="loc">⌖ <span>Exploring</span> <b>Imphal, Manipur</b></div>
+</header>
+<!-- CINEMATIC MOTION + AI CONCIERGE -->
+<div class="video-stage">
+  <video autoplay muted loop playsinline preload="metadata"
+    poster="https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=1400&q=85">
+    <source src="https://cdn.coverr.co/videos/coverr-aerial-view-of-a-city-1577/1080p.mp4" type="video/mp4">
+  </video>
+  <div class="video-caption">Imphal. Alive, local, yours.</div>
+</div>
+<div class="motion-line"></div>
+
+<button id="aiFab" class="ai-fab" onclick="askAI()" aria-label="Open Imphi AI assistant">
+  <span class="imphi-hero-wrap" style="position:relative;right:auto;bottom:auto;display:block">
+    <span class="imphi-mascot">
+      <span class="imphi-ear left"></span><span class="imphi-ear right"></span>
+      <span class="imphi-tail"></span><span class="imphi-body"></span><span class="imphi-fur"></span>
+      <span class="imphi-eye left"></span><span class="imphi-eye right"></span>
+      <span class="imphi-cheek left"></span><span class="imphi-cheek right"></span>
+      <span class="imphi-muzzle"></span><span class="imphi-nose"></span><span class="imphi-mouth"></span>
+      <span class="imphi-paw left"></span><span class="imphi-paw right"></span>
+      <span class="imphi-badge">✦</span>
+      <span class="imphi-label">Imphi AI</span>
+      <i class="imphi-sparkle s1"></i><i class="imphi-sparkle s2"></i><i class="imphi-sparkle s3"></i>
+    </span>
+  </span>
+</button>
+
+<div class="ai-modal" id="aiModal" onclick="if(event.target===this)closeAI()">
+  <div class="ai-panel">
+    <div class="ai-head">
+      <div class="ai-brand"><div class="ai-orb"></div><div><b>Imphal AI</b><small>Your local city concierge</small></div></div>
+      <button class="ai-close" onclick="closeAI()">✕</button>
+    </div>
+    <div class="ai-messages" id="aiMessages">
+      <div class="ai-msg bot"><div class="ai-bubble">Hi. I’m Imphal AI. Ask me anything — places, food, shopping, travel, events, businesses, ideas, planning, explanations, or everyday questions. I’ll help you figure out the next step.</div></div>
+    </div>
+    <div class="ai-suggestions">
+      <button onclick="aiQuick('Plan a great one-day trip around Imphal')">One-day trip</button>
+      <button onclick="aiQuick('Find me great local food')">Great food</button>
+      <button onclick="aiQuick('What should I do tonight?')">Tonight</button>
+      <button onclick="aiQuick('Help me discover local businesses')">Local business</button>
+    </div>
+    <form class="ai-compose" onsubmit="sendAI(event)">
+      <input id="aiChatInput" autocomplete="off" placeholder="Ask anything…">
+      <button type="submit">➤</button>
+    </form>
+  </div>
+</div>
+
+
+<!-- HOME -->
+<main id="home" class="view active">
+<section class="hero">
+ <span class="eyebrow"><i class="live"></i> LIVE FROM IMPHAL</span>
+ <h1>Everything Imphal.<br>One beautiful place.</h1>
+ <p>Discover places worth knowing, people worth meeting and experiences happening around you.</p>
+ <div class="search"><span>⌕</span><input id="search" placeholder="Search cafés, shops, stays, events…" oninput="searchAll()"><button onclick="go('explore')">→</button></div>
+</section>
+
+<section class="section"><div class="section-head"><h2>Explore your city</h2><button onclick="go('explore')">See all</button></div>
+<div class="chips"><button class="chip active" onclick="filterCat('All',this)">All</button><button class="chip" onclick="filterCat('Food',this)">🍜 Food</button><button class="chip" onclick="filterCat('Shopping',this)">🛍 Shopping</button><button class="chip" onclick="filterCat('Services',this)">✦ Services</button><button class="chip" onclick="filterCat('Stay',this)">⌂ Stay</button><button class="chip" onclick="filterCat('Events',this)">◉ Events</button></div></section>
+
+<section class="section"><div class="section-head"><h2>Trending around Imphal</h2><button onclick="go('explore')">View all</button></div><div class="grid" id="homeCards"></div></section>
+
+<section class="section"><div class="section-head"><h2>What are you feeling?</h2><button onclick="go('explore')">Personalise</button></div><div class="quick"><button onclick="filterCat('Food')">🍜<span>Feed me</span></button><button onclick="filterCat('Events')">🎟️<span>Tonight</span></button><button onclick="filterCat('Shopping')">🛍️<span>Shop local</span></button><button onclick="filterCat('Stay')">🛏️<span>Stay here</span></button></div></section>
+
+<section class="section"><div class="section-head"><h2>People are talking</h2><button onclick="go('community')">Community</button></div><div class="story-row">
+<div class="story"><div class="story-img"><img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80"></div><label>Creators</label></div>
+<div class="story"><div class="story-img"><img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=200&q=80"></div><label>Foodies</label></div>
+<div class="story"><div class="story-img"><img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=200&q=80"></div><label>Handloom</label></div>
+<div class="story"><div class="story-img"><img src="https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=200&q=80"></div><label>Travel</label></div>
+<div class="story"><div class="story-img"><img src="https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=200&q=80"></div><label>Weekend</label></div>
+</div></section>
+
+<section class="section"><div class="offer"><div class="offer-img" style="background-image:url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=300&q=85')"></div><div><span class="pill">TODAY ONLY</span><h3>Local Food Week</h3><p>Limited-time offers from local cafés and restaurants.</p><span class="price">VIEW LOCAL OFFERS →</span></div></div></section>
+
+<section class="section"><div class="event"><div style="font-size:9px;letter-spacing:1px;font-weight:900;opacity:.7">SAT · 18 OCT · 5:00 PM</div><h3>Imphal After Hours — Local Creators Night</h3><p>Music · Food · Art · Community</p><button onclick="openSheet('event')">View event</button></div></section>
+
+<section class="section"><div class="section-head"><h2>Explore the city</h2><button onclick="go('map')">Open map</button></div><div class="map"><div class="pin p1"><i>⌖</i></div><div class="pin p2"><i>⌖</i></div><div class="pin p3"><i>⌖</i></div><div class="maplabel">◉ 126 places · Explore map</div></div></section>
+
+<section class="section"><div class="ai"><span class="pill" style="background:#ffffff17;color:#fff">IMPAL AI</span><h3>Ask Imphal anything.</h3><p>“I have ₹2,000, six hours and want great food + one unforgettable place.”</p><input id="aiInput" placeholder="Tell me what you want…"><button onclick="askAI()">Create my plan →</button></div></section>
+</main>
+
+<!-- EXPLORE -->
+<main id="explore" class="view">
+<section class="section"><div class="section-head"><h2>Explore Imphal</h2><button onclick="go('map')">Map</button></div><div class="search" style="margin:0"><span>⌕</span><input id="exploreSearch" placeholder="Search everything…" oninput="renderExplore()"></div></section>
+<section class="section"><div class="chips"><button class="chip active" onclick="setExploreCat('All',this)">All</button><button class="chip" onclick="setExploreCat('Food',this)">Food</button><button class="chip" onclick="setExploreCat('Shopping',this)">Shopping</button><button class="chip" onclick="setExploreCat('Services',this)">Services</button><button class="chip" onclick="setExploreCat('Stay',this)">Stay</button><button class="chip" onclick="setExploreCat('Events',this)">Events</button></div></section>
+<section class="section"><div class="grid" id="exploreCards"></div><div id="exploreEmpty" class="empty hidden">No places matched your search.</div></section>
+</main>
+
+<!-- MAP -->
+<main id="map" class="view">
+<section class="section"><div class="section-head"><h2>Map of Imphal</h2><button onclick="showToast('Location access can be connected in production')">Near me</button></div>
+<div class="map" style="height:520px"><div class="pin p1"><i>⌖</i></div><div class="pin p2"><i>⌖</i></div><div class="pin p3"><i>⌖</i></div><div class="maplabel">Kangla · Thangmeiband · Keishampat · Imphal</div></div></section>
+<section class="section"><div class="feature"><div class="feature-img" style="background-image:url('https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=500&q=80')"></div><div><span class="pill">DISCOVER MANIPUR</span><h3>Go beyond the city.</h3><p>Build a route to Loktak, Keibul Lamjao, Ukhrul and more.</p><button class="darkbtn" onclick="go('travel')">Open travel guide</button></div></div></section>
+</main>
+
+<!-- TRAVEL -->
+<main id="travel" class="view">
+<section class="hero" style="margin-top:8px;min-height:300px"><span class="eyebrow">MANIPUR TRAVEL GUIDE</span><h1>Your first 48 hours.</h1><p>Heritage, markets, food, nature and experiences—built around your time and budget.</p><button class="darkbtn" onclick="openSheet('trip')">Build my itinerary →</button></section>
+<section class="section"><div class="section-head"><h2>Places worth the journey</h2><button onclick="go('map')">Map</button></div><div class="grid">
+<div class="card"><div class="thumb" style="background-image:url('https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=800&q=85')"><span class="badge">LOKTAK</span></div><div class="body"><h3>Loktak Lake</h3><div class="meta">Floating islands · Nature</div></div></div>
+<div class="card"><div class="thumb" style="background-image:url('https://images.unsplash.com/photo-1511497584788-876760111969?auto=format&fit=crop&w=800&q=85')"><span class="badge">WILDLIFE</span></div><div class="body"><h3>Keibul Lamjao</h3><div class="meta">Sangai · National Park</div></div></div>
+<div class="card"><div class="thumb" style="background-image:url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=800&q=85')"><span class="badge">UKHRUL</span></div><div class="body"><h3>Shirui Hills</h3><div class="meta">Hills · Trails · Nature</div></div></div>
+<div class="card"><div class="thumb" style="background-image:url('https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=800&q=85')"><span class="badge">ADVENTURE</span></div><div class="body"><h3>Sadu Chiru</h3><div class="meta">Waterfall · Trek</div></div></div>
+</div></section>
+</main>
+
+<!-- DEALS -->
+<main id="deals" class="view">
+<section class="section"><div class="section-head"><h2>Deals in Imphal</h2><button onclick="showToast('Deals refreshed')">Refresh</button></div>
+<div id="dealList"></div></section>
+</main>
+
+<!-- SHOP -->
+<main id="shop" class="view">
+<section class="section"><div class="section-head"><h2>Made in Manipur</h2><button onclick="openSheet('sell')">Sell here</button></div><p style="font-size:11px;color:var(--muted)">Buy directly from local makers, creators and independent businesses.</p><div class="shop-grid" id="products"></div></section>
+<section class="section"><div class="business"><div><h3>Build your local brand.</h3><p>List products and reach residents + visitors.</p></div><button onclick="openSheet('business')">Open shop</button></div></section>
+</main>
+
+<!-- EVENTS -->
+<main id="events" class="view">
+<section class="section"><div class="section-head"><h2>What's happening</h2><button onclick="openSheet('event')">Create event</button></div><div id="eventList"></div></section>
+</main>
+
+<!-- COMMUNITY -->
+<main id="community" class="view">
+<section class="section"><div class="section-head"><h2>Community</h2><button onclick="openSheet('post')">Post</button></div>
+<div class="feature"><div class="feature-img" style="background-image:url('https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=400&q=80')"></div><div><span class="pill">LOCAL CREATOR</span><h3>What makes Imphal special?</h3><p>Stories, recommendations and discoveries from people who live here.</p><span class="link">JOIN THE CONVERSATION →</span></div></div></section>
+<section class="section"><div class="grid" id="communityGrid"></div></section>
+</main>
+
+<!-- BUSINESS -->
+<main id="business" class="view">
+<section class="hero" style="min-height:300px"><span class="eyebrow">FOR LOCAL BUSINESSES</span><h1>Turn discovery<br>into customers.</h1><p>Get found when residents and visitors are ready to spend.</p><button class="darkbtn" onclick="openSheet('business')">Claim your business →</button></section>
+<section class="section"><div class="statbar"><div class="stat"><b>FREE</b><span>Basic listing</span></div><div class="stat"><b>₹499</b><span>Pro / month</span></div><div class="stat"><b>₹1,499</b><span>Elite / month</span></div></div></section>
+<section class="section"><div class="section-head"><h2>Plans</h2><button>Compare</button></div><div class="plans">
+<div class="plan"><span class="pill">FREE</span><h3>Connect</h3><strong>₹0</strong><small> forever</small><ul><li>✓ Business profile</li><li>✓ Photos & contact</li><li>✓ Reviews</li><li>✓ WhatsApp link</li></ul><button onclick="selectPlan('Free')">Start free</button></div>
+<div class="plan featured"><span class="pill">MOST POPULAR</span><h3>Pro</h3><strong>₹499</strong><small> / month</small><ul><li>✓ Featured discovery</li><li>✓ Offers & catalogue</li><li>✓ Enquiry analytics</li><li>✓ Verified badge</li></ul><button onclick="selectPlan('Pro')">Go Pro</button></div>
+<div class="plan"><span class="pill">ELITE</span><h3>Elite</h3><strong>₹1,499</strong><small> / month</small><ul><li>✓ Homepage exposure</li><li>✓ Campaign promotion</li><li>✓ Advanced analytics</li><li>✓ Priority support</li></ul><button onclick="selectPlan('Elite')">Go Elite</button></div>
+</div></section>
+
+<section class="section">
+<div class="instant-studio">
+ <div class="studio-top">
+  <div><span class="studio-badge">INSTANT STUDIO · BUSINESS</span><h3>Publish. Price. Sell.</h3><p>Business owners can turn their profile into a living storefront — products, rates, photos and instant stories.</p></div>
+  <div class="ai-orb" style="width:48px;height:48px"></div>
+ </div>
+ <div class="story-strip" id="ownerStories"></div>
+ <div class="item-grid" id="ownerItems"></div>
+ <div class="owner-tools">
+  <button class="primary-owner shimmer-btn" onclick="openOwnerStudio()">＋ Add item / rate</button>
+  <button onclick="openStoryStudio()">◉ Post instant story</button>
+ </div>
+ <div class="plan-locked">Available after a business owner activates a paid Pro or Elite plan.</div>
+</div>
+</section>
+<section class="section"><div class="ai"><span class="pill" style="background:#ffffff17;color:#fff">BUSINESS INTELLIGENCE</span><h3>Know what people want.</h3><p>Views, saves, enquiries, offer taps and category demand become your local growth dashboard.</p><button onclick="openSheet('dashboard')" style="background:var(--cyan);color:#063b61;border-radius:11px;padding:10px 13px;font-size:10px;font-weight:900">Preview dashboard</button></div></section>
+</main>
+
+<!-- PROFILE -->
+<main id="profile" class="view">
+<section class="section"><div class="section-head"><h2>Your Imphal</h2><button onclick="openSheet('profile')">Account</button></div>
+<div class="feature"><div style="width:70px;height:70px;border-radius:22px;background:linear-gradient(145deg,#0879d1,#5bd7f7);display:grid;place-items:center;color:#fff;font:800 24px Manrope">IC</div><div><span class="pill">LOCAL EXPLORER</span><h3 id="profileName">Welcome to Imphal Connect</h3><p>Save places, follow creators and build your own city guide.</p></div></div></section>
+<section class="section"><div class="money-grid"><div class="money-card" onclick="showToast('Saved places')"><div class="ico">♡</div><b id="savedCount">0 saved</b><small>Your favourite places.</small></div><div class="money-card" onclick="go('shop')"><div class="ico">🛍</div><b>Marketplace</b><small>Your local shopping.</small></div><div class="money-card" onclick="go('events')"><div class="ico">🎟</div><b>Events</b><small>Your saved events.</small></div><div class="money-card" onclick="go('business')"><div class="ico">🏪</div><b>Business</b><small>Manage a listing.</small></div></div></section>
+</main>
+</div>
+
+<nav class="bottom">
+<button class="nav active" data-go="home" onclick="go('home')">⌂<span>Home</span></button>
+<button class="nav" data-go="explore" onclick="go('explore')">⌕<span>Explore</span></button>
+<button class="nav" data-go="deals" onclick="go('deals')">✦<span>Deals</span></button>
+<button class="nav" data-go="shop" onclick="go('shop')">🛍<span>Shop</span></button>
+<button class="nav" data-go="profile" onclick="go('profile')">◎<span>Profile</span></button>
+</nav>
+
+<div class="toast" id="toast"></div>
+<div class="modal" id="modal" onclick="if(event.target===this)closeSheet()"><div class="sheet" id="sheet"></div></div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+const DATA=[
+{id:1,cat:'Food',name:'Classic Cafe Imphal',place:'Old Lambulane',type:'Café',rating:'4.8',tag:'TRENDING',img:'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=800&q=85'},
+{id:2,cat:'Shopping',name:'Local Loom',place:'Thangmeiband',type:'Handloom',rating:'4.9',tag:'LOCAL PICK',img:'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=800&q=85'},
+{id:3,cat:'Services',name:'Studio North East',place:'Keishampat',type:'Creative',rating:'4.7',tag:'POPULAR',img:'https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=800&q=85'},
+{id:4,cat:'Stay',name:'The Blue House',place:'Kangla Road',type:'Stay',rating:'4.8',tag:'NEW',img:'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=85'},
+{id:5,cat:'Food',name:'Ningol Café',place:'Paona Bazaar',type:'Café',rating:'4.7',tag:'LOCAL',img:'https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=800&q=85'},
+{id:6,cat:'Shopping',name:'Manipur Craft House',place:'Imphal',type:'Handicraft',rating:'4.9',tag:'MADE HERE',img:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=800&q=85'},
+{id:7,cat:'Services',name:'North East Auto Care',place:'Keishampat',type:'Automotive',rating:'4.6',tag:'VERIFIED',img:'https://images.unsplash.com/photo-1486006920555-c77dcf18193c?auto=format&fit=crop&w=800&q=85'},
+{id:8,cat:'Stay',name:'Kangla View Stay',place:'Kangla',type:'Homestay',rating:'4.8',tag:'GUEST PICK',img:'https://images.unsplash.com/photo-1564501049412-61c2a3083791?auto=format&fit=crop&w=800&q=85'},
+{id:9,cat:'Events',name:'Imphal After Hours',place:'Imphal',type:'Creators Night',rating:'5.0',tag:'SATURDAY',img:'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=800&q=85'}
+];
+const PRODUCTS=[
+{name:'Woven Stories',desc:'Handloom · Independent maker',price:1299,img:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=700&q=85'},
+{name:'Manipur Pantry',desc:'Local produce · Pantry',price:499,img:'https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=700&q=85'},
+{name:'Art of Imphal',desc:'Prints · Local artist',price:799,img:'https://images.unsplash.com/photo-1549490349-8643362247b5?auto=format&fit=crop&w=700&q=85'},
+{name:'The Loom Edit',desc:'Textiles · Made in Manipur',price:1899,img:'https://images.unsplash.com/photo-1525507119028-ed4c629a60a3?auto=format&fit=crop&w=700&q=85'}
+];
+let activeCat='All',exploreCat='All';
+const $=id=>document.getElementById(id);
+function toast(t){const x=$('toast');x.textContent=t;x.classList.add('show');clearTimeout(window.__t);window.__t=setTimeout(()=>x.classList.remove('show'),1900)}
+function showToast(t){toast(t)}
+function go(id){document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));$(id).classList.add('active');document.querySelectorAll('.nav').forEach(n=>n.classList.toggle('active',n.dataset.go===id));window.scrollTo({top:0,behavior:'smooth'});if(id==='explore')renderExplore();if(id==='shop')renderProducts();if(id==='deals')renderDeals();if(id==='events')renderEvents();if(id==='community')renderCommunity()}
+function card(d){const saved=(JSON.parse(localStorage.getItem('ic_saved')||'[]')).includes(d.id);return `<article class="card" onclick="openPlace(${d.id})"><div class="thumb" style="background-image:url('${d.img}')"><span class="badge">${d.tag}</span><button class="heart" onclick="event.stopPropagation();toggleSave(${d.id},this)">${saved?'♥':'♡'}</button></div><div class="body"><h3>${d.name}</h3><div class="meta">${d.place} · ${d.type}</div><div class="rating"><span class="stars">★★★★★</span> ${d.rating}</div></div></article>`}
+function renderHome(){ $('homeCards').innerHTML=DATA.slice(0,4).map(card).join('') }
+function renderExplore(){const q=($('exploreSearch')?.value||'').toLowerCase();const arr=DATA.filter(d=>(exploreCat==='All'||d.cat===exploreCat)&&(`${d.name} ${d.place} ${d.type} ${d.cat}`.toLowerCase().includes(q)));$('exploreCards').innerHTML=arr.map(card).join('');$('exploreEmpty').classList.toggle('hidden',arr.length>0)}
+function searchAll(){const q=$('search').value.toLowerCase();if(q){go('explore');$('exploreSearch').value=q;renderExplore()}}
+function filterCat(cat,el){activeCat=cat;if(el){document.querySelectorAll('#home .chip').forEach(x=>x.classList.remove('active'));el.classList.add('active')}exploreCat=cat;go('explore');renderExplore()}
+function setExploreCat(cat,el){exploreCat=cat;document.querySelectorAll('#explore .chip').forEach(x=>x.classList.remove('active'));el.classList.add('active');renderExplore()}
+function toggleSave(id,btn){let a=JSON.parse(localStorage.getItem('ic_saved')||'[]');if(a.includes(id)){a=a.filter(x=>x!==id);btn.textContent='♡';toast('Removed from saved')}else{a.push(id);btn.textContent='♥';toast('Saved to your places')}localStorage.setItem('ic_saved',JSON.stringify(a));$('savedCount').textContent=a.length+' saved'}
+function openPlace(id){const d=DATA.find(x=>x.id===id);if(!d)return;openCustom(`<div class="grab"></div><span class="pill">${d.cat.toUpperCase()}</span><h2>${d.name}</h2><p>${d.place} · ${d.type} · <b>★ ${d.rating}</b></p><div class="feature"><div class="feature-img" style="background-image:url('${d.img}')"></div><div><h3>Local discovery</h3><p>Save this place, contact the business or add it to your personal Imphal guide.</p></div></div><button class="primary" onclick="toast('Enquiry started');closeSheet()">Contact / Enquire</button>`)}
+function openCustom(html){$('sheet').innerHTML=html;$('modal').classList.add('open')}
+function openSheet(type){
+let h='';
+if(type==='profile')h=`<div class="grab"></div><span class="pill">YOUR ACCOUNT</span><h2>Welcome to Imphal Connect</h2><p>Save places, follow local creators, build itineraries and keep your favourite discoveries together.</p><input id="nameInput" placeholder="Your name"><button class="primary" onclick="saveName()">Save profile</button>`;
+if(type==='notifications')h=`<div class="grab"></div><span class="pill">UPDATES</span><h2>Your Imphal, in real time.</h2><p>Get notified about events, saved places, new offers and local discoveries.</p><button class="primary" onclick="toast('Notifications preference saved');closeSheet()">Enable updates</button>`;
+if(type==='event')h=`<div class="grab"></div><span class="pill">SAT · 18 OCT</span><h2>Imphal After Hours</h2><p>Music · Food · Art · Community. A relaxed evening celebrating local creators and independent businesses.</p><div class="feature"><div style="font-size:28px">🎟</div><div><h3>5:00 PM · Imphal</h3><p>Save the event and receive the event details.</p></div></div><button class="primary" onclick="saveEvent()">Save event</button>`;
+if(type==='trip')h=`<div class="grab"></div><span class="pill">SMART ITINERARY</span><h2>Build your Manipur day.</h2><p>Tell us your time and budget. Imphal Connect combines places, food, shopping and experiences.</p><div class="formgrid"><div><label style="font-size:9px">TIME</label><select id="tripTime"><option>4 hours</option><option>1 day</option><option>2 days</option><option>3 days</option></select></div><div><label style="font-size:9px">BUDGET</label><select id="tripBudget"><option>₹1,000</option><option>₹2,000</option><option>₹5,000</option><option>₹10,000+</option></select></div></div><textarea id="tripMood" placeholder="Food, culture, nature, shopping, romantic, family…"></textarea><button class="primary" onclick="buildTrip()">Build my route</button>`;
+if(type==='business')h=`<div class="grab"></div><span class="pill">BUSINESS HUB</span><h2>Get discovered when people are ready.</h2><p>Claim your page, add offers, receive enquiries and understand local demand.</p><input placeholder="Business name"><input placeholder="Phone / WhatsApp"><select><option>Food & dining</option><option>Shopping</option><option>Services</option><option>Stay</option><option>Tourism / experience</option><option>Other</option></select><button class="primary" onclick="toast('Business onboarding saved');closeSheet()">Claim my business</button>`;
+if(type==='dashboard')h=`<div class="grab"></div><span class="pill">BUSINESS INTELLIGENCE</span><h2>Your local growth dashboard.</h2><div class="statbar"><div class="stat"><b>2.4K</b><span>Profile views</span></div><div class="stat"><b>186</b><span>Enquiries</span></div><div class="stat"><b>72</b><span>Saves</span></div></div><p>See which searches, offers and categories are producing customer intent.</p><button class="primary" onclick="closeSheet()">Close dashboard</button>`;
+if(type==='sell')h=`<div class="grab"></div><span class="pill">MADE IN MANIPUR</span><h2>Open your local shop.</h2><p>Add products, prices and photos. Reach residents and visitors looking for authentic local products.</p><input placeholder="Shop / maker name"><button class="primary" onclick="toast('Seller onboarding saved');closeSheet()">Start selling</button>`;
+if(type==='post')h=`<div class="grab"></div><span class="pill">COMMUNITY</span><h2>Share something from Imphal.</h2><textarea placeholder="Your story, recommendation or discovery…"></textarea><button class="primary" onclick="toast('Post saved locally');closeSheet()">Publish</button>`;
+openCustom(h)}
+function closeSheet(){$('modal').classList.remove('open')}
+function saveName(){const n=$('nameInput').value.trim();if(n){localStorage.setItem('ic_name',n);$('profileName').textContent='Hi, '+n;toast('Profile saved');closeSheet()}}
+function saveEvent(){localStorage.setItem('ic_event','1');toast('Event saved');closeSheet()}
+function buildTrip(){const t=$('tripTime').value,b=$('tripBudget').value,m=$('tripMood').value||'local culture and food';openCustom(`<div class="grab"></div><span class="pill">YOUR PLAN</span><h2>${t} in Manipur · ${b}</h2><p>Built around <b>${m}</b>.</p><div class="feature"><div style="font-size:25px">1</div><div><h3>Heritage + city</h3><p>Start with a cultural stop and a local breakfast.</p></div></div><div class="feature"><div style="font-size:25px">2</div><div><h3>Food + local shopping</h3><p>Explore local flavours and Made in Manipur makers.</p></div></div><div class="feature"><div style="font-size:25px">3</div><div><h3>Nature + sunset</h3><p>Finish with a memorable outdoor experience.</p></div></div><button class="primary" onclick="toast('Itinerary saved');closeSheet()">Save itinerary</button>`)}
+function askAI(){const q=$('aiInput').value.trim();if(!q){toast('Tell me what you want to experience');return}buildTrip()}
+function renderProducts(){$('products').innerHTML=PRODUCTS.map((p,i)=>`<article class="product"><div class="product-img" style="background-image:url('${p.img}')"></div><div class="product-body"><h3>${p.name}</h3><p>${p.desc}</p><div class="product-row"><b>₹${p.price.toLocaleString('en-IN')}</b><button class="add" onclick="addCart(${i})">+</button></div></div></article>`).join('')}
+function addCart(i){let c=JSON.parse(localStorage.getItem('ic_cart')||'[]');c.push(PRODUCTS[i].name);localStorage.setItem('ic_cart',JSON.stringify(c));toast(PRODUCTS[i].name+' added to cart')}
+function renderDeals(){$('dealList').innerHTML=DATA.filter(d=>d.cat==='Food'||d.cat==='Shopping').slice(0,5).map(d=>`<div class="offer" style="margin-bottom:10px"><div class="offer-img" style="background-image:url('${d.img}')"></div><div><span class="pill">LOCAL OFFER</span><h3>${d.name}</h3><p>Tap to discover today's local offer and contact the business.</p><span class="price" onclick="openPlace(${d.id})">VIEW OFFER →</span></div></div>`).join('')}
+function renderEvents(){$('eventList').innerHTML=DATA.filter(d=>d.cat==='Events').map(d=>`<div class="event" style="margin-bottom:12px"><div style="font-size:9px;font-weight:900;opacity:.7">SAT · 18 OCT · 5:00 PM</div><h3>${d.name}</h3><p>Music · Food · Art · Community</p><button onclick="openPlace(${d.id})">View event</button></div>`).join('')}
+function renderCommunity(){$('communityGrid').innerHTML=DATA.slice(0,6).map((d,i)=>`<article class="card"><div class="thumb" style="background-image:url('${d.img}')"><span class="badge">COMMUNITY PICK</span></div><div class="body"><h3>${['Best weekend idea','Hidden food stop','Maker to know','Local service','Stay recommendation','Tonight in Imphal'][i]}</h3><div class="meta">Shared by the Imphal Connect community</div></div></article>`).join('')}
+function selectPlan(p){if(p==='Free'){toast('Free business listing selected');return}openCustom(`<div class="grab"></div><span class="pill">${p.toUpperCase()} PLAN</span><h2>Start ${p}.</h2><p>Choose your plan. Checkout is handled securely through Razorpay after you sign in.</p><div class="plan featured"><h3>${p}</h3><strong>${p==='Pro'?'₹499':'₹1,499'}</strong><small> / month</small><ul><li>✓ Business profile</li><li>✓ Discovery placement</li><li>✓ Offers & analytics</li><li>✓ Customer enquiries</li></ul></div><button class="primary" onclick="toast('${p} plan selected');closeSheet()">Continue to checkout</button>`)}
+window.addEventListener('load',()=>{renderHome();renderExplore();renderProducts();renderDeals();renderEvents();renderCommunity();renderOwnerStudio();const n=localStorage.getItem('ic_name');if(n)$('profileName').textContent='Hi, '+n;$('savedCount').textContent=JSON.parse(localStorage.getItem('ic_saved')||'[]').length+' saved';if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{})});
+
+/* ===== IMPhAL AI CONCIERGE ENGINE =====
+   Front-end demo mode. For real unrestricted AI, connect this function to a secure server-side
+   AI endpoint; never expose a provider API key in this HTML file.
+*/
+function openAI(){ $('aiModal').classList.add('open'); setTimeout(()=> $('aiChatInput').focus(),180) }
+function closeAI(){ $('aiModal').classList.remove('open') }
+function aiQuick(q){ $('aiChatInput').value=q; sendAI(new Event('submit',{cancelable:true})) }
+function addAIMessage(text,who='bot'){
+  const box=$('aiMessages'), row=document.createElement('div'); row.className='ai-msg '+who;
+  row.innerHTML='<div class="ai-bubble">'+escapeAI(text)+'</div>'; box.appendChild(row); box.scrollTop=box.scrollHeight
+}
+function escapeAI(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+function localAIAnswer(q){
+  const x=q.toLowerCase();
+  if(x.includes('food')||x.includes('eat')||x.includes('cafe')||x.includes('restaurant')){
+    return 'For food, I can help you explore cafés and local dining. Try Classic Cafe Imphal or Ningol Café from the Food section. Tell me your budget, cuisine and area and I can narrow the plan.';
+  }
+  if(x.includes('tonight')||x.includes('event')){
+    return 'For tonight, check the Events and Deals sections first. If you tell me your time, budget and whether you want music, food, shopping or something relaxed, I can build a plan.';
+  }
+  if(x.includes('trip')||x.includes('travel')||x.includes('manipur')){
+    return 'I can build a Manipur itinerary around your time and budget. A strong starting structure is heritage in Imphal → local food → shopping/makers → a nature experience. Tell me how many hours or days you have.';
+  }
+  if(x.includes('business')||x.includes('sell')||x.includes('shop')){
+    return 'If you run a local business, Imphal Connect can help you get discovered, publish offers, collect enquiries and showcase products. Open Business Hub to start a listing.';
+  }
+  if(x.includes('price')||x.includes('budget')||x.includes('₹')){
+    return 'Give me your exact budget and what you want to do. I can turn it into a practical local plan and keep the choices within your range.';
+  }
+  return 'I can help with that. For questions requiring live information, the production version should connect me to web search and approved Imphal Connect services. For local planning, give me your goal, time and budget and I’ll turn it into an actionable plan.';
+}
+async function sendAI(e){
+  if(e&&e.preventDefault)e.preventDefault();
+  const input=$('aiChatInput'), q=input.value.trim(); if(!q)return;
+  addAIMessage(q,'user'); input.value='';
+  const box=$('aiMessages'), typing=document.createElement('div'); typing.className='ai-msg bot'; typing.innerHTML='<div class="ai-bubble"><span class="typing"><i></i><i></i><i></i></span></div>'; box.appendChild(typing); box.scrollTop=box.scrollHeight;
+  try{
+    const r=await fetch('/api/ai/chat',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({message:q,context:{page:document.querySelector('.view.active')?.id||'home'}})});
+    const d=await r.json(); if(!r.ok) throw new Error(d.error||'AI unavailable');
+    typing.remove(); addAIMessage(d.reply||'I could not generate a response right now.','bot');
+  }catch(err){
+    typing.remove(); addAIMessage(localAIAnswer(q)+'\n\nIf this question needs live/general AI knowledge, connect an AI provider key in the server environment.','bot');
+  }
+}
+
+/* ===== BUSINESS INSTANT STUDIO ===== */
+const OWNER_KEY='ic_owner_items', STORY_KEY='ic_owner_stories', PLAN_KEY='ic_owner_plan';
+function ownerPlan(){return localStorage.getItem(PLAN_KEY)||''}
+function ownerItems(){try{return JSON.parse(localStorage.getItem(OWNER_KEY)||'[]')}catch{return[]}}
+function ownerStories(){try{return JSON.parse(localStorage.getItem(STORY_KEY)||'[]')}catch{return[]}}
+function renderOwnerStudio(){
+ const items=ownerItems(), stories=ownerStories();
+ const itemBox=$('ownerItems'), storyBox=$('ownerStories'); if(!itemBox||!storyBox)return;
+ itemBox.innerHTML=items.length?items.map(x=>`<div class="instant-item"><img src="${x.img}" alt=""><div class="ii-body"><b>${escapeAI(x.name)}</b><span>${escapeAI(x.desc||'Local item')}</span><div class="ii-price">₹${Number(x.price||0).toLocaleString('en-IN')}</div></div></div>`).join(''):'<div style="grid-column:1/-1;padding:16px;text-align:center;font-size:10px;opacity:.72">Your published items will appear here.</div>';
+ storyBox.innerHTML=stories.map(x=>`<div class="story-bubble"><div class="story-ring"><img src="${x.img}" alt=""></div><label>${escapeAI(x.title||'Story')}</label></div>`).join('') || '<div style="font-size:9px;opacity:.7;padding:14px 0">No stories yet — publish your first 24-hour story.</div>';
+}
+function openOwnerStudio(){
+ if(!ownerPlan()){openCustom(`<div class="grab"></div><span class="pill">PRO / ELITE</span><h2>Unlock Instant Studio</h2><p>Activate a paid business plan to publish products, prices, photos and instant stories.</p><button class="primary" onclick="selectPlan('Pro');closeSheet()">Activate Pro — ₹499/month</button>`);return}
+ openCustom(`<div class="grab"></div><span class="pill">INSTANT STUDIO</span><h2>Add a product or service</h2><p>Publish an item with its rate and photo. It appears immediately in your storefront.</p>
+ <input id="ownerName" placeholder="Item / service name">
+ <input id="ownerPrice" type="number" min="0" placeholder="Price / rate (₹)">
+ <input id="ownerDesc" placeholder="Short description">
+ <input id="ownerPhoto" type="file" accept="image/*" onchange="previewOwnerPhoto(this)">
+ <div id="ownerPreview" class="upload-preview"></div>
+ <button class="primary" onclick="publishOwnerItem()">Publish instantly</button>`);
+}
+let ownerPhotoData='';
+function previewOwnerPhoto(input){const f=input.files?.[0];if(!f)return;const r=new FileReader();r.onload=e=>{ownerPhotoData=e.target.result;$('ownerPreview').innerHTML=`<img src="${ownerPhotoData}" alt="preview">`};r.readAsDataURL(f)}
+function publishOwnerItem(){
+ const n=$('ownerName').value.trim(), p=Number($('ownerPrice').value), d=$('ownerDesc').value.trim();
+ if(!n||!p){toast('Add an item name and price');return}
+ const a=ownerItems();a.unshift({name:n,price:p,desc:d,img:ownerPhotoData||'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=700&q=85',created:Date.now()});
+ localStorage.setItem(OWNER_KEY,JSON.stringify(a.slice(0,24)));renderOwnerStudio();toast('Published instantly ✦');closeSheet()
+}
+function openStoryStudio(){
+ if(!ownerPlan()){openCustom(`<div class="grab"></div><span class="pill">PRO / ELITE</span><h2>Stories are a paid business feature</h2><p>Activate Pro or Elite to post visual stories that stay live for 24 hours.</p><button class="primary" onclick="selectPlan('Pro');closeSheet()">Activate Pro — ₹499/month</button>`);return}
+ openCustom(`<div class="grab"></div><span class="pill">24-HOUR STORY</span><h2>Post an instant story</h2><p>Upload a photo, add a short title and publish it to your business story strip.</p>
+ <input id="storyTitle" placeholder="Story title — e.g. Fresh today">
+ <input id="storyPhoto" type="file" accept="image/*" onchange="previewStoryPhoto(this)">
+ <div id="storyPreview" class="upload-preview"></div>
+ <button class="primary" onclick="publishStory()">Publish story</button>`);
+}
+let storyPhotoData='';
+function previewStoryPhoto(input){const f=input.files?.[0];if(!f)return;const r=new FileReader();r.onload=e=>{storyPhotoData=e.target.result;$('storyPreview').innerHTML=`<img src="${storyPhotoData}" alt="preview">`};r.readAsDataURL(f)}
+function publishStory(){
+ const t=$('storyTitle').value.trim()||'New story';
+ if(!storyPhotoData){toast('Choose a photo first');return}
+ const a=ownerStories().filter(x=>Date.now()-x.created<86400000);a.unshift({title:t,img:storyPhotoData,created:Date.now()});
+ localStorage.setItem(STORY_KEY,JSON.stringify(a.slice(0,12)));renderOwnerStudio();toast('Story is live for 24 hours ✦');closeSheet()
+}
+function cleanExpiredStories(){const a=ownerStories().filter(x=>Date.now()-x.created<86400000);localStorage.setItem(STORY_KEY,JSON.stringify(a))}
+const _selectPlan=selectPlan;
+selectPlan=function(p){localStorage.setItem(PLAN_KEY,p);_selectPlan(p);setTimeout(renderOwnerStudio,100)}
+cleanExpiredStories();
+</script>
+
+<div id="icAuthModal" class="ic-prod-modal" hidden>
+  <div class="ic-prod-card">
+    <button class="ic-prod-close" onclick="IC.closeAuth()">×</button>
+    <div class="ic-prod-kicker">IMPHAL CONNECT BUSINESS</div>
+    <h2 id="icAuthTitle">Business owner login</h2>
+    <p id="icAuthSub">Manage your listing, stories, items and subscription.</p>
+    <input id="icAuthName" class="ic-prod-input" placeholder="Full name" autocomplete="name">
+    <input id="icAuthEmail" class="ic-prod-input" placeholder="Email address" type="email" autocomplete="email">
+    <input id="icAuthPassword" class="ic-prod-input" placeholder="Password (8+ characters)" type="password" autocomplete="current-password">
+    <div class="ic-prod-actions"><button class="ic-prod-primary" onclick="IC.submitAuth()">Continue</button><button class="ic-prod-secondary" onclick="IC.toggleAuthMode()" id="icAuthToggle">Create account</button></div>
+    <div id="icAuthMsg" class="ic-prod-msg"></div>
+  </div>
+</div>
+<div id="icOwnerModal" class="ic-prod-modal" hidden>
+  <div class="ic-prod-card ic-prod-wide">
+    <button class="ic-prod-close" onclick="IC.closeOwner()">×</button>
+    <div class="ic-prod-kicker">BUSINESS CONTROL ROOM</div>
+    <h2>Your Imphal Connect business</h2>
+    <div id="icOwnerContent"></div>
+  </div>
+</div>
+<style>
+.ic-prod-modal{position:fixed;inset:0;background:rgba(4,35,65,.45);backdrop-filter:blur(18px);z-index:9999;display:grid;place-items:center;padding:18px}.ic-prod-modal[hidden]{display:none}.ic-prod-card{position:relative;width:min(520px,100%);background:rgba(255,255,255,.96);border:1px solid rgba(255,255,255,.8);border-radius:28px;padding:28px;box-shadow:0 30px 90px rgba(0,55,110,.3);color:#07365d}.ic-prod-wide{width:min(860px,100%);max-height:88vh;overflow:auto}.ic-prod-close{position:absolute;right:16px;top:12px;border:0;background:#eef8ff;width:36px;height:36px;border-radius:50%;font-size:24px;color:#23618f}.ic-prod-kicker{font-size:11px;font-weight:900;letter-spacing:.16em;color:#0879d1;margin-bottom:8px}.ic-prod-card h2{margin:0 0 8px;font-size:28px}.ic-prod-card p{color:#5c7891}.ic-prod-input{width:100%;box-sizing:border-box;margin:7px 0;padding:14px 15px;border:1px solid #cfe5f4;border-radius:14px;background:#f8fcff;outline:none}.ic-prod-input:focus{border-color:#4ebce9;box-shadow:0 0 0 4px rgba(91,215,247,.15)}.ic-prod-actions{display:flex;gap:10px;margin-top:12px}.ic-prod-primary,.ic-prod-secondary{border:0;border-radius:14px;padding:13px 18px;font-weight:800;cursor:pointer}.ic-prod-primary{background:linear-gradient(135deg,#0879d1,#43c7ed);color:#fff;box-shadow:0 10px 25px rgba(8,121,209,.22)}.ic-prod-secondary{background:#eef8ff;color:#0870ba}.ic-prod-msg{min-height:24px;margin-top:12px;font-size:13px}.ic-owner-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.ic-owner-stat{padding:18px;border-radius:20px;background:linear-gradient(145deg,#f3fbff,#e8f6ff);border:1px solid #d6edf9}.ic-owner-stat b{font-size:25px}.ic-owner-box{margin-top:14px;padding:18px;border:1px solid #dceef8;border-radius:20px}.ic-owner-box h3{margin:0 0 10px}.ic-owner-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid #e8f2f8}.ic-owner-row:last-child{border-bottom:0}.ic-badge{display:inline-block;padding:5px 9px;border-radius:999px;background:#e8f7ee;color:#17854a;font-size:11px;font-weight:900}.ic-badge.off{background:#fff1e7;color:#b65c18}.ic-plan-btn{border:0;border-radius:12px;padding:10px 13px;background:#0879d1;color:#fff;font-weight:800;cursor:pointer}.ic-danger{background:#fff0f0;color:#c23b3b}.ic-mini{font-size:12px;color:#698398}@media(max-width:650px){.ic-owner-grid{grid-template-columns:1fr}.ic-prod-card{padding:22px}}
+</style>
+
+
+<script>
+const IC = (()=>{
+  const state={signup:false,session:null,me:null,config:null};
+  const $=id=>document.getElementById(id);
+  async function init(){
+    try{
+      const cfg=await fetch('/api/config').then(r=>r.json()); state.config=cfg; window.__IC_SUPABASE__=cfg.supabase;
+    }catch(e){}
+    if(window.supabase){
+      // Supabase config is intentionally fetched from server so the browser does not contain a hard-coded project secret.
+      const cfg=window.__IC_SUPABASE__;
+      if(cfg?.url&&cfg?.key) window.icSupabase=supabase.createClient(cfg.url,cfg.key);
+    }
+  }
+  function msg(s,ok=false){const e=$('icAuthMsg'); if(e){e.textContent=s;e.style.color=ok?'#16804a':'#bd4545'}}
+  function openAuth(signup=false){state.signup=signup;$('icAuthModal').hidden=false;$('icAuthName').style.display=signup?'block':'none';$('icAuthTitle').textContent=signup?'Create business owner account':'Business owner login';$('icAuthToggle').textContent=signup?'I already have an account':'Create account';msg('')}
+  function closeAuth(){$('icAuthModal').hidden=true}
+  function toggleAuthMode(){openAuth(!state.signup)}
+  async function submitAuth(){
+    if(!window.icSupabase){msg('Supabase is not configured yet. Add the production environment variables first.');return}
+    const email=$('icAuthEmail').value.trim(), password=$('icAuthPassword').value; if(!email||password.length<8){msg('Enter a valid email and an 8+ character password.');return}
+    if(state.signup){const name=$('icAuthName').value.trim(); if(!name){msg('Enter your name.');return} const {error}=await icSupabase.auth.signUp({email,password,options:{data:{full_name:name}}}); if(error)return msg(error.message); msg('Account created. Check your email if confirmation is enabled, then log in.',true); state.signup=false; $('icAuthName').style.display='none'; $('icAuthToggle').textContent='Create account'; return;}
+    const {error}=await icSupabase.auth.signInWithPassword({email,password}); if(error)return msg(error.message); await loadMe(); closeAuth(); openOwner();
+  }
+  async function loadMe(){ if(!window.icSupabase)return; const {data:{session}}=await icSupabase.auth.getSession(); state.session=session; if(!session){state.me=null;return} const r=await fetch('/api/me',{headers:{Authorization:'Bearer '+session.access_token}}); state.me=r.ok?await r.json():null; }
+  async function api(path,opts={}){if(!state.session) await loadMe(); if(!state.session) throw new Error('Please log in first'); const r=await fetch(path,{...opts,headers:{'content-type':'application/json',...(opts.headers||{}),Authorization:'Bearer '+state.session.access_token}}); const data=await r.json().catch(()=>({})); if(!r.ok) throw new Error(data.error||'Request failed'); return data}
+  async function ensureBusiness(){ if(state.me?.business)return state.me.business; const name=prompt('Business name'); if(!name)return null; const d=await api('/api/business',{method:'POST',body:JSON.stringify({name,category:'Services'})}); state.me.business=d.business; return d.business }
+  async function subscribe(plan){
+    try{const b=await ensureBusiness();if(!b)return; const d=await api('/api/billing/create-subscription',{method:'POST',body:JSON.stringify({plan})});
+      const options={key:d.keyId,subscription_id:d.subscriptionId,name:'Imphal Connect',description:(plan==='elite'?'Elite':'Pro')+' Business subscription',prefill:{name:state.me?.profile?.full_name||'',email:state.me?.user?.email||''},theme:{color:'#0879d1'},handler:async function(response){try{const v=await api('/api/billing/verify-subscription',{method:'POST',body:JSON.stringify(response)});alert('Subscription verified. Your '+plan.toUpperCase()+' tools are now active.');await loadMe();renderOwner();}catch(e){alert('Payment returned, but verification failed: '+e.message)}}};
+      const rz=new Razorpay(options); rz.on('payment.failed',r=>alert('Payment failed: '+(r.error?.description||'Please try again.'))); rz.open();
+    }catch(e){alert(e.message)}
+  }
+  async function cancel(){try{await api('/api/billing/cancel',{method:'POST',body:'{}'});await loadMe();renderOwner();alert('Your subscription is set to cancel at the end of its billing cycle.')}catch(e){alert(e.message)}}
+  function openOwner(){loadMe().then(renderOwner);$('icOwnerModal').hidden=false}
+  function closeOwner(){$('icOwnerModal').hidden=true}
+  function renderOwner(){
+    const b=state.me?.business; if(!b){$('icOwnerContent').innerHTML=`<p>You don't have a business profile yet.</p><button class="ic-prod-primary" onclick="IC.createBusiness()">Create my business</button>`;return}
+    const active=b.subscription_status==='active'&&['pro','elite'].includes(b.plan); const end=b.subscription_current_end?new Date(b.subscription_current_end).toLocaleDateString('en-IN'):'—';
+    $('icOwnerContent').innerHTML=`<div class="ic-owner-grid"><div class="ic-owner-stat"><span>Plan</span><br><b>${b.plan.toUpperCase()}</b><br><span class="${active?'ic-badge':'ic-badge off'}">${b.subscription_status}</span></div><div class="ic-owner-stat"><span>Subscription end</span><br><b>${end}</b><br><span class="ic-mini">Managed by Razorpay</span></div></div><div class="ic-owner-box"><h3>Business profile</h3><div class="ic-owner-row"><span>${escapeHtml(b.name)}</span><span>${b.is_published?'Published':'Draft'}</span></div><div class="ic-owner-row"><span>${escapeHtml(b.category)}</span><button class="ic-plan-btn" onclick="IC.togglePublish()">${b.is_published?'Unpublish':'Publish'}</button></div></div><div class="ic-owner-box"><h3>Subscription</h3><div class="ic-owner-row"><span>Pro · ₹499/month</span><button class="ic-plan-btn" onclick="IC.subscribe('pro')">Choose</button></div><div class="ic-owner-row"><span>Elite · ₹1,499/month</span><button class="ic-plan-btn" onclick="IC.subscribe('elite')">Choose</button></div>${active?'<div style="margin-top:10px"><button class="ic-plan-btn ic-danger" onclick="IC.cancel()">Cancel at cycle end</button></div>':''}</div><div class="ic-owner-box"><h3>Instant Studio</h3>${active?'<p class="ic-mini">Your paid business tools are enabled. The website can now publish items and 24-hour stories through the secured API.</p><button class="ic-plan-btn" onclick="IC.addItem()">Add item / rate</button> <button class="ic-plan-btn" onclick="IC.addStory()">Post 24h story</button>':'<p class="ic-mini">Activate Pro or Elite to publish rates, photos and stories.</p>'}</div>`;
+  }
+  async function createBusiness(){const b=await ensureBusiness();if(b)renderOwner()}
+  async function togglePublish(){try{const b=state.me.business;const d=await api('/api/business',{method:'PATCH',body:JSON.stringify({is_published:!b.is_published})});state.me.business=d.business;renderOwner()}catch(e){alert(e.message)}}
+  async function pickImage(){return await new Promise(resolve=>{const input=document.createElement('input');input.type='file';input.accept='image/jpeg,image/png,image/webp';input.onchange=()=>resolve(input.files?.[0]||null);input.click()})}
+  async function uploadImage(file){if(!file)return '';if(file.size>5*1024*1024)throw new Error('Please use an image under 5 MB.');const ext=(file.name.split('.').pop()||'jpg').toLowerCase();const s=await api('/api/upload/sign',{method:'POST',body:JSON.stringify({extension:ext})});const {error}=await icSupabase.storage.from('business-media').uploadToSignedUrl(s.path,s.token,file);if(error)throw new Error(error.message);return s.publicBase}
+  async function addItem(){const name=prompt('Item / service name');if(!name)return;const price=prompt('Price / rate (optional)');const description=prompt('Short description (optional)')||'';try{const file=await pickImage();const image_url=await uploadImage(file);await api('/api/items',{method:'POST',body:JSON.stringify({name,price,description,image_url})});alert('Published to your business profile.');}catch(e){alert(e.message)}}
+  async function addStory(){const title=prompt('Story title');if(title===null)return;try{const file=await pickImage();const image_url=await uploadImage(file);await api('/api/stories',{method:'POST',body:JSON.stringify({title,image_url})});alert('Story published for 24 hours.');}catch(e){alert(e.message)}}
+  function escapeHtml(s){return String(s||'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
+  window.addEventListener('load',async()=>{await init(); if(window.icSupabase){icSupabase.auth.onAuthStateChange((_e,s)=>{state.session=s})}});
+  return {openAuth,closeAuth,toggleAuthMode,submitAuth,openOwner,closeOwner,subscribe,cancel,createBusiness,togglePublish,addItem,addStory,loadMe};
+})();
+
+// Make the existing pricing buttons use the secure subscription flow.
+window.selectPlan=(plan)=>{if(plan==='free'){alert('Free Connect is available without payment. Create an account to claim your business profile.');return} IC.openAuth(false); setTimeout(()=>{window.__icPendingPlan=plan},50)};
+const _oldSubmitAuth=IC.submitAuth;
+IC.submitAuth=async function(){await _oldSubmitAuth(); if(window.__icPendingPlan && IC.loadMe){await IC.loadMe(); if(window.ICPRO?.P?.session){const p=window.__icPendingPlan;window.__icPendingPlan=null;IC.subscribe(p)}}};
+</script>
+
+<style>
+/* ===== FINAL PRODUCTION V2 LAYER ===== */
+.prod-pill{display:inline-flex;align-items:center;gap:6px;padding:7px 10px;border-radius:999px;background:#eef9ff;color:#0879d1;font-size:9px;font-weight:900}
+.prod-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.prod-card{background:#fff;border:1px solid #dceef5;border-radius:20px;padding:13px}.prod-card h4{font:800 13px Manrope;margin:0 0 5px;color:#07365d}.prod-card p{font-size:9px;color:#71899a;line-height:1.5;margin:0}.prod-card button,.prod-btn{border:0;border-radius:11px;padding:9px 11px;background:#0879d1;color:#fff;font-size:9px;font-weight:900}.prod-btn.alt{background:#e9f7ff;color:#07588e}.prod-btn.danger{background:#fff0f0;color:#b63c45}
+.prod-table{width:100%;border-collapse:separate;border-spacing:0 7px;font-size:9px}.prod-table td{background:#fff;padding:9px;border-top:1px solid #dceef5;border-bottom:1px solid #dceef5}.prod-table td:first-child{border-left:1px solid #dceef5;border-radius:10px 0 0 10px}.prod-table td:last-child{border-right:1px solid #dceef5;border-radius:0 10px 10px 0}.status{display:inline-block;padding:4px 7px;border-radius:999px;background:#eaf8ef;color:#14814b;font-size:8px;font-weight:900}.status.off{background:#fff0ed;color:#b54c35}.status.blue{background:#eaf5ff;color:#086dc0}.admin-shell{min-height:calc(100vh - 80px)}.admin-hero{background:linear-gradient(135deg,#07365d,#0879d1 60%,#5bd7f7);color:#fff;border-radius:28px;padding:22px;position:relative;overflow:hidden}.admin-hero h1{font:800 32px Manrope;margin:7px 0}.admin-nav{display:flex;gap:7px;overflow:auto;padding:13px 0;scrollbar-width:none}.admin-nav button{white-space:nowrap;padding:10px 13px;border-radius:13px;background:#fff;border:1px solid #dceef5;color:#315a70;font-size:9px;font-weight:900}.admin-nav button.active{background:#0879d1;color:#fff;border-color:#0879d1}.admin-section{display:none}.admin-section.active{display:block}.funding-card{background:linear-gradient(135deg,#f0fbff,#fff);border:1px solid #dceef5;border-radius:22px;padding:17px}.funding-card h3{font:800 16px Manrope;color:#07365d;margin:4px 0}.funding-card label{font-size:9px;font-weight:800;color:#557184;display:block;margin:8px 0 4px}.funding-card input,.funding-card textarea,.funding-card select{width:100%;border:1px solid #d7eaf3;border-radius:11px;padding:10px;outline:none;background:#fff;font-size:11px}.funding-card textarea{min-height:80px;resize:vertical}.mini-kpi{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.mini-kpi div{background:#fff;border:1px solid #dceef5;border-radius:15px;padding:10px}.mini-kpi b{font:800 17px Manrope;color:#07365d;display:block}.mini-kpi span{font-size:8px;color:#71899a}.hidden-prod{display:none!important}
+@media(min-width:760px){.prod-grid{grid-template-columns:repeat(3,1fr)}}
+</style>
+<script>
+/* ===== PRODUCTION APP BRIDGE ===== */
+(function(){
+  const P={session:null,me:null};
+  const esc=s=>String(s??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+  async function session(){
+    if(window.icSupabase){const {data}=await icSupabase.auth.getSession();P.session=data.session||null;}
+    return P.session;
+  }
+  async function api(path,opts={}){
+    await session(); const headers={'content-type':'application/json',...(opts.headers||{})}; if(P.session)headers.Authorization='Bearer '+P.session.access_token;
+    const r=await fetch(path,{...opts,headers}); const d=await r.json().catch(()=>({})); if(!r.ok)throw new Error(d.error||'Request failed'); return d;
+  }
+  async function refreshMe(){try{P.me=await api('/api/me');}catch{P.me=null} return P.me}
+  window.ICPRO={P,api,session,refreshMe,esc};
+  window.addEventListener('load',async()=>{await session(); if(P.session)await refreshMe();});
+})();
+
+/* Real AI: backend is authoritative; no API key in browser. */
+window.askAI=window.askAI||function(){openAI()};
+
+/* Replace prototype owner studio with the secured server-backed version. */
+window.ownerPlan=function(){return (ICPRO.P.me?.business?.plan||'free')};
+window.renderOwnerStudio=async function(){
+  const b=ICPRO.P.me?.business; const itemBox=$('ownerItems'), storyBox=$('ownerStories'); if(!itemBox||!storyBox)return;
+  if(!b){itemBox.innerHTML='<div class="plan-locked">Create and verify your business account to start publishing.</div>';storyBox.innerHTML='';return;}
+  try{
+    const d=await ICPRO.api('/api/businesses/'+encodeURIComponent(b.slug));
+    storyBox.innerHTML=(d.stories||[]).slice(0,8).map(s=>`<div class="story-bubble"><div class="story-ring">${s.image_url?`<img src="${esc(s.image_url)}" alt="">`:'<div style="height:100%;display:grid;place-items:center;color:#fff">✦</div>'}</div><label>${esc(s.title||'Story')}</label></div>`).join('')||'<div class="plan-locked">No active stories yet.</div>';
+    itemBox.innerHTML=(d.items||[]).slice(0,8).map(i=>`<div class="instant-item">${i.image_url?`<img src="${esc(i.image_url)}" alt="${esc(i.name)}">`:'<div style="height:105px;display:grid;place-items:center;background:#ffffff12">✦</div>'}<div class="ii-body"><b>${esc(i.name)}</b><span>${esc(i.description||'')}</span><div class="ii-price">${i.price==null?'Ask for rate':'₹'+Number(i.price).toLocaleString('en-IN')}</div></div></div>`).join('')||'<div class="plan-locked">Add your first product/service.</div>';
+  }catch(e){itemBox.innerHTML='<div class="plan-locked">Could not load your live catalogue.</div>';}
+};
+
+/* Secure business onboarding + publishing. */
+window.openOwnerStudio=async function(){
+  await ICPRO.refreshMe(); const b=ICPRO.P.me?.business;
+  if(!b){IC.openOwner();return;}
+  const active=b.subscription_status==='active'&&['pro','elite'].includes(b.plan);
+  if(!active){openCustom(`<div class="grab"></div><span class="pill">PRO / ELITE</span><h2>Unlock Instant Studio</h2><p>Publish products, prices, photos, offers and 24-hour stories through your secured business account.</p><button class="primary" onclick="IC.subscribe('pro');closeSheet()">Activate Pro — ₹499/month</button>`);return;}
+  openCustom(`<div class="grab"></div><span class="pill">INSTANT STUDIO</span><h2>Publish something new.</h2><p>Your changes go to the cloud and become visible on your public business profile.</p><button class="primary" onclick="ICPRO_ADD_ITEM();closeSheet()">＋ Add item / rate</button><button class="primary" style="margin-top:8px" onclick="ICPRO_ADD_STORY();closeSheet()">◉ Post 24h story</button><button class="primary" style="margin-top:8px;background:#e9f7ff;color:#07588e" onclick="ICPRO_OPEN_ANALYTICS();closeSheet()">View analytics</button>`);
+};
+window.openStoryStudio=window.openOwnerStudio;
+async function pickProdImage(){return new Promise(resolve=>{const i=document.createElement('input');i.type='file';i.accept='image/jpeg,image/png,image/webp';i.onchange=()=>resolve(i.files?.[0]||null);i.click()})}
+async function uploadProdImage(file){if(!file)return '';if(file.size>5*1024*1024)throw new Error('Use an image under 5 MB.');const ext=(file.name.split('.').pop()||'jpg').toLowerCase();const s=await ICPRO.api('/api/upload/sign',{method:'POST',body:JSON.stringify({extension:ext})});const {error}=await icSupabase.storage.from('business-media').uploadToSignedUrl(s.path,s.token,file);if(error)throw new Error(error.message);return s.publicBase}
+window.ICPRO_ADD_ITEM=async function(){
+  try{await ICPRO.refreshMe();if(!ICPRO.P.me?.business)throw new Error('Create your business first.');const name=prompt('Product/service name');if(!name)return;const price=prompt('Price/rate in ₹ (optional)');const description=prompt('Short description')||'';const file=await pickProdImage();const image_url=await uploadProdImage(file);await ICPRO.api('/api/items',{method:'POST',body:JSON.stringify({name,price,description,image_url})});toast('Published to your business');await renderOwnerStudio();}catch(e){alert(e.message)}
+};
+window.ICPRO_ADD_STORY=async function(){try{await ICPRO.refreshMe();const title=prompt('Story title');if(title===null)return;const file=await pickProdImage();const image_url=await uploadProdImage(file);await ICPRO.api('/api/stories',{method:'POST',body:JSON.stringify({title,image_url})});toast('Story live for 24 hours');await renderOwnerStudio();}catch(e){alert(e.message)}};
+window.ICPRO_OPEN_ANALYTICS=async function(){try{const d=await ICPRO.api('/api/analytics/owner');openCustom(`<div class="grab"></div><span class="pill">LIVE ANALYTICS</span><h2>${esc(d.business?.name||'Business')}</h2><div class="mini-kpi"><div><b>${d.totals?.views||0}</b><span>Views</span></div><div><b>${d.totals?.enquiries||0}</b><span>Enquiries</span></div><div><b>${d.totals?.saves||0}</b><span>Saves</span></div></div><p style="font-size:10px;color:#71899a;margin-top:14px">Track customer intent from profile views, product views, saves, calls and enquiries.</p>`)}catch(e){alert(e.message)}};
+
+/* Funding/lending application: application workflow, not an automatic loan promise. */
+window.openFunding=async function(){await ICPRO.refreshMe();const b=ICPRO.P.me?.business;if(!b){IC.openOwner();return}openCustom(`<div class="grab"></div><span class="pill">BUSINESS FUNDING</span><h2>Request business funding.</h2><p>Submit a funding request for admin review or an integrated financing partner. Imphal Connect does not approve or disburse credit itself.</p><div class="funding-card"><label>Amount requested (₹)</label><input id="fundAmount" type="number" min="1000" placeholder="e.g. 100000"><label>Purpose</label><textarea id="fundPurpose" placeholder="Inventory, equipment, expansion..."></textarea><label>Preferred tenure</label><select id="fundTenure"><option>6 months</option><option>12 months</option><option>24 months</option><option>36 months</option></select><button class="prod-btn" style="margin-top:10px;width:100%" onclick="submitFunding()">Submit funding request</button></div>`)};
+window.submitFunding=async function(){try{const amount=Number($('fundAmount').value);const purpose=$('fundPurpose').value.trim();const tenure=$('fundTenure').value;if(!amount||amount<1000||!purpose)throw new Error('Enter amount and purpose.');await ICPRO.api('/api/funding/applications',{method:'POST',body:JSON.stringify({amount,purpose,tenure})});toast('Funding request submitted');closeSheet()}catch(e){alert(e.message)}};
+
+/* Admin console is separate: /admin.html. */
+window.ICPRO_RENDER_OWNER=async function(){
+  await ICPRO.refreshMe(); const b=ICPRO.P.me?.business;
+  if(!b){$('icOwnerContent').innerHTML=`<p>You don't have a business profile yet.</p><button class="ic-prod-primary" onclick="IC.createBusiness()">Create my business</button>`;return;}
+  const active=b.subscription_status==='active'&&['pro','elite'].includes(b.plan); const end=b.subscription_current_end?new Date(b.subscription_current_end).toLocaleDateString('en-IN'):'—';
+  $('icOwnerContent').innerHTML=`<div class="ic-owner-grid"><div class="ic-owner-stat"><span>Plan</span><br><b>${ICPRO.esc(b.plan.toUpperCase())}</b><br><span class="${active?'ic-badge':'ic-badge off'}">${ICPRO.esc(b.subscription_status)}</span></div><div class="ic-owner-stat"><span>Subscription end</span><br><b>${end}</b><br><span class="ic-mini">Managed by Razorpay</span></div></div>
+  <div class="ic-owner-box"><h3>Business profile</h3><div class="ic-owner-row"><span>${ICPRO.esc(b.name)}</span><span>${b.is_published?'Published':'Draft'}</span></div><div class="ic-owner-row"><span>${ICPRO.esc(b.category)}</span><button class="ic-plan-btn" onclick="IC.togglePublish()">${b.is_published?'Unpublish':'Publish'}</button></div></div>
+  <div class="ic-owner-box"><h3>Subscription</h3><div class="ic-owner-row"><span>Pro · ₹499/month</span><button class="ic-plan-btn" onclick="IC.subscribe('pro')">Choose</button></div><div class="ic-owner-row"><span>Elite · ₹1,499/month</span><button class="ic-plan-btn" onclick="IC.subscribe('elite')">Choose</button></div>${active?'<div style="margin-top:10px"><button class="ic-plan-btn ic-danger" onclick="IC.cancel()">Cancel at cycle end</button></div>':''}</div>
+  <div class="ic-owner-box"><h3>Business tools</h3><p class="ic-mini">${active?'Your paid tools are active.':'Activate Pro or Elite to publish products, offers and stories.'}</p><button class="ic-plan-btn" onclick="openOwnerStudio()">Instant Studio</button> <button class="ic-plan-btn" onclick="ICPRO_OPEN_ANALYTICS()">Analytics</button> <button class="ic-plan-btn" onclick="openFunding()">Funding</button></div>`;
+};
+window.openAdmin=()=>location.href='/admin.html';
+
+/* Live public business discovery: published owner profiles are visible to residents and visitors. */
+const ICLIVE={cache:[],loaded:false};
+function liveBusinessCard(b){
+  const img=b.cover_url||b.logo_url||'https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=900&q=85';
+  const badge=b.is_verified?'VERIFIED BUSINESS':'LOCAL BUSINESS';
+  return `<article class="card" onclick="openBusinessProfile('${encodeURIComponent(b.slug)}')"><div class="thumb" style="background-image:url('${ICPRO.esc(img)}')"><span class="badge">${badge}</span></div><div class="body"><h3>${ICPRO.esc(b.name)}</h3><div class="meta">${ICPRO.esc(b.city||'Imphal')} · ${ICPRO.esc(b.category||'Local business')}</div><div class="rating"><span class="stars">${b.is_verified?'★★★★★':'★★★★☆'}</span> ${b.is_verified?'Verified':'Discover'}</div></div></article>`;
+}
+async function loadLiveBusinesses(q='',category=''){
+  try{
+    const params=new URLSearchParams();if(q)params.set('q',q);if(category&&category!=='All')params.set('category',category);
+    const r=await fetch('/api/businesses?'+params.toString());if(!r.ok)throw new Error('Business directory unavailable');
+    const d=await r.json();ICLIVE.cache=d.businesses||[];ICLIVE.loaded=true;return ICLIVE.cache;
+  }catch{ICLIVE.loaded=true;return ICLIVE.cache||[]}
+}
+window.openBusinessProfile=async function(encodedSlug){
+  const slug=decodeURIComponent(encodedSlug);
+  openCustom(`<div class="grab"></div><span class="pill">LOCAL BUSINESS</span><h2>Loading…</h2><p>Opening the live business profile.</p>`);
+  try{
+    const r=await fetch('/api/businesses/'+encodeURIComponent(slug));const d=await r.json();if(!r.ok)throw new Error(d.error||'Business not found');
+    const b=d.business||{};trackBusinessEvent(b.id,'view');
+    const items=(d.items||[]).slice(0,12).map(i=>`<div class="feature"><div class="feature-img" style="background-image:url('${ICPRO.esc(i.image_url||'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=700&q=85')}')"></div><div><h3>${ICPRO.esc(i.name)}</h3><p>${ICPRO.esc(i.description||'')}</p><b style="color:#0879d1">${i.price==null?'Ask for rate':'₹'+Number(i.price).toLocaleString('en-IN')}</b></div></div>`).join('');
+    const offers=(d.offers||[]).map(o=>`<div class="offer" style="margin:8px 0"><span class="pill">OFFER</span><h3>${ICPRO.esc(o.title)}</h3><p>${ICPRO.esc(o.description||o.discount_text||'Local offer')}</p></div>`).join('');
+    const story=(d.stories||[]).slice(0,8).map(x=>`<div class="story-bubble"><div class="story-ring"><img src="${ICPRO.esc(x.image_url||b.cover_url||'')}" alt=""></div><label>${ICPRO.esc(x.title||'Story')}</label></div>`).join('');
+    const contact=b.whatsapp||b.phone; const contactUrl=b.whatsapp?`https://wa.me/${String(b.whatsapp).replace(/[^0-9]/g,'')}`:(b.phone?`tel:${b.phone}`:'');
+    $('sheet').innerHTML=`<div class="grab"></div><span class="pill">${b.is_verified?'VERIFIED · ':''}${ICPRO.esc(b.category||'LOCAL BUSINESS')}</span><h2>${ICPRO.esc(b.name)}</h2><p>${ICPRO.esc(b.city||'Imphal')} · ${ICPRO.esc(b.address||'')} </p>${story?`<div class="story-row">${story}</div>`:''}<p>${ICPRO.esc(b.description||'Discover this local business on Imphal Connect.')}</p>${items?`<h3 style="margin-top:16px">Products & services</h3>${items}`:''}${offers?`<h3 style="margin-top:16px">Current offers</h3>${offers}`:''}<div class="ic-prod-actions"><button class="ic-prod-primary" onclick="trackBusinessEvent('${b.id}','enquiry');toast('Enquiry started');closeSheet()">Enquire</button>${contact?`<button class="ic-prod-secondary" onclick="trackBusinessEvent('${b.id}','${b.whatsapp?'whatsapp':'call'}');location.href=${JSON.stringify(contactUrl)}">${b.whatsapp?'WhatsApp':'Call'}</button>`:''}</div>`;
+  }catch(e){$('sheet').innerHTML=`<div class="grab"></div><span class="pill">UNAVAILABLE</span><h2>Business profile unavailable</h2><p>${ICPRO.esc(e.message)}</p>`}
+};
+const _renderHome=window.renderHome;
+window.renderHome=async function(){
+  _renderHome();
+  const live=await loadLiveBusinesses();
+  if(live.length){$('homeCards').innerHTML=live.slice(0,4).map(liveBusinessCard).join('')+DATA.slice(0,Math.max(0,4-live.length)).map(card).join('');}
+};
+const _renderExplore=window.renderExplore;
+window.renderExplore=async function(){
+  const q=($('exploreSearch')?.value||'').trim().toLowerCase();
+  const live=await loadLiveBusinesses(q,exploreCat);
+  const local=DATA.filter(d=>(exploreCat==='All'||d.cat===exploreCat)&&(`${d.name} ${d.place} ${d.type} ${d.cat}`.toLowerCase().includes(q)));
+  $('exploreCards').innerHTML=live.map(liveBusinessCard).join('')+local.map(card).join('');
+  $('exploreEmpty').classList.toggle('hidden',live.length+local.length>0);
+};
+
+
+/* Make existing business CTA open secure owner flow. */
+const oldOpenSheet=window.openSheet;
+window.openSheet=function(type){if(type==='business'){IC.openOwner();return}return oldOpenSheet(type)};
+const _openOwnerOriginal=IC.openOwner; IC.openOwner=async function(){ $('icOwnerModal').hidden=false; try{await ICPRO.refreshMe();}catch{} if(window.ICPRO_RENDER_OWNER) await ICPRO_RENDER_OWNER(); };
+
+/* Track business analytics from public profile interactions when available. */
+window.trackBusinessEvent=async function(businessId,eventType,meta={}){try{await fetch('/api/analytics/event',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({business_id:businessId,event_type:eventType,metadata:meta})})}catch{}};
+</script>
+
+</body>
+</html>
