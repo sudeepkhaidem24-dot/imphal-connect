@@ -39,6 +39,13 @@ async function ownedBusiness(userId){const {data,error}=await supabaseAdmin.from
 function planId(plan){return plan==='pro'?process.env.RAZORPAY_PRO_PLAN_ID:plan==='elite'?process.env.RAZORPAY_ELITE_PLAN_ID:null}
 function activePaid(b){return !!b&&['pro','elite'].includes(b.plan)&&b.subscription_status==='active'&&(!b.subscription_current_end||new Date(b.subscription_current_end)>new Date())}
 function slugify(name){return (name.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')+'-'+crypto.randomBytes(3).toString('hex')).slice(0,70)}
+function publicSupabaseKey(){
+	const key=process.env.SUPABASE_PUBLISHABLE_KEY||'';
+	if(!key||key===process.env.SUPABASE_SERVICE_ROLE_KEY||/^sb_secret_/i.test(key))return '';
+	const payload=key.split('.')[1];
+	if(payload){try{if(JSON.parse(Buffer.from(payload,'base64url').toString('utf8')).role==='service_role')return ''}catch{}}
+	return key;
+}
 
 // Razorpay webhook must see raw bytes.
 app.post('/api/payments/webhook',express.raw({type:'application/json'}),async(req,res)=>{try{const sig=req.get('x-razorpay-signature')||'';const expected=crypto.createHmac('sha256',process.env.RAZORPAY_WEBHOOK_SECRET||'').update(req.body).digest('hex');if(!timingSafe(sig,expected))return res.status(400).json({error:'Invalid webhook signature'});const event=JSON.parse(req.body.toString('utf8'));const sub=event?.payload?.subscription?.entity;const payment=event?.payload?.payment?.entity;await supabaseAdmin.from('payment_events').insert({event_name:event.event,razorpay_id:sub?.id||payment?.id||null,payload:event});const sid=sub?.id||payment?.subscription_id;if(sid){const patch={updated_at:new Date().toISOString()};if(sub){patch.subscription_status=['active','authenticated'].includes(sub.status)?'active':sub.status;patch.subscription_current_end=sub.current_end?new Date(sub.current_end*1000).toISOString():null;if(['cancelled','completed','expired'].includes(sub.status))patch.plan='free'}await supabaseAdmin.from('businesses').update(patch).eq('subscription_id',sid)}return res.json({ok:true})}catch(e){console.error(e);return res.status(400).json({error:'Webhook processing failed'})}});
@@ -46,7 +53,7 @@ app.use(express.json({limit:'2mb'}));
 app.use(express.static('public',{extensions:['html']}));
 
 app.get('/api/health',(_req,res)=>res.json({ok:true,service:'imphal-connect',version:'2.1.0',time:new Date().toISOString()}));
-app.get('/api/config',(_req,res)=>res.json({razorpayKeyId:process.env.RAZORPAY_KEY_ID||'',appUrl:APP_URL,supabase:{url:process.env.SUPABASE_URL||'',key:process.env.SUPABASE_PUBLISHABLE_KEY||''},plans:{pro:!!process.env.RAZORPAY_PRO_PLAN_ID,elite:!!process.env.RAZORPAY_ELITE_PLAN_ID},ai:!!process.env.AI_API_KEY}));
+app.get('/api/config',(_req,res)=>res.json({razorpayKeyId:process.env.RAZORPAY_KEY_ID||'',appUrl:APP_URL,supabase:{url:process.env.SUPABASE_URL||'',key:publicSupabaseKey()},plans:{pro:!!process.env.RAZORPAY_PRO_PLAN_ID,elite:!!process.env.RAZORPAY_ELITE_PLAN_ID},ai:!!process.env.AI_API_KEY}));
 
 app.get('/api/me',requireUser,async(req,res)=>{const profile=await profileFor(req.user.id);const business=await ownedBusiness(req.user.id);res.json({user:{id:req.user.id,email:req.user.email},profile,business})});
 app.post('/api/business',authLimiter,requireUser,async(req,res)=>{const existing=await ownedBusiness(req.user.id);if(existing)return res.status(409).json({error:'Business already exists',business:existing});const name=String(req.body.name||'').trim();if(name.length<2||name.length>120)return res.status(400).json({error:'Business name must be 2-120 characters'});const payload={owner_id:req.user.id,name,slug:slugify(name),category:String(req.body.category||'Services').slice(0,60),description:String(req.body.description||'').slice(0,4000),phone:String(req.body.phone||'').slice(0,40),whatsapp:String(req.body.whatsapp||'').slice(0,40),address:String(req.body.address||'').slice(0,300),is_published:false};const {data,error}=await supabaseAdmin.from('businesses').insert(payload).select('*').single();if(error)return res.status(400).json({error:error.message});res.status(201).json({business:data})});
