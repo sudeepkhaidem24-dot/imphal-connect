@@ -257,7 +257,7 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:999;ba
 </div>
 <div class="motion-line"></div>
 
-<button id="aiFab" class="ai-fab" onclick="askAI()" aria-label="Open Imphi AI assistant">
+<button id="aiFab" class="ai-fab" onclick="openAI()" aria-label="Open Imphal AI assistant">
   <span class="imphi-hero-wrap" style="position:relative;right:auto;bottom:auto;display:block">
     <span class="imphi-mascot">
       <span class="imphi-ear left"></span><span class="imphi-ear right"></span>
@@ -475,7 +475,7 @@ function closeSheet(){$('modal').classList.remove('open')}
 function saveName(){const n=$('nameInput').value.trim();if(n){localStorage.setItem('ic_name',n);$('profileName').textContent='Hi, '+n;toast('Profile saved');closeSheet()}}
 function saveEvent(){localStorage.setItem('ic_event','1');toast('Event saved');closeSheet()}
 function buildTrip(){const t=$('tripTime').value,b=$('tripBudget').value,m=$('tripMood').value||'local culture and food';openCustom(`<div class="grab"></div><span class="pill">YOUR PLAN</span><h2>${t} in Manipur · ${b}</h2><p>Built around <b>${m}</b>.</p><div class="feature"><div style="font-size:25px">1</div><div><h3>Heritage + city</h3><p>Start with a cultural stop and a local breakfast.</p></div></div><div class="feature"><div style="font-size:25px">2</div><div><h3>Food + local shopping</h3><p>Explore local flavours and Made in Manipur makers.</p></div></div><div class="feature"><div style="font-size:25px">3</div><div><h3>Nature + sunset</h3><p>Finish with a memorable outdoor experience.</p></div></div><button class="primary" onclick="toast('Itinerary saved');closeSheet()">Save itinerary</button>`)}
-function askAI(){const q=$('aiInput').value.trim();if(!q){toast('Tell me what you want to experience');return}buildTrip()}
+function legacyAskAI(){const q=$('aiInput').value.trim();if(!q){toast('Tell me what you want to experience');return}buildTrip()}
 function renderProducts(){$('products').innerHTML=PRODUCTS.map((p,i)=>`<article class="product"><div class="product-img" style="background-image:url('${p.img}')"></div><div class="product-body"><h3>${p.name}</h3><p>${p.desc}</p><div class="product-row"><b>₹${p.price.toLocaleString('en-IN')}</b><button class="add" onclick="addCart(${i})">+</button></div></div></article>`).join('')}
 function addCart(i){let c=JSON.parse(localStorage.getItem('ic_cart')||'[]');c.push(PRODUCTS[i].name);localStorage.setItem('ic_cart',JSON.stringify(c));toast(PRODUCTS[i].name+' added to cart')}
 function renderDeals(){$('dealList').innerHTML=DATA.filter(d=>d.cat==='Food'||d.cat==='Shopping').slice(0,5).map(d=>`<div class="offer" style="margin-bottom:10px"><div class="offer-img" style="background-image:url('${d.img}')"></div><div><span class="pill">LOCAL OFFER</span><h3>${d.name}</h3><p>Tap to discover today's local offer and contact the business.</p><span class="price" onclick="openPlace(${d.id})">VIEW OFFER →</span></div></div>`).join('')}
