@@ -169,27 +169,35 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:999;ba
 @keyframes fabIn{from{transform:translateY(20px);opacity:0}to{transform:none;opacity:1}}
 .ai-modal{position:fixed;inset:0;z-index:120;background:rgba(3,24,40,.42);backdrop-filter:blur(16px);display:none;align-items:flex-end}
 .ai-modal.open{display:flex}
-.ai-panel{width:100%;max-height:92vh;overflow:hidden;background:linear-gradient(180deg,#f8fdff,#eefaff);border-radius:32px 32px 0 0;box-shadow:0 -30px 90px rgba(3,36,59,.25);display:flex;flex-direction:column}
+.ai-panel{width:100%;height:min(820px,92vh);height:min(820px,92dvh);overflow:hidden;background:linear-gradient(180deg,#f8fdff,#eefaff);border-radius:32px 32px 0 0;box-shadow:0 -30px 90px rgba(3,36,59,.25);display:flex;flex-direction:column}
 .ai-head{padding:16px 18px 12px;border-bottom:1px solid #d9edf5;display:flex;align-items:center;justify-content:space-between}
 .ai-brand{display:flex;align-items:center;gap:11px}.ai-brand b{font:800 16px Manrope;color:#07365d}.ai-brand small{display:block;color:#71899a;font-size:9px;margin-top:2px}
 .ai-close{width:38px;height:38px;border-radius:13px;background:#fff;border:1px solid #dceef5;color:#315a70}
-.ai-messages{padding:16px;overflow:auto;min-height:300px;max-height:56vh}
-.ai-msg{display:flex;gap:9px;margin:10px 0;animation:msgIn .35s ease both}
-.ai-msg.user{justify-content:flex-end}.ai-bubble{max-width:82%;padding:12px 14px;border-radius:18px;background:#fff;border:1px solid #dceef5;color:#183d53;font-size:12px;line-height:1.55;box-shadow:0 8px 22px rgba(27,108,143,.06)}
+.ai-messages{padding:18px;overflow:auto;min-height:0;flex:1;overscroll-behavior:contain;scroll-behavior:smooth;scrollbar-width:thin;scrollbar-color:#b9dce9 transparent}
+.ai-msg{display:flex;gap:9px;margin:14px 0;animation:msgIn .35s cubic-bezier(.2,.8,.2,1) both;scroll-margin-bottom:12px}
+.ai-msg.user{justify-content:flex-end}.ai-bubble{max-width:min(88%,680px);padding:15px 17px;border-radius:18px;background:#fff;border:1px solid #dceef5;color:#183d53;font-size:14px;line-height:1.72;box-shadow:0 8px 22px rgba(27,108,143,.06);overflow-wrap:anywhere}
 .ai-msg.user .ai-bubble{background:#07365d;color:#fff;border-color:#07365d;border-bottom-right-radius:6px}
 .ai-msg.bot .ai-bubble{border-bottom-left-radius:6px}
+.ai-msg.bot{align-items:flex-start;flex-direction:column}.ai-msg.bot .ai-bubble{max-width:min(92%,760px);padding:17px 19px}
+.ai-content>*:first-child{margin-top:0}.ai-content>*:last-child{margin-bottom:0}
+.ai-content p{margin:0 0 11px}.ai-content h1,.ai-content h2,.ai-content h3,.ai-content h4,.ai-content h5,.ai-content h6{font:800 16px/1.35 Manrope;color:#07365d;margin:17px 0 8px}
+.ai-content h1{font-size:21px}.ai-content h2{font-size:18px}.ai-content ul,.ai-content ol{margin:8px 0 13px;padding-left:23px}.ai-content li{padding-left:3px;margin:5px 0}.ai-content li::marker{color:#0879d1;font-weight:800}
+.ai-content strong{color:#07365d;font-weight:800}.ai-content code{padding:2px 5px;border-radius:5px;background:#eaf6fb;color:#075b87;font:.92em ui-monospace,SFMono-Regular,Consolas,monospace}
+.ai-actions{display:flex;gap:7px;margin:9px 2px 0}.ai-actions button{padding:6px 9px;border-radius:9px;background:#ffffffc9;border:1px solid #d6eaf2;color:#37647b;font-size:10px;font-weight:800;transition:background .18s,transform .18s}.ai-actions button:hover{background:#e7f7ff;transform:translateY(-1px)}.ai-actions button:focus-visible,.ai-close:focus-visible,.ai-compose button:focus-visible{outline:3px solid #55bde8;outline-offset:2px}
 @keyframes msgIn{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
 .ai-suggestions{display:flex;gap:7px;overflow:auto;padding:0 16px 10px;scrollbar-width:none}.ai-suggestions button{white-space:nowrap;background:#fff;border:1px solid #d6edf6;border-radius:999px;padding:9px 11px;font-size:10px;font-weight:800;color:#175879}
-.ai-compose{display:flex;gap:8px;padding:10px 14px calc(12px + env(safe-area-inset-bottom));background:#ffffffde;border-top:1px solid #d9edf5}
+.ai-compose{display:flex;gap:8px;padding:10px 14px calc(12px + env(safe-area-inset-bottom));background:#ffffffde;border-top:1px solid #d9edf5;flex-shrink:0}
 .ai-compose input{flex:1;height:48px;border:1px solid #d5eaf3;border-radius:16px;padding:0 14px;outline:none;background:#fff;font-size:12px}.ai-compose button{width:48px;border-radius:15px;background:#07365d;color:#fff;font-size:17px}
-.typing{display:inline-flex;gap:4px;align-items:center}.typing i{width:5px;height:5px;border-radius:50%;background:#76a0b3;animation:typing 1s infinite}.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}@keyframes typing{50%{transform:translateY(-4px);opacity:.5}}
+.typing{display:inline-flex;gap:6px;align-items:center;min-height:16px;padding:0 2px}.typing i{width:7px;height:7px;border-radius:50%;background:linear-gradient(145deg,#63d9f3,#0879d1);box-shadow:0 2px 8px #0879d144;animation:typing 1.1s ease-in-out infinite}.typing i:nth-child(2){animation-delay:.16s}.typing i:nth-child(3){animation-delay:.32s}@keyframes typing{0%,60%,100%{transform:translateY(0);opacity:.55}30%{transform:translateY(-5px);opacity:1}}
 .video-stage{height:210px;border-radius:26px;overflow:hidden;position:relative;background:#07365d;margin-top:18px;box-shadow:var(--shadow)}
 .video-stage video{width:100%;height:100%;object-fit:cover;display:block;filter:saturate(1.05) contrast(1.02)}
 .video-stage:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 45%,rgba(3,31,50,.5));pointer-events:none}
 .video-caption{position:absolute;left:16px;bottom:14px;color:#fff;z-index:2;font:800 16px Manrope;text-shadow:0 3px 18px #0008}
 .motion-line{height:1px;background:linear-gradient(90deg,transparent,#5bd7f7,transparent);margin:22px 0;animation:scan 3s ease-in-out infinite}
 @keyframes scan{50%{opacity:.35;transform:scaleX(.65)}}
-@media(min-width:760px){.ai-modal{align-items:center;padding:30px}.ai-panel{max-width:620px;border-radius:30px}.video-stage{height:300px}}
+@media(min-width:760px){.ai-modal{align-items:center;padding:30px}.ai-panel{max-width:700px;height:min(820px,calc(100vh - 60px));height:min(820px,calc(100dvh - 60px));border-radius:30px}.video-stage{height:300px}}
+@media(max-width:480px){.ai-panel{height:min(90vh,760px);height:min(90dvh,760px);border-radius:25px 25px 0 0}.ai-head{padding:13px 15px 10px}.ai-messages{padding:13px 11px}.ai-msg.bot .ai-bubble{max-width:95%;padding:14px}.ai-bubble{max-width:91%;font-size:13px}.ai-suggestions{padding-left:11px;padding-right:11px}.ai-compose{padding-left:10px;padding-right:10px}}
+@media(prefers-reduced-motion:reduce){.ai-msg{animation:none}.ai-messages{scroll-behavior:auto}.ai-actions button{transition:none}}
 @media(prefers-reduced-motion:reduce){.hero:after,.ai-orb,.ai-fab,.motion-line{animation:none!important}}
 </style>
 
@@ -280,7 +288,7 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:999;ba
       <button class="ai-close" onclick="closeAI()">✕</button>
     </div>
     <div class="ai-messages" id="aiMessages">
-      <div class="ai-msg bot"><div class="ai-bubble">Hi. I’m Imphal AI. Ask me anything — places, food, shopping, travel, events, businesses, ideas, planning, explanations, or everyday questions. I’ll help you figure out the next step.</div></div>
+      <div class="ai-msg bot"><div class="ai-bubble">Hi. I’m Imphal AI. Ask me anything — places, food, shopping, travel, events, businesses, ideas, planning, explanations, or everyday questions. I’ll help you figure out the next step.</div><div class="ai-actions"><button type="button" onclick="copyAIResponse(this.closest('.ai-msg').querySelector('.ai-bubble').innerText,this)" aria-label="Copy AI welcome message">Copy</button></div></div>
     </div>
     <div class="ai-suggestions">
       <button onclick="aiQuick('Plan a great one-day trip around Imphal')">One-day trip</button>
@@ -488,14 +496,53 @@ window.addEventListener('load',()=>{renderHome();renderExplore();renderProducts(
    Front-end demo mode. For real unrestricted AI, connect this function to a secure server-side
    AI endpoint; never expose a provider API key in this HTML file.
 */
-function openAI(){ $('aiModal').classList.add('open'); setTimeout(()=> $('aiChatInput').focus(),180) }
+function openAI(){ $('aiModal').classList.add('open'); setTimeout(()=>{$('aiChatInput').focus();scrollAIToLatest()},180) }
 function closeAI(){ $('aiModal').classList.remove('open') }
 function aiQuick(q){ $('aiChatInput').value=q; sendAI(new Event('submit',{cancelable:true})) }
-function addAIMessage(text,who='bot'){
-  const box=$('aiMessages'), row=document.createElement('div'); row.className='ai-msg '+who;
-  row.innerHTML='<div class="ai-bubble">'+escapeAI(text)+'</div>'; box.appendChild(row); box.scrollTop=box.scrollHeight
-}
 function escapeAI(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+function renderAIMarkdown(text){
+  const inline=value=>escapeAI(value)
+    .replace(/`([^`]+)`/g,'<code>$1</code>')
+    .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+    .replace(/__(.+?)__/g,'<strong>$1</strong>')
+    .replace(/(^|\s)\*([^*\n]+)\*(?=\s|$)/g,'$1<em>$2</em>')
+    .replace(/\*\*/g,'');
+  const lines=String(text).replace(/\r/g,'').split('\n'), out=[];
+  let paragraph=[], listType='';
+  const closeList=()=>{if(listType){out.push(`</${listType}>`);listType=''}};
+  const flushParagraph=()=>{if(paragraph.length){out.push(`<p>${inline(paragraph.join(' '))}</p>`);paragraph=[]}};
+  for(const line of lines){
+    const heading=line.match(/^\s*(#{1,6})\s+(.+?)\s*#*\s*$/);
+    const bullet=line.match(/^\s*[-*+]\s+(.+)$/);
+    const numbered=line.match(/^\s*\d+[.)]\s+(.+)$/);
+    if(heading){flushParagraph();closeList();const level=heading[1].length;out.push(`<h${level}>${inline(heading[2])}</h${level}>`)}
+    else if(bullet||numbered){flushParagraph();const type=bullet?'ul':'ol';if(listType!==type){closeList();out.push(`<${type}>`);listType=type}out.push(`<li>${inline((bullet||numbered)[1])}</li>`)}
+    else if(!line.trim()){flushParagraph();closeList()}
+    else{closeList();paragraph.push(line.replace(/^\s*#{1,6}(?=\s|$)/,''))}
+  }
+  flushParagraph();closeList();return out.join('');
+}
+function scrollAIToLatest(){const box=$('aiMessages');box.scrollTo({top:box.scrollHeight,behavior:'smooth'})}
+function addAIMessage(text,who='bot',prompt=''){
+  const box=$('aiMessages'), row=document.createElement('div'); row.className='ai-msg '+who;
+  const bubble=document.createElement('div');bubble.className='ai-bubble';
+  if(who==='bot'){const content=document.createElement('div');content.className='ai-content';content.innerHTML=renderAIMarkdown(text);bubble.appendChild(content)}
+  else bubble.textContent=String(text);
+  row.appendChild(bubble);
+  if(who==='bot'){
+    document.querySelectorAll('.ai-regenerate').forEach(button=>button.remove());
+    const actions=document.createElement('div');actions.className='ai-actions';
+    const copy=document.createElement('button');copy.type='button';copy.textContent='Copy';copy.setAttribute('aria-label','Copy AI response');
+    copy.addEventListener('click',()=>copyAIResponse(String(text),copy));actions.appendChild(copy);
+    if(prompt){row.dataset.prompt=prompt;const regenerate=document.createElement('button');regenerate.type='button';regenerate.className='ai-regenerate';regenerate.textContent='Regenerate';regenerate.setAttribute('aria-label','Regenerate latest AI response');regenerate.addEventListener('click',()=>regenerateAI(row));actions.appendChild(regenerate)}
+    row.appendChild(actions);
+  }
+  box.appendChild(row);scrollAIToLatest();return row;
+}
+async function copyAIResponse(text,button){
+  try{await navigator.clipboard.writeText(text)}catch{const field=document.createElement('textarea');field.value=text;field.style.position='fixed';field.style.opacity='0';document.body.appendChild(field);field.select();document.execCommand('copy');field.remove()}
+  const previous=button.textContent;button.textContent='Copied';setTimeout(()=>button.textContent=previous,1300);
+}
 function localAIAnswer(q){
   const x=q.toLowerCase();
   if(x.includes('food')||x.includes('eat')||x.includes('cafe')||x.includes('restaurant')){
@@ -519,13 +566,17 @@ async function sendAI(e){
   if(e&&e.preventDefault)e.preventDefault();
   const input=$('aiChatInput'), q=input.value.trim(); if(!q)return;
   addAIMessage(q,'user'); input.value='';
-  const box=$('aiMessages'), typing=document.createElement('div'); typing.className='ai-msg bot'; typing.innerHTML='<div class="ai-bubble"><span class="typing"><i></i><i></i><i></i></span></div>'; box.appendChild(typing); box.scrollTop=box.scrollHeight;
+  await requestAI(q);
+}
+async function regenerateAI(row){const q=row.dataset.prompt;if(!q)return;row.remove();await requestAI(q)}
+async function requestAI(q){
+  const box=$('aiMessages'), typing=document.createElement('div'); typing.className='ai-msg bot'; typing.innerHTML='<div class="ai-bubble"><span class="typing"><i></i><i></i><i></i></span></div>'; box.appendChild(typing); scrollAIToLatest();
   try{
     const r=await fetch('/api/ai/chat',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({message:q,context:{page:document.querySelector('.view.active')?.id||'home'}})});
     const d=await r.json(); if(!r.ok) throw new Error(d.error||'AI unavailable');
-    typing.remove(); addAIMessage(d.reply||'I could not generate a response right now.','bot');
+    typing.remove(); addAIMessage(d.reply||'I could not generate a response right now.','bot',q);
   }catch(err){
-    typing.remove(); addAIMessage(localAIAnswer(q)+'\n\nIf this question needs live/general AI knowledge, connect an AI provider key in the server environment.','bot');
+    typing.remove(); addAIMessage(localAIAnswer(q)+'\n\nIf this question needs live/general AI knowledge, connect an AI provider key in the server environment.','bot',q);
   }
 }
 
