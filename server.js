@@ -14,7 +14,7 @@ const APP_URL=process.env.APP_URL||`http://localhost:${PORT}`;
 const required=['SUPABASE_URL','SUPABASE_PUBLISHABLE_KEY','SUPABASE_SERVICE_ROLE_KEY','RAZORPAY_KEY_ID','RAZORPAY_KEY_SECRET','RAZORPAY_WEBHOOK_SECRET'];
 const missing=required.filter(k=>!process.env[k]);
 if(missing.length) console.warn(`Missing environment variables: ${missing.join(', ')}`);
-const supabaseAdmin=createClient(process.env.SUPABASE_URL||'https://placeholder.invalid','service-role-placeholder',{auth:{autoRefreshToken:false,persistSession:false}});
+const supabaseAdmin=createClient(process.env.SUPABASE_URL||'https://placeholder.invalid',process.env.SUPABASE_SERVICE_ROLE_KEY||'service-role-placeholder',{auth:{autoRefreshToken:false,persistSession:false}});
 const supabasePublic=createClient(process.env.SUPABASE_URL||'https://placeholder.invalid',process.env.SUPABASE_PUBLISHABLE_KEY||'public-placeholder');
 const razorpay=new Razorpay({key_id:process.env.RAZORPAY_KEY_ID||'placeholder',key_secret:process.env.RAZORPAY_KEY_SECRET||'placeholder'});
 app.set('trust proxy',1);
