@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#eaf8ff">
-<meta name="description" content="Imphal Connect — discover Imphal and Manipur. Food, stays, shopping, events, local makers, experiences and businesses.">
+<meta name="description" content="Imphal Connect — the digital city platform for Imphal. Discover local businesses, places and experiences, or grow your business with profiles, products, enquiries, analytics and promotion.">
 <link rel="manifest" href="manifest.json">
-<title>Imphal Connect — Your City. Your People.</title>
+<title>Imphal Connect — Imphal’s Digital City Platform</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap');
 :root{--bg:#f2fbff;--card:#fff;--blue:#0879d1;--cyan:#5bd7f7;--navy:#07365d;--ink:#09263b;--muted:#71899a;--line:#dceef5;--green:#0ca978;--gold:#e9a72d;--danger:#d64a5c;--shadow:0 18px 50px rgba(24,101,133,.11);--r:24px}
@@ -239,6 +239,81 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:999;ba
 .upload-preview{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:8px 0}.upload-preview img{width:100%;height:74px;object-fit:cover;border-radius:10px}
 @media(min-width:760px){.item-grid{grid-template-columns:repeat(4,1fr)}.instant-item img{height:140px}}
 </style>
+
+<style id="ic-enterprise-layer">
+/* ===== IMphal Connect Enterprise Launch Layer ===== */
+.ic-enterprise-band{margin-top:18px;padding:24px;border-radius:28px;background:linear-gradient(135deg,#ffffff 0%,#eefaff 55%,#dff6ff 100%);border:1px solid #cfeaf4;box-shadow:0 18px 48px rgba(24,101,133,.09);position:relative;overflow:hidden}
+.ic-enterprise-band:after{content:"";position:absolute;width:230px;height:230px;border-radius:50%;right:-110px;top:-100px;background:radial-gradient(circle,#5bd7f733,transparent 68%);pointer-events:none}
+.ic-enterprise-kicker{display:inline-flex;padding:7px 10px;border-radius:999px;background:#e5f7ff;color:#0879d1;font-size:9px;font-weight:900;letter-spacing:.7px}
+.ic-enterprise-band h2{font:800 clamp(22px,4vw,32px)/1.05 Manrope;color:#07365d;letter-spacing:-1px;margin:11px 0 8px}
+.ic-enterprise-band p{font-size:11px;line-height:1.65;color:#5d7787;max-width:700px;margin:0}
+.ic-enterprise-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:17px}
+.ic-enterprise-mini{background:#ffffffd9;border:1px solid #d9edf5;border-radius:16px;padding:12px}
+.ic-enterprise-mini b{display:block;font:800 12px Manrope;color:#07365d;margin-bottom:3px}.ic-enterprise-mini span{font-size:8px;color:#71899a;line-height:1.4}
+.ic-enterprise-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}.ic-enterprise-actions a{padding:11px 14px;border-radius:12px;font-size:9px;font-weight:900}.ic-enterprise-primary{background:#0879d1;color:#fff;box-shadow:0 10px 24px #0879d12b}.ic-enterprise-secondary{background:#fff;border:1px solid #d7eaf2;color:#07588e}
+.ic-city-story{display:grid;grid-template-columns:1.2fr .8fr;gap:10px;margin-top:10px}
+.ic-city-story-card{min-height:190px;border-radius:24px;overflow:hidden;position:relative;background:#07365d center/cover;box-shadow:0 14px 34px #196c8f14}
+.ic-city-story-card:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 30%,rgba(3,30,49,.78))}
+.ic-city-story-card div{position:absolute;left:16px;right:16px;bottom:15px;z-index:2;color:#fff}.ic-city-story-card small{font-size:8px;font-weight:900;letter-spacing:.7px;opacity:.78}.ic-city-story-card h3{font:800 17px Manrope;margin:6px 0 0}
+.ic-trust-strip{display:flex;gap:7px;flex-wrap:wrap;margin-top:13px}.ic-trust{padding:7px 9px;border-radius:999px;background:#fff;border:1px solid #dceef5;color:#567384;font-size:8px;font-weight:800}
+.ic-footer{margin:35px 0 95px;padding:20px 2px;border-top:1px solid #dceef5;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;color:#6b8594;font-size:9px}.ic-footer b{color:#07365d;font:800 13px Manrope}.ic-footer-links{display:flex;gap:12px;flex-wrap:wrap}.ic-footer-links a:hover{color:#0879d1}
+@media(max-width:760px){.ic-enterprise-grid{grid-template-columns:1fr 1fr}.ic-city-story{grid-template-columns:1fr}.ic-city-story-card{min-height:165px}}
+@media(prefers-reduced-motion:reduce){.ic-enterprise-band *{animation:none!important}}
+</style>
+<script id="ic-enterprise-launch">
+(function(){
+  function mountEnterpriseLayer(){
+    const hero=document.querySelector('#home .hero');
+    if(hero && !document.getElementById('icEnterpriseBand')){
+      const band=document.createElement('section');band.id='icEnterpriseBand';band.className='ic-enterprise-band';
+      band.innerHTML=`
+        <span class="ic-enterprise-kicker">FOR LOCAL BUSINESSES · BUILT IN IMPHAL</span>
+        <h2>Get discovered. Get enquiries. Grow locally.</h2>
+        <p>Imphal Connect is a digital business platform for local merchants, restaurants, stays, makers and service providers. Create a professional presence, showcase products and services, receive customer enquiries and understand demand — all in one place.</p>
+        <div class="ic-enterprise-grid">
+          <div class="ic-enterprise-mini"><b>Profile</b><span>Your professional local business page.</span></div>
+          <div class="ic-enterprise-mini"><b>Catalogue</b><span>Products, services, prices and photos.</span></div>
+          <div class="ic-enterprise-mini"><b>Leads</b><span>Real customer enquiries in your inbox.</span></div>
+          <div class="ic-enterprise-mini"><b>Insights</b><span>Analytics and promotional tools.</span></div>
+        </div>
+        <div class="ic-enterprise-actions">
+          <a class="ic-enterprise-primary" href="/business.html">Business plans · ₹499/mo</a>
+          <a class="ic-enterprise-secondary" href="javascript:IC.openOwner()">Manage my business</a>
+        </div>
+        <div class="ic-trust-strip"><span class="ic-trust">Free listing</span><span class="ic-trust">Pro · ₹499/month</span><span class="ic-trust">Elite · ₹1,499/month</span><span class="ic-trust">Secure account</span></div>`;
+      hero.after(band);
+    }
+    const h1=document.querySelector('#home .hero h1'), p=document.querySelector('#home .hero p'), eye=document.querySelector('#home .hero .eyebrow');
+    if(h1) h1.innerHTML='Everything Imphal.<br>One digital home.';
+    if(p) p.textContent='Discover local businesses, places and experiences — or give your own business the digital tools to get found, receive enquiries and grow.';
+    if(eye) eye.innerHTML='<i class="live"></i> LIVE FROM IMPHAL · LOCAL BUSINESSES & PEOPLE';
+    const search=document.getElementById('search'); if(search) search.placeholder='Search businesses, food, stays, services…';
+    const aiTitle=document.querySelector('#home .ai h3'); if(aiTitle) aiTitle.textContent='Ask Imphal AI anything.';
+    const aiText=document.querySelector('#home .ai p'); if(aiText) aiText.textContent='Plan your day, discover local businesses, compare options, understand something, or ask for a practical recommendation.';
+    
+    if(!document.getElementById('icCityStory')){
+      const anchor=document.querySelector('#home .section .map')?.closest('.section');
+      if(anchor){
+        const s=document.createElement('section');s.id='icCityStory';s.className='section';
+        s.innerHTML=`
+          <div class="section-head"><h2>See Imphal differently</h2><button onclick="openAI()">Ask Imphal AI</button></div>
+          <div class="ic-city-story">
+            <article class="ic-city-story-card" style="background-image:url('https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=1100&q=85')"><div><small>DISCOVER · EXPLORE · EXPERIENCE</small><h3>From everyday places to memorable days.</h3></div></article>
+            <article class="ic-city-story-card" style="background-image:url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=900&q=85')"><div><small>LOCAL BUSINESS</small><h3>Support the people building Imphal.</h3></div></article>
+          </div>`;
+        anchor.after(s);
+      }
+    }
+    if(!document.getElementById('icFooter')){
+      const f=document.createElement('footer');f.id='icFooter';f.className='ic-footer';
+      f.innerHTML='<div><b>Imphal Connect</b><br><span>Imphal’s digital city platform.</span></div><div class="ic-footer-links"><a href="/business.html">For Businesses</a><a href="/terms.html">Terms</a><a href="/privacy.html">Privacy</a><a href="/refund.html">Refunds</a><a href="/contact.html">Support</a></div>';
+      document.querySelector('.app')?.appendChild(f);
+    }
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',mountEnterpriseLayer); else mountEnterpriseLayer();
+  setTimeout(mountEnterpriseLayer,900);
+})();
+</script>
 </head>
 <body><div class="ambient-orbs"><i></i><i></i><i></i></div>
 <div class="app">
