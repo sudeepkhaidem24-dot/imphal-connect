@@ -86,7 +86,7 @@ app.post('/api/leads',publicEventLimiter,async(req,res)=>{
   if(token){try{const {data}=await supabaseAdmin.auth.getUser(token);customerId=data?.user?.id||null}catch{}}
   const leadId=crypto.randomUUID();
   const metadata={lead_id:leadId,customer_id:customerId,customer_name:customerName,customer_phone:customerPhone,customer_email:customerEmail,message,status:'new',source:'business_profile'};
-  const {error}=await supabaseAdmin.from('business_analytics').insert({business_id:businessId,event_type:'lead',metadata});
+  const {error}=await supabaseAdmin.from('business_analytics').insert([{business_id:businessId,event_type:'lead',metadata},{business_id:businessId,event_type:'enquiry',metadata:{lead_id:leadId,source:'business_profile'}}]);
   if(error)return res.status(400).json({error:error.message});
   res.status(201).json({ok:true,lead:{id:leadId,business_id:businessId,customer_name:customerName,status:'new'}});
 });
