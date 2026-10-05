@@ -614,7 +614,7 @@ header .icon{background:#ffffff18;border-color:#ffffff30;color:#fff;backdrop-fil
 
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
+<script src="https://cdn.uropay.me/uropay-embed.min.js"></script>
 <script>
 const DATA=[
 {id:1,cat:'Food',name:'Classic Cafe Imphal',place:'Old Lambulane',type:'Café',rating:'4.8',tag:'TRENDING',img:'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=800&q=85'},
@@ -668,7 +668,7 @@ function addCart(i){let c=JSON.parse(localStorage.getItem('ic_cart')||'[]');c.pu
 function renderDeals(){$('dealList').innerHTML=DATA.filter(d=>d.cat==='Food'||d.cat==='Shopping').slice(0,5).map(d=>`<div class="offer" style="margin-bottom:10px"><div class="offer-img" style="background-image:url('${d.img}')"></div><div><span class="pill">LOCAL OFFER</span><h3>${d.name}</h3><p>Tap to discover today's local offer and contact the business.</p><span class="price" onclick="openPlace(${d.id})">VIEW OFFER →</span></div></div>`).join('')}
 function renderEvents(){$('eventList').innerHTML=DATA.filter(d=>d.cat==='Events').map(d=>`<div class="event" style="margin-bottom:12px"><div style="font-size:9px;font-weight:900;opacity:.7">SAT · 18 OCT · 5:00 PM</div><h3>${d.name}</h3><p>Music · Food · Art · Community</p><button onclick="openPlace(${d.id})">View event</button></div>`).join('')}
 function renderCommunity(){$('communityGrid').innerHTML=DATA.slice(0,6).map((d,i)=>`<article class="card"><div class="thumb" style="background-image:url('${d.img}')"><span class="badge">COMMUNITY PICK</span></div><div class="body"><h3>${['Best weekend idea','Hidden food stop','Maker to know','Local service','Stay recommendation','Tonight in Imphal'][i]}</h3><div class="meta">Shared by the Imphal Connect community</div></div></article>`).join('')}
-function selectPlan(p){if(p==='Free'){toast('Free business listing selected');return}openCustom(`<div class="grab"></div><span class="pill">${p.toUpperCase()} PLAN</span><h2>Start ${p}.</h2><p>Choose your plan. Checkout is handled securely through Cashfree after you sign in.</p><div class="plan featured"><h3>${p}</h3><strong>${p==='Pro'?'₹499':'₹1,499'}</strong><small> / month</small><ul><li>✓ Business profile</li><li>✓ Discovery placement</li><li>✓ Offers & analytics</li><li>✓ Customer enquiries</li></ul></div><button class="primary" onclick="closeSheet();subscribe('${p.toLowerCase()}')">Continue to secure checkout</button>`)}
+function selectPlan(p){if(p==='Free'){toast('Free business listing selected');return}openCustom(`<div class="grab"></div><span class="pill">${p.toUpperCase()} PLAN</span><h2>Start ${p}.</h2><p>Choose your plan. Pay securely with UPI through UroRelay.</p><div class="plan featured"><h3>${p}</h3><strong>${p==='Pro'?'₹499':'₹1,499'}</strong><small> / month</small><ul><li>✓ Business profile</li><li>✓ Discovery placement</li><li>✓ Offers & analytics</li><li>✓ Customer enquiries</li></ul></div><button class="primary" onclick="closeSheet();subscribe('${p.toLowerCase()}')">Continue to UPI payment</button>`)}
 window.addEventListener('load',()=>{renderHome();renderExplore();renderProducts();renderDeals();renderEvents();renderCommunity();renderOwnerStudio();const n=localStorage.getItem('ic_name');if(n)$('profileName').textContent='Hi, '+n;$('savedCount').textContent=JSON.parse(localStorage.getItem('ic_saved')||'[]').length+' saved';if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{})});
 
 /* ===== IMPhAL AI CONCIERGE ENGINE =====
@@ -847,7 +847,7 @@ const IC = (()=>{
       if(!response.ok)throw new Error(`Configuration request failed (HTTP ${response.status})`);
       const cfg=await response.json();
       if(!cfg.supabase?.url||!cfg.supabase?.key)throw new Error('The Supabase URL or publishable key is missing.');
-      state.config=cfg.supabase; window.__IC_SUPABASE__=cfg.supabase; window.__IC_CASHFREE__=cfg.cashfree||{mode:'production'};
+      state.config=cfg.supabase; window.__IC_SUPABASE__=cfg.supabase; window.__IC_UROPAY__=cfg.uropay||{};
     }catch(e){state.configError=e?.message||'Unknown configuration error'}
     if(window.supabase){
       // Supabase config is intentionally fetched from server so the browser does not contain a hard-coded project secret.
@@ -891,14 +891,22 @@ const IC = (()=>{
   async function loadMe(){ if(!window.icSupabase)return; const {data:{session}}=await icSupabase.auth.getSession(); state.session=session; if(!session){state.me=null;return} const r=await fetch('/api/me',{headers:{Authorization:'Bearer '+session.access_token}}); state.me=r.ok?await r.json():null; }
   async function api(path,opts={}){if(!state.session) await loadMe(); if(!state.session) throw new Error('Please log in first'); const r=await fetch(path,{...opts,headers:{'content-type':'application/json',...(opts.headers||{}),Authorization:'Bearer '+state.session.access_token}}); const data=await r.json().catch(()=>({})); if(!r.ok) throw new Error(data.error||'Request failed'); return data}
   async function ensureBusiness(){ if(state.me?.business)return state.me.business; const name=prompt('Business name'); if(!name)return null; const d=await api('/api/business',{method:'POST',body:JSON.stringify({name,category:'Services'})}); state.me.business=d.business; return d.business }
+  function loadUroPayEmbed(){return new Promise((resolve,reject)=>{const existing=document.querySelector('script[data-ic-uropay]');if(existing){if(window.__IC_UROPAY_LOADED__)return resolve();existing.addEventListener('load',()=>resolve());existing.addEventListener('error',reject);return}const script=document.createElement('script');script.src='https://cdn.uropay.me/uropay-embed.min.js';script.async=true;script.dataset.icUropay='1';script.onload=()=>{window.__IC_UROPAY_LOADED__=true;resolve()};script.onerror=()=>reject(new Error('UroPay payment component failed to load. Please refresh and try again.'));document.head.appendChild(script)})}
   async function subscribe(plan){
     try{
       const b=await ensureBusiness();if(!b)return;
-      const d=await api('/api/billing/create-subscription',{method:'POST',body:JSON.stringify({plan})});
-      if(!d.subscriptionSessionId)throw new Error('Cashfree did not return a checkout session. Please try again.');
-      if(typeof Cashfree!=='function')throw new Error('Cashfree Checkout failed to load. Please refresh and try again.');
-      const cashfree=Cashfree({mode:window.__IC_CASHFREE__?.mode||'production'});
-      await cashfree.checkout({subsSessionId:d.subscriptionSessionId,redirectTarget:'_self'});
+      const cfg=window.__IC_UROPAY__||{};
+      const buttonId=plan==='pro'?cfg.proButtonId:plan==='elite'?cfg.eliteButtonId:'';
+      if(!cfg.apiKey||!buttonId)throw new Error('UPI checkout is not configured yet. Please try again shortly.');
+      const amount=plan==='pro'?499:1499;
+      const name=plan==='pro'?'Imphal Connect Pro':'Imphal Connect Elite';
+      const modal=document.createElement('div');
+      modal.id='icUroPayModal';
+      modal.className='modal open';
+      modal.innerHTML='<div class="sheet" style="max-width:520px;text-align:center"><div class="grab"></div><span class="pill">'+plan.toUpperCase()+' PLAN</span><h2>'+name+'</h2><p>Pay ₹'+amount.toLocaleString('en-IN')+' by UPI. The payment goes directly to the connected UPI account.</p><div id="icUroPayButtonWrap" style="margin:28px 0"><a href="#" class="uropay-btn" data-uropay-api-key="'+escapeHtml(cfg.apiKey)+'" data-uropay-button-id="'+escapeHtml(buttonId)+'" data-uropay-environment="'+escapeHtml(cfg.environment||'LIVE')+'" data-uropay-amount="'+amount+'">Pay ₹'+amount.toLocaleString('en-IN')+' with UPI</a></div><p class="meta">After payment, return to Imphal Connect to continue.</p><button class="ghost" onclick="document.getElementById(\'icUroPayModal\')?.remove()">Close</button></div>';
+      document.body.appendChild(modal);
+      await loadUroPayEmbed();
+      const refresh=document.createElement('script');refresh.src='https://cdn.uropay.me/uropay-embed.min.js';refresh.async=true;refresh.dataset.icUropayRefresh='1';document.body.appendChild(refresh);
     }catch(e){alert(e.message)}
   }
   async function cancel(){try{await api('/api/billing/cancel',{method:'POST',body:'{}'});await loadMe();renderOwner();alert('Your subscription is set to cancel at the end of its billing cycle.')}catch(e){alert(e.message)}}
@@ -907,7 +915,7 @@ const IC = (()=>{
   function renderOwner(){
     const b=state.me?.business; if(!b){$('icOwnerContent').innerHTML=`<p>You don't have a business profile yet.</p><button class="ic-prod-primary" onclick="IC.createBusiness()">Create my business</button>`;return}
     const active=b.subscription_status==='active'&&['pro','elite'].includes(b.plan); const end=b.subscription_current_end?new Date(b.subscription_current_end).toLocaleDateString('en-IN'):'—';
-    $('icOwnerContent').innerHTML=`<div class="ic-owner-grid"><div class="ic-owner-stat"><span>Plan</span><br><b>${b.plan.toUpperCase()}</b><br><span class="${active?'ic-badge':'ic-badge off'}">${b.subscription_status}</span></div><div class="ic-owner-stat"><span>Subscription end</span><br><b>${end}</b><br><span class="ic-mini">Managed by Cashfree</span></div></div><div class="ic-owner-box"><h3>Business profile</h3><div class="ic-owner-row"><span>${escapeHtml(b.name)}</span><span>${b.is_published?'Published':'Draft'}</span></div><div class="ic-owner-row"><span>${escapeHtml(b.category)}</span><button class="ic-plan-btn" onclick="IC.togglePublish()">${b.is_published?'Unpublish':'Publish'}</button></div></div><div class="ic-owner-box"><h3>Subscription</h3><div class="ic-owner-row"><span>Pro · ₹499/month</span><button class="ic-plan-btn" onclick="IC.subscribe('pro')">Choose</button></div><div class="ic-owner-row"><span>Elite · ₹1,499/month</span><button class="ic-plan-btn" onclick="IC.subscribe('elite')">Choose</button></div>${active?'<div style="margin-top:10px"><button class="ic-plan-btn ic-danger" onclick="IC.cancel()">Cancel at cycle end</button></div>':''}</div><div class="ic-owner-box"><h3>Instant Studio</h3>${active?'<p class="ic-mini">Your paid business tools are enabled. The website can now publish items and 24-hour stories through the secured API.</p><button class="ic-plan-btn" onclick="IC.addItem()">Add item / rate</button> <button class="ic-plan-btn" onclick="IC.addStory()">Post 24h story</button>':'<p class="ic-mini">Activate Pro or Elite to publish rates, photos and stories.</p>'}</div>`;
+    $('icOwnerContent').innerHTML=`<div class="ic-owner-grid"><div class="ic-owner-stat"><span>Plan</span><br><b>${b.plan.toUpperCase()}</b><br><span class="${active?'ic-badge':'ic-badge off'}">${b.subscription_status}</span></div><div class="ic-owner-stat"><span>Subscription end</span><br><b>${end}</b><br><span class="ic-mini">UPI payments via UroRelay</span></div></div><div class="ic-owner-box"><h3>Business profile</h3><div class="ic-owner-row"><span>${escapeHtml(b.name)}</span><span>${b.is_published?'Published':'Draft'}</span></div><div class="ic-owner-row"><span>${escapeHtml(b.category)}</span><button class="ic-plan-btn" onclick="IC.togglePublish()">${b.is_published?'Unpublish':'Publish'}</button></div></div><div class="ic-owner-box"><h3>Subscription</h3><div class="ic-owner-row"><span>Pro · ₹499/month</span><button class="ic-plan-btn" onclick="IC.subscribe('pro')">Choose</button></div><div class="ic-owner-row"><span>Elite · ₹1,499/month</span><button class="ic-plan-btn" onclick="IC.subscribe('elite')">Choose</button></div>${active?'<div style="margin-top:10px"><button class="ic-plan-btn ic-danger" onclick="IC.cancel()">Cancel at cycle end</button></div>':''}</div><div class="ic-owner-box"><h3>Instant Studio</h3>${active?'<p class="ic-mini">Your paid business tools are enabled. The website can now publish items and 24-hour stories through the secured API.</p><button class="ic-plan-btn" onclick="IC.addItem()">Add item / rate</button> <button class="ic-plan-btn" onclick="IC.addStory()">Post 24h story</button>':'<p class="ic-mini">Activate Pro or Elite to publish rates, photos and stories.</p>'}</div>`;
   }
   async function createBusiness(){const b=await ensureBusiness();if(b)renderOwner()}
   async function togglePublish(){try{const b=state.me.business;const d=await api('/api/business',{method:'PATCH',body:JSON.stringify({is_published:!b.is_published})});state.me.business=d.business;renderOwner()}catch(e){alert(e.message)}}
