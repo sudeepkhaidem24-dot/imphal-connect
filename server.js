@@ -75,6 +75,58 @@ app.post('/api/payments/uropay',express.json({limit:'64kb'}),async(req,res)=>{
     return res.status(500).json({error:'Webhook processing failed'});
   }
 });
+
+function moneyValue(v){
+  if(v===null||v===undefined||v==='')return null;
+  const n=Number(String(v).replace(/[^0-9.]/g,''));
+  return Number.isFinite(n)?n:null;
+}
+function eventAmount(event){
+  const candidates=[event?.amount,event?.amount_paid,event?.paid_amount,event?.transaction_amount,event?.credited_amount,event?.credit_amount,event?.value,event?.payment_amount];
+  for(const v of candidates){const n=moneyValue(v);if(n!==null)return n}
+  return null;
+}
+app.post('/api/payments/uropay/intents',paymentLimiter,requireUser,async(req,res)=>{
+  try{
+    const plan=String(req.body?.plan||'').toLowerCase();
+    const amount=planAmount(plan);
+    if(!amount)return res.status(400).json({error:'Choose Pro or Elite'});
+    const b=await ownedBusiness(req.user.id);
+    if(!b)return res.status(400).json({error:'Create your business before subscribing'});
+    if(activePaid(b))return res.status(409).json({error:'Your current subscription is already active'});
+    await supabaseAdmin.from('payment_intents').update({status:'expired',updated_at:new Date().toISOString()})
+      .eq('user_id',req.user.id).eq('status','pending').lt('created_at',new Date(Date.now()-30*60*1000).toISOString());
+    const {data,error}=await supabaseAdmin.from('payment_intents').insert({user_id:req.user.id,business_id:b.id,plan,amount,status:'pending'}).select('id,plan,amount,status,created_at').single();
+    if(error)return res.status(400).json({error:error.message});
+    res.status(201).json({intent:data});
+  }catch(e){console.error('UroRelay intent error',e);res.status(500).json({error:'Could not start payment'})}
+});
+app.post('/api/payments/uropay/confirm',paymentLimiter,requireUser,async(req,res)=>{
+  try{
+    const intentId=String(req.body?.intentId||'');
+    const providerRef=String(req.body?.providerRef||'').trim().slice(0,160);
+    if(!intentId||!providerRef)return res.status(400).json({error:'Payment intent and UPI reference are required'});
+    const {data:intent,error:intentError}=await supabaseAdmin.from('payment_intents').select('*').eq('id',intentId).eq('user_id',req.user.id).maybeSingle();
+    if(intentError||!intent)return res.status(404).json({error:'Payment attempt not found'});
+    if(intent.status==='paid')return res.json({ok:true,status:'active'});
+    if(intent.status!=='pending')return res.status(409).json({error:'This payment attempt is no longer active'});
+    if(new Date(intent.created_at)<new Date(Date.now()-30*60*1000))return res.status(410).json({error:'This payment attempt expired. Please start payment again.'});
+    const {data:used}=await supabaseAdmin.from('payment_intents').select('id').eq('provider_ref',providerRef).eq('status','paid').neq('id',intent.id).maybeSingle();
+    if(used)return res.status(409).json({error:'This UPI reference has already been used'});
+    const {data:event}=await supabaseAdmin.from('payment_events').select('id,event_name,provider_ref,payload,created_at').eq('provider_ref',providerRef).gte('created_at',intent.created_at).order('created_at',{ascending:false}).limit(1).maybeSingle();
+    if(!event)return res.status(202).json({ok:false,status:'pending',message:'Payment not confirmed yet. Wait a moment and try again.'});
+    const paidAmount=eventAmount(event.payload||{});
+    if(paidAmount===null)return res.status(202).json({ok:false,status:'pending',message:'Payment was received, but the amount could not be verified yet.'});
+    if(Math.abs(paidAmount-Number(intent.amount))>0.01)return res.status(400).json({error:'Payment amount does not match this plan'});
+    const now=new Date();const end=new Date(now);end.setMonth(end.getMonth()+1);
+    const subscriptionId='URORELAY_'+intent.id;
+    const {data:updatedIntent,error:updateError}=await supabaseAdmin.from('payment_intents').update({status:'paid',provider_ref:providerRef,paid_at:now.toISOString(),updated_at:now.toISOString()}).eq('id',intent.id).eq('status','pending').select('*').single();
+    if(updateError||!updatedIntent)return res.status(409).json({error:'Payment was already being processed'});
+    const {data:business,error:businessError}=await supabaseAdmin.from('businesses').update({plan:intent.plan,subscription_status:'active',subscription_id:subscriptionId,subscription_current_end:end.toISOString(),updated_at:now.toISOString()}).eq('id',intent.business_id).eq('owner_id',req.user.id).select('*').single();
+    if(businessError)return res.status(500).json({error:'Payment confirmed but subscription update failed. Please contact support.'});
+    res.json({ok:true,status:'active',business});
+  }catch(e){console.error('UroRelay confirm error',e);res.status(500).json({error:'Could not verify payment'})}
+});
 app.get('/api/config',(_req,res)=>res.json({supabase:{url:process.env.SUPABASE_URL||'',key:publicSupabaseKey()},uropay:{apiKey:process.env.UROPAY_API_KEY||'',proButtonId:process.env.UROPAY_PRO_BUTTON_ID||'',eliteButtonId:process.env.UROPAY_ELITE_BUTTON_ID||'',environment:String(process.env.UROPAY_ENV||'LIVE').toUpperCase()==='TEST'?'TEST':'LIVE'}}));
 
 app.get('/api/me',requireUser,async(req,res)=>{const profile=await profileFor(req.user.id);const business=await ownedBusiness(req.user.id);res.json({user:{id:req.user.id,email:req.user.email},profile,business})});
