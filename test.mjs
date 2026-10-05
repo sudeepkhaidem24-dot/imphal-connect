@@ -56,7 +56,7 @@ async function fetchTestConfig(publishableKey,serviceRoleKey){
 const publishableKey='test-supabase-publishable-key';
 const serviceRoleKey='test-service-role-secret-sentinel';
 const {config,appUrl}=await fetchTestConfig(publishableKey,serviceRoleKey);
-assert.deepEqual(config,{razorpayKeyId:'test-razorpay-public-key',appUrl,supabase:{url:'https://test.supabase.co',key:publishableKey},plans:{pro:false,elite:false},ai:false});
+assert.deepEqual(config,{supabase:{url:'https://test.supabase.co',key:publishableKey}});
 assert.ok(!JSON.stringify(config).includes(serviceRoleKey),'/api/config exposed the Supabase service-role key');
 const misconfiguredSecret=['sb','secret'].join('_')+'_misconfigured-publishable-value';
 const {config:misconfigured}=await fetchTestConfig(misconfiguredSecret,serviceRoleKey);

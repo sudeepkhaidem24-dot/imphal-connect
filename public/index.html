@@ -663,8 +663,12 @@ const IC = (()=>{
   const $=id=>document.getElementById(id);
   async function init(){
     try{
-      const cfg=await fetch('/api/config').then(r=>r.json()); state.config=cfg; window.__IC_SUPABASE__=cfg.supabase;
-    }catch(e){}
+      const response=await fetch('/api/config');
+      if(!response.ok)throw new Error(`Configuration request failed (HTTP ${response.status})`);
+      const cfg=await response.json();
+      if(!cfg.supabase?.url||!cfg.supabase?.key)throw new Error('The Supabase URL or publishable key is missing.');
+      state.config=cfg.supabase; window.__IC_SUPABASE__=cfg.supabase;
+    }catch(e){state.configError=e?.message||'Unknown configuration error'}
     if(window.supabase){
       // Supabase config is intentionally fetched from server so the browser does not contain a hard-coded project secret.
       const cfg=window.__IC_SUPABASE__;
@@ -672,14 +676,26 @@ const IC = (()=>{
     }
   }
   function msg(s,ok=false){const e=$('icAuthMsg'); if(e){e.textContent=s;e.style.color=ok?'#16804a':'#bd4545'}}
+  function authErrorMessage(error){
+    const message=error?.message||String(error||'Unknown authentication error');
+    if(error?.name==='TypeError'&&/fetch/i.test(message)){
+      let host='';
+      try{host=state.config?.url?` (${new URL(state.config.url).host})`:''}catch{}
+      return `Could not reach Supabase${host}; check network, DNS, and CORS access. ${message}`;
+    }
+    const details=[error?.details,error?.hint].filter(Boolean);
+    return `${error?.status?`Supabase error ${error.status}: `:''}${message}${details.length?` (${details.join('; ')})`:''}`;
+  }
   function openAuth(signup=false){state.signup=signup;$('icAuthModal').hidden=false;$('icAuthName').style.display=signup?'block':'none';$('icAuthTitle').textContent=signup?'Create business owner account':'Business owner login';$('icAuthToggle').textContent=signup?'I already have an account':'Create account';msg('')}
   function closeAuth(){$('icAuthModal').hidden=true}
   function toggleAuthMode(){openAuth(!state.signup)}
   async function submitAuth(){
-    if(!window.icSupabase){msg('Supabase is not configured yet. Add the production environment variables first.');return}
+    if(!window.icSupabase){msg(state.configError||'Supabase is not configured yet. Add the production environment variables first.');return}
     const email=$('icAuthEmail').value.trim(), password=$('icAuthPassword').value; if(!email||password.length<8){msg('Enter a valid email and an 8+ character password.');return}
-    if(state.signup){const name=$('icAuthName').value.trim(); if(!name){msg('Enter your name.');return} const {error}=await icSupabase.auth.signUp({email,password,options:{data:{full_name:name}}}); if(error)return msg(error.message); msg('Account created. Check your email if confirmation is enabled, then log in.',true); state.signup=false; $('icAuthName').style.display='none'; $('icAuthToggle').textContent='Create account'; return;}
-    const {error}=await icSupabase.auth.signInWithPassword({email,password}); if(error)return msg(error.message); await loadMe(); closeAuth(); openOwner();
+    try{
+      if(state.signup){const name=$('icAuthName').value.trim(); if(!name){msg('Enter your name.');return} const {error}=await icSupabase.auth.signUp({email,password,options:{data:{full_name:name}}}); if(error)return msg(authErrorMessage(error)); msg('Account created. Check your email if confirmation is enabled, then log in.',true); state.signup=false; $('icAuthName').style.display='none'; $('icAuthToggle').textContent='Create account'; return;}
+      const {error}=await icSupabase.auth.signInWithPassword({email,password}); if(error)return msg(authErrorMessage(error)); await loadMe(); closeAuth(); openOwner();
+    }catch(error){msg(authErrorMessage(error))}
   }
   async function loadMe(){ if(!window.icSupabase)return; const {data:{session}}=await icSupabase.auth.getSession(); state.session=session; if(!session){state.me=null;return} const r=await fetch('/api/me',{headers:{Authorization:'Bearer '+session.access_token}}); state.me=r.ok?await r.json():null; }
   async function api(path,opts={}){if(!state.session) await loadMe(); if(!state.session) throw new Error('Please log in first'); const r=await fetch(path,{...opts,headers:{'content-type':'application/json',...(opts.headers||{}),Authorization:'Bearer '+state.session.access_token}}); const data=await r.json().catch(()=>({})); if(!r.ok) throw new Error(data.error||'Request failed'); return data}
