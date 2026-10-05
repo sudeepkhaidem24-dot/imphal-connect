@@ -856,5 +856,120 @@ const _openOwnerOriginal=IC.openOwner; IC.openOwner=async function(){ $('icOwner
 window.trackBusinessEvent=async function(businessId,eventType,meta={}){try{await fetch('/api/analytics/event',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({business_id:businessId,event_type:eventType,metadata:meta})})}catch{}};
 </script>
 
+
+<style>
+/* CUSTOMER READY LAUNCH LAYER */
+.ic-launch-form{display:grid;gap:10px}.ic-launch-form label{font-size:10px;font-weight:800;color:#416276}.ic-launch-form input,.ic-launch-form select,.ic-launch-form textarea{width:100%;border:1px solid #dceef5;background:#fff;border-radius:14px;padding:12px;outline:0;color:#09263b}.ic-launch-form textarea{min-height:90px;resize:vertical}.ic-launch-actions{display:flex;gap:8px}.ic-launch-actions button{flex:1}.ic-lead{background:#fff;border:1px solid #dceef5;border-radius:18px;padding:13px;margin-top:9px}.ic-lead-top{display:flex;justify-content:space-between;gap:8px}.ic-lead-name{font-weight:900;font-size:12px}.ic-lead-msg{font-size:10px;line-height:1.5;color:#526f80;margin:7px 0}.ic-lead-meta{font-size:9px;color:#8299a6}.ic-lead-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.ic-lead-actions button{background:#eaf8ff;color:#0879d1;border-radius:10px;padding:7px 9px;font-size:9px;font-weight:900}.ic-live-empty{grid-column:1/-1;background:#fff;border:1px solid #dceef5;border-radius:20px;padding:28px;text-align:center;color:#71899a;font-size:11px}.ic-live-empty b{display:block;color:#07365d;font:800 15px Manrope;margin-bottom:6px}.ic-status-new{color:#0879d1}.ic-status-contacted{color:#b77700}.ic-status-qualified{color:#0b9a6b}.ic-status-closed{color:#71899a}
+@media(max-width:700px){.ic-prod-modal{padding:10px}.ic-prod-card{padding:20px;border-radius:23px}.ic-owner-grid{grid-template-columns:1fr 1fr}.ic-launch-actions{flex-direction:column}.ic-lead-top{align-items:flex-start}}
+</style>
+<script>
+/* ===== CUSTOMER READY LAUNCH LAYER ===== */
+(function(){
+  const esc=s=>String(s??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+  const money=n=>n==null||n===''?'Ask for rate':'₹'+Number(n).toLocaleString('en-IN');
+  const safeUrl=u=>String(u||'').replace(/"/g,'%22');
+
+  window.openLeadForm=function(businessId,businessName){
+    openCustom('<div class="grab"></div><span class="pill">DIRECT ENQUIRY</span><h2>Contact '+esc(businessName)+'</h2><p>Send your request directly to this business. Your enquiry will appear in their business inbox.</p><form class="ic-launch-form" onsubmit="submitLead(event)"><input type="hidden" id="leadBusinessId" value="'+esc(businessId)+'"><label>Your name</label><input id="leadName" required maxlength="120" placeholder="Your full name"><label>Phone / WhatsApp</label><input id="leadPhone" maxlength="40" inputmode="tel" placeholder="+91 …"><label>Email (optional)</label><input id="leadEmail" type="email" maxlength="160" placeholder="you@example.com"><label>What do you need?</label><textarea id="leadMessage" required maxlength="2000" placeholder="Tell the business what you are looking for…"></textarea><button class="primary" type="submit">Send enquiry</button></form>');
+  };
+  window.submitLead=async function(e){
+    e.preventDefault();const btn=e.target.querySelector('button[type=submit]');btn.disabled=true;btn.textContent='Sending…';
+    try{const r=await fetch('/api/leads',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({business_id:$('leadBusinessId').value,customer_name:$('leadName').value.trim(),customer_phone:$('leadPhone').value.trim(),customer_email:$('leadEmail').value.trim(),message:$('leadMessage').value.trim()})});const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d.error||'Could not send enquiry');closeSheet();toast('Enquiry sent successfully');}catch(err){toast(err.message);btn.disabled=false;btn.textContent='Send enquiry'}
+  };
+
+  async function launchUpload(file){
+    if(!file)return '';
+    if(file.size>5*1024*1024)throw new Error('Please use an image under 5 MB.');
+    const ext=(file.name.split('.').pop()||'jpg').toLowerCase();
+    const s=await ICPRO.api('/api/upload/sign',{method:'POST',body:JSON.stringify({extension:ext})});
+    const up=await icSupabase.storage.from('business-media').uploadToSignedUrl(s.path,s.token,file);
+    if(up.error)throw new Error(up.error.message);return s.publicBase;
+  }
+
+  IC.createBusiness=async function(){
+    await ICPRO.refreshMe(); if(ICPRO.P.me?.business){IC.openOwner();return}
+    openCustom('<div class="grab"></div><span class="pill">FREE CONNECT · ACTIVE</span><h2>List your business</h2><p>Start free. Add your public details now; you can upgrade later for products, stories, offers and analytics.</p><form class="ic-launch-form" onsubmit="submitBusiness(event)"><label>Business name *</label><input id="bizName" required maxlength="120" placeholder="e.g. Classic Cafe Imphal"><label>Category *</label><select id="bizCategory"><option>Food & Dining</option><option>Shopping</option><option>Services</option><option>Stay & Tourism</option><option>Health & Wellness</option><option>Events</option><option>Automotive</option><option>Handloom & Crafts</option><option>Education</option><option>Other</option></select><label>Description</label><textarea id="bizDescription" maxlength="4000" placeholder="What do you offer?"></textarea><div class="formgrid"><div><label>Phone</label><input id="bizPhone" maxlength="40" inputmode="tel" placeholder="+91 …"></div><div><label>WhatsApp</label><input id="bizWhatsapp" maxlength="40" inputmode="tel" placeholder="+91 …"></div></div><label>Address</label><input id="bizAddress" maxlength="300" placeholder="Street / locality, Imphal"><label>City</label><input id="bizCity" maxlength="80" value="Imphal"><div class="formgrid"><div><label>Latitude</label><input id="bizLat" type="number" step="any" placeholder="24.8170"></div><div><label>Longitude</label><input id="bizLng" type="number" step="any" placeholder="93.9368"></div></div><button class="primary" type="submit">Create business profile</button></form>');
+  };
+  window.submitBusiness=async function(e){
+    e.preventDefault();const btn=e.target.querySelector('button');btn.disabled=true;btn.textContent='Creating…';
+    try{const d=await ICPRO.api('/api/business',{method:'POST',body:JSON.stringify({name:$('bizName').value.trim(),category:$('bizCategory').value,description:$('bizDescription').value.trim(),phone:$('bizPhone').value.trim(),whatsapp:$('bizWhatsapp').value.trim(),address:$('bizAddress').value.trim(),city:$('bizCity').value.trim()||'Imphal',latitude:$('bizLat').value?Number($('bizLat').value):null,longitude:$('bizLng').value?Number($('bizLng').value):null})});await ICPRO.refreshMe();closeSheet();IC.openOwner();toast('Business profile created');}catch(err){toast(err.message);btn.disabled=false;btn.textContent='Create business profile'}
+  };
+
+  IC.addItem=async function(){
+    await ICPRO.refreshMe();const b=ICPRO.P.me?.business;if(!b)return toast('Create your business first');
+    if(!['pro','elite'].includes(b.plan)||b.subscription_status!=='active')return toast('Activate Pro or Elite to publish products');
+    openCustom('<div class="grab"></div><span class="pill">INSTANT STUDIO</span><h2>Add product or service</h2><p>Publish a real item to your public business profile.</p><form class="ic-launch-form" onsubmit="submitItem(event)"><label>Name *</label><input id="itemName" required maxlength="160" placeholder="Product or service"><label>Price / rate</label><input id="itemPrice" type="number" min="0" step="0.01" placeholder="₹"><label>Description</label><textarea id="itemDescription" maxlength="1200" placeholder="Short description"></textarea><label>Photo (optional)</label><input id="itemImage" type="file" accept="image/jpeg,image/png,image/webp"><button class="primary" type="submit">Publish item</button></form>');
+  };
+  window.submitItem=async function(e){
+    e.preventDefault();const btn=e.target.querySelector('button');btn.disabled=true;btn.textContent='Publishing…';
+    try{const image_url=await launchUpload($('itemImage').files?.[0]);await ICPRO.api('/api/items',{method:'POST',body:JSON.stringify({name:$('itemName').value.trim(),price:$('itemPrice').value?Number($('itemPrice').value):null,description:$('itemDescription').value.trim(),image_url})});closeSheet();toast('Item published');await ICPRO_RENDER_OWNER();}catch(err){toast(err.message);btn.disabled=false;btn.textContent='Publish item'}
+  };
+
+  IC.addStory=async function(){
+    await ICPRO.refreshMe();const b=ICPRO.P.me?.business;if(!b)return toast('Create your business first');
+    if(!['pro','elite'].includes(b.plan)||b.subscription_status!=='active')return toast('Activate Pro or Elite to publish stories');
+    openCustom('<div class="grab"></div><span class="pill">24-HOUR STORY</span><h2>Publish a story</h2><p>Show customers what is happening today.</p><form class="ic-launch-form" onsubmit="submitStory(event)"><label>Story title</label><input id="storyTitle" maxlength="120" placeholder="Today at our business…"><label>Photo *</label><input id="storyImage" required type="file" accept="image/jpeg,image/png,image/webp"><button class="primary" type="submit">Publish for 24 hours</button></form>');
+  };
+  window.submitStory=async function(e){
+    e.preventDefault();const btn=e.target.querySelector('button');btn.disabled=true;btn.textContent='Publishing…';
+    try{const image_url=await launchUpload($('storyImage').files?.[0]);await ICPRO.api('/api/stories',{method:'POST',body:JSON.stringify({title:$('storyTitle').value.trim(),image_url})});closeSheet();toast('Story published for 24 hours');await ICPRO_RENDER_OWNER();}catch(err){toast(err.message);btn.disabled=false;btn.textContent='Publish for 24 hours'}
+  };
+
+  const oldOwnerRender=window.ICPRO_RENDER_OWNER;
+  window.ICPRO_RENDER_OWNER=async function(){
+    await oldOwnerRender();
+    const b=ICPRO.P.me?.business;if(!b)return;
+    const active=b.subscription_status==='active'&&['pro','elite'].includes(b.plan);
+    const leadBox=document.createElement('div');leadBox.className='ic-owner-box';leadBox.innerHTML='<h3>Customer enquiries</h3><div class="ic-mini">Loading your latest leads…</div>';
+    $('icOwnerContent').appendChild(leadBox);
+    try{
+      const d=await ICPRO.api('/api/leads');const leads=d.leads||[];
+      if(!leads.length){leadBox.innerHTML='<h3>Customer enquiries</h3><p class="ic-mini">No enquiries yet. Your next customer enquiry will appear here.</p>';return}
+      leadBox.innerHTML='<h3>Customer enquiries <span class="ic-mini">('+leads.length+')</span></h3>'+leads.map(l=>'<div class="ic-lead"><div class="ic-lead-top"><span class="ic-lead-name">'+esc(l.customer_name)+'</span><span class="ic-mini ic-status-'+esc(l.status)+'">'+esc(l.status.toUpperCase())+'</span></div><div class="ic-lead-msg">'+esc(l.message)+'</div><div class="ic-lead-meta">'+esc(l.customer_phone||l.customer_email||'No contact provided')+' · '+new Date(l.created_at).toLocaleString('en-IN')+'</div><div class="ic-lead-actions">'+(l.customer_phone?'<button onclick="location.href=\'tel:'+esc(l.customer_phone)+'\'">Call</button>':'')+(l.customer_phone?'<button onclick="location.href=\'https://wa.me/'+String(l.customer_phone).replace(/[^0-9]/g,'')+'\'">WhatsApp</button>':'')+(l.status==='new'?'<button onclick="updateLeadStatus(\''+esc(l.id)+'\',\'contacted\')">Mark contacted</button>':'')+(l.status!=='closed'?'<button onclick="updateLeadStatus(\''+esc(l.id)+'\',\'closed\')">Close</button>':'')+'</div></div>').join('');
+    }catch(err){leadBox.innerHTML='<h3>Customer enquiries</h3><p class="ic-mini">Lead inbox is temporarily unavailable.</p>'}
+  };
+  window.updateLeadStatus=async function(id,status){try{await ICPRO.api('/api/leads/'+encodeURIComponent(id),{method:'PATCH',body:JSON.stringify({status})});await ICPRO_RENDER_OWNER();toast('Lead updated');}catch(e){toast(e.message)}};
+
+  /* Live-only discovery: no fake businesses are shown in customer discovery. */
+  const oldLiveCard=window.liveBusinessCard;
+  window.renderHome=async function(){
+    const live=await loadLiveBusinesses();
+    $('homeCards').innerHTML=live.length?live.slice(0,4).map(liveBusinessCard).join(''):'<div class="ic-live-empty"><b>Your local directory is going live.</b>Be the first business to publish a profile on Imphal Connect.</div>';
+  };
+  window.renderExplore=async function(){
+    const q=($('exploreSearch')?.value||'').trim().toLowerCase();
+    const live=await loadLiveBusinesses(q,exploreCat);
+    $('exploreCards').innerHTML=live.length?live.map(liveBusinessCard).join(''):'<div class="ic-live-empty"><b>No live businesses found.</b>Try another search or invite a local business to join.</div>';
+    $('exploreEmpty').classList.add('hidden');
+  };
+
+  /* Real business profile with enquiry + directions. */
+  window.openBusinessProfile=async function(encodedSlug){
+    const slug=decodeURIComponent(encodedSlug);openCustom('<div class="grab"></div><span class="pill">LIVE BUSINESS</span><h2>Loading…</h2><p>Opening the published profile.</p>');
+    try{
+      const r=await fetch('/api/businesses/'+encodeURIComponent(slug));const d=await r.json();if(!r.ok)throw new Error(d.error||'Business not found');
+      const b=d.business||{};trackBusinessEvent(b.id,'view');
+      const items=(d.items||[]).slice(0,20).map(i=>'<div class="feature"><div class="feature-img" style="background-image:url(\''+esc(i.image_url||'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=700&q=85')+'\')"></div><div><h3>'+esc(i.name)+'</h3><p>'+esc(i.description||'')+'</p><b style="color:#0879d1">'+money(i.price)+'</b></div></div>').join('');
+      const offers=(d.offers||[]).map(o=>'<div class="offer" style="margin:8px 0"><span class="pill">OFFER</span><div><h3>'+esc(o.title)+'</h3><p>'+esc(o.description||o.discount_text||'Local offer')+'</p></div></div>').join('');
+      const story=(d.stories||[]).slice(0,8).map(x=>'<div class="story-bubble"><div class="story-ring"><img src="'+esc(x.image_url||b.cover_url||'')+'" alt=""></div><label>'+esc(x.title||'Story')+'</label></div>').join('');
+      const q=encodeURIComponent([b.name,b.address,b.city||'Imphal'].filter(Boolean).join(', '));
+      const directions='https://www.google.com/maps/search/?api=1&query='+q;
+      const contact=b.whatsapp||b.phone;const contactUrl=b.whatsapp?'https://wa.me/'+String(b.whatsapp).replace(/[^0-9]/g,''):(b.phone?'tel:'+b.phone:'');
+      $('sheet').innerHTML='<div class="grab"></div><span class="pill">'+(b.is_verified?'VERIFIED · ':'')+esc(b.category||'LOCAL BUSINESS')+'</span><h2>'+esc(b.name)+'</h2><p>'+esc(b.city||'Imphal')+' · '+esc(b.address||'Address coming soon')+'</p>'+(story?'<div class="story-row">'+story+'</div>':'')+'<p>'+esc(b.description||'Discover this local business on Imphal Connect.')+'</p>'+(items?'<h3 style="margin-top:16px">Products & services</h3>'+items:'')+(offers?'<h3 style="margin-top:16px">Current offers</h3>'+offers:'')+'<div class="ic-prod-actions"><button class="ic-prod-primary" onclick="openLeadForm(\''+esc(b.id)+'\',\''+esc(b.name).replace(/'/g,'&#39;')+'\')">Enquire</button>'+(contact?'<button class="ic-prod-secondary" onclick="trackBusinessEvent(\''+esc(b.id)+'\',\''+(b.whatsapp?'whatsapp':'call')+'\');location.href='+JSON.stringify(contactUrl)+'">'+(b.whatsapp?'WhatsApp':'Call')+'</button>':'')+'<button class="ic-prod-secondary" onclick="window.open('+JSON.stringify(directions)+',\'_blank\')">Directions</button></div>';
+    }catch(e){$('sheet').innerHTML='<div class="grab"></div><span class="pill">UNAVAILABLE</span><h2>Business profile unavailable</h2><p>'+esc(e.message)+'</p>'}
+  };
+
+  /* Free is a real active baseline, not an inactive subscription. */
+  const prevRender=window.ICPRO_RENDER_OWNER;
+  window.ICPRO_RENDER_OWNER=async function(){
+    await prevRender();
+    const b=ICPRO.P.me?.business;if(!b)return;
+    const stats=$('icOwnerContent')?.querySelector('.ic-owner-stat');
+    if(stats && b.plan==='free'){
+      const badge=stats.querySelector('.ic-badge');if(badge){badge.textContent='ACTIVE';badge.className='ic-badge'}
+    }
+  };
+})();
+</script>
 </body>
 </html>
