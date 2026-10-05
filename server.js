@@ -147,5 +147,7 @@ app.get('/api/admin/users',requireAdmin,async(_req,res)=>{const {data,error}=awa
 app.get('/api/admin/funding',requireAdmin,async(_req,res)=>{const {data,error}=await supabaseAdmin.from('funding_applications').select('*,businesses(name)').order('created_at',{ascending:false}).limit(500);if(error)return res.status(500).json({error:error.message});res.json({applications:(data||[]).map(x=>({...x,business:x.businesses}))})});
 app.patch('/api/admin/funding/:id',requireAdmin,async(req,res)=>{const status=String(req.body.status||'');if(!['submitted','under_review','approved','rejected','disbursed','closed'].includes(status))return res.status(400).json({error:'Invalid funding status'});const {data,error}=await supabaseAdmin.from('funding_applications').update({status,reviewed_by:req.user.id,reviewed_at:new Date().toISOString(),updated_at:new Date().toISOString()}).eq('id',req.params.id).select('*').single();if(error)return res.status(400).json({error:error.message});res.json({application:data})});
 
+app.get('/gaming',(req,res)=>res.sendFile(process.cwd()+'/public/gaming.html'));
+app.get('/gaming.html',(req,res)=>res.sendFile(process.cwd()+'/public/gaming.html'));
 app.get('/{*splat}',(req,res)=>res.sendFile(process.cwd()+'/public/index.html'));
 app.listen(PORT,()=>console.log(`Imphal Connect v2 running on ${APP_URL}`));
