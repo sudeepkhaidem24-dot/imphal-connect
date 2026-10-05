@@ -900,11 +900,18 @@ const IC = (()=>{
       if(!cfg.apiKey||!buttonId)throw new Error('UPI checkout is not configured yet. Please try again shortly.');
       const amount=plan==='pro'?499:1499;
       const name=plan==='pro'?'Imphal Connect Pro':'Imphal Connect Elite';
+      const intentRes=await api('/api/payments/uropay/intents',{method:'POST',body:JSON.stringify({plan})});
+      const intent=intentRes.intent;
       const modal=document.createElement('div');
-      modal.id='icUroPayModal';
-      modal.className='modal open';
-      modal.innerHTML='<div class="sheet" style="max-width:520px;text-align:center"><div class="grab"></div><span class="pill">'+plan.toUpperCase()+' PLAN</span><h2>'+name+'</h2><p>Pay ₹'+amount.toLocaleString('en-IN')+' by UPI. The payment goes directly to the connected UPI account.</p><div id="icUroPayButtonWrap" style="margin:28px 0"><a href="#" class="uropay-btn" data-uropay-api-key="'+escapeHtml(cfg.apiKey)+'" data-uropay-button-id="'+escapeHtml(buttonId)+'" data-uropay-environment="'+escapeHtml(cfg.environment||'LIVE')+'" data-uropay-amount="'+amount+'">Pay ₹'+amount.toLocaleString('en-IN')+' with UPI</a></div><p class="meta">After payment, return to Imphal Connect to continue.</p><button class="ghost" onclick="document.getElementById(\'icUroPayModal\')?.remove()">Close</button></div>';
+      modal.id='icUroPayModal';modal.className='modal open';
+      modal.innerHTML='<div class="sheet" style="max-width:520px;text-align:center"><div class="grab"></div><span class="pill">'+plan.toUpperCase()+' PLAN</span><h2>'+name+'</h2><p>Pay ₹'+amount.toLocaleString('en-IN')+' by UPI. The payment goes directly to the connected UPI account.</p><div id="icUroPayButtonWrap" style="margin:28px 0"><a href="#" class="uropay-btn" data-uropay-api-key="'+escapeHtml(cfg.apiKey)+'" data-uropay-button-id="'+escapeHtml(buttonId)+'" data-uropay-environment="'+escapeHtml(cfg.environment||'LIVE')+'" data-uropay-amount="'+amount+'">Pay ₹'+amount.toLocaleString('en-IN')+' with UPI</a></div><div style="margin:18px 0;padding:16px;border:1px solid var(--line);border-radius:18px;text-align:left"><strong>Already paid?</strong><p class="meta" style="margin:6px 0 10px">Enter the UPI reference number from your payment to activate your plan.</p><input id="icUroPayRef" inputmode="numeric" autocomplete="off" placeholder="UPI reference number" style="width:100%;box-sizing:border-box;padding:12px;border-radius:12px;border:1px solid var(--line);font:inherit"><button class="ic-prod-primary" id="icUroPayVerify" style="width:100%;margin-top:10px">Verify payment</button><div id="icUroPayStatus" class="meta" style="margin-top:8px"></div></div><p class="meta">Your payment is matched to this signed-in account and the selected plan.</p><button class="ghost" onclick="document.getElementById(\'icUroPayModal\')?.remove()">Close</button></div>';
       document.body.appendChild(modal);
+      $('icUroPayVerify').onclick=async()=>{
+        const ref=$('icUroPayRef').value.trim();const status=$('icUroPayStatus');
+        if(!ref){status.textContent='Enter the UPI reference number first.';return}
+        status.textContent='Checking payment…';
+        try{const result=await api('/api/payments/uropay/confirm',{method:'POST',body:JSON.stringify({intentId:intent.id,providerRef:ref})});if(result.status==='active'){status.textContent='Payment confirmed. Your plan is now active.';modal.remove();await loadMe();renderOwner();return}status.textContent=result.message||'Payment is still pending. Try again in a moment.'}catch(e){status.textContent=e.message||'Could not verify payment.'}
+      };
       await loadUroPayEmbed();
       const refresh=document.createElement('script');refresh.src='https://cdn.uropay.me/uropay-embed.min.js';refresh.async=true;refresh.dataset.icUropayRefresh='1';document.body.appendChild(refresh);
     }catch(e){alert(e.message)}
