@@ -74,34 +74,41 @@ app.post('/api/billing/cancel',paymentLimiter,requireUser,async(req,res)=>{const
 app.post('/api/upload/sign',requireUser,async(req,res)=>{const b=await ownedBusiness(req.user.id);if(!b)return res.status(400).json({error:'Create a business first'});if(!activePaid(b))return res.status(403).json({error:'An active Pro or Elite subscription is required'});const ext=String(req.body.extension||'jpg').toLowerCase().replace(/[^a-z0-9]/g,'').slice(0,5)||'jpg';const allowedExt=['jpg','jpeg','png','webp'];if(!allowedExt.includes(ext))return res.status(400).json({error:'Only JPG, PNG and WebP images are supported'});const path=`${req.user.id}/${crypto.randomUUID()}.${ext}`;const {data,error}=await supabaseAdmin.storage.from('business-media').createSignedUploadUrl(path);if(error)return res.status(400).json({error:error.message});res.json({path,token:data.token,publicBase:`${process.env.SUPABASE_URL}/storage/v1/object/public/business-media/${path}`})});
 
 app.post('/api/leads',publicEventLimiter,async(req,res)=>{
-    const businessId=String(req.body.business_id||'').trim();
-    const customerName=String(req.body.customer_name||'').trim().slice(0,120);
-    const customerPhone=String(req.body.customer_phone||'').trim().slice(0,40);
-    const customerEmail=String(req.body.customer_email||'').trim().slice(0,160);
-    const message=String(req.body.message||'').trim().slice(0,2000);
-    if(!businessId||customerName.length<2||message.length<2)return res.status(400).json({error:'Name, business and message are required'});
-    const {data:business,error:be}=await supabaseAdmin.from('businesses').select('id,name,is_published').eq('id',businessId).eq('is_published',true).maybeSingle();
-    if(be||!business)return res.status(404).json({error:'Business not found'});
-    let customerId=null;
-    const token=String(req.headers.authorization||'').replace(/^Bearer\s+/i,'').trim();
-    if(token){try{const {data}=await supabaseAdmin.auth.getUser(token);customerId=data?.user?.id||null}catch{}}
-    const {data,error}=await supabaseAdmin.from('business_leads').insert({business_id:businessId,customer_id:customerId,customer_name:customerName,customer_phone:customerPhone,customer_email:customerEmail,message,source:'business_profile',status:'new'}).select('id,business_id,customer_name,status,created_at').single();
-    if(error)return res.status(400).json({error:error.message});
-    await supabaseAdmin.from('business_analytics').insert({business_id:businessId,event_type:'enquiry',metadata:{lead_id:data.id,source:'business_profile'}}).then(()=>{});
-    res.status(201).json({ok:true,lead:data,business:{id:business.id,name:business.name}});
-  });
-  app.get('/api/leads',requireUser,async(req,res)=>{
-    const b=await ownedBusiness(req.user.id);if(!b)return res.status(404).json({error:'Business not found'});
-    const {data,error}=await supabaseAdmin.from('business_leads').select('id,customer_name,customer_phone,customer_email,message,status,source,created_at,updated_at').eq('business_id',b.id).order('created_at',{ascending:false}).limit(100);
-    if(error)return res.status(500).json({error:error.message});res.json({leads:data||[]});
-  });
-  app.patch('/api/leads/:id',requireUser,async(req,res)=>{
-    const b=await ownedBusiness(req.user.id);if(!b)return res.status(404).json({error:'Business not found'});
-    const status=String(req.body.status||'');if(!['new','contacted','qualified','closed','spam'].includes(status))return res.status(400).json({error:'Invalid lead status'});
-    const {data,error}=await supabaseAdmin.from('business_leads').update({status,updated_at:new Date().toISOString()}).eq('id',req.params.id).eq('business_id',b.id).select('id,status,updated_at').single();
-    if(error)return res.status(400).json({error:error.message});res.json({lead:data});
-  });
-  
+  const businessId=String(req.body.business_id||'').trim();
+  const customerName=String(req.body.customer_name||'').trim().slice(0,120);
+  const customerPhone=String(req.body.customer_phone||'').trim().slice(0,40);
+  const customerEmail=String(req.body.customer_email||'').trim().slice(0,160);
+  const message=String(req.body.message||'').trim().slice(0,2000);
+  if(!businessId||customerName.length<2||message.length<2)return res.status(400).json({error:'Name, business and message are required'});
+  const {data:business,error:be}=await supabaseAdmin.from('businesses').select('id,name,is_published').eq('id',businessId).eq('is_published',true).maybeSingle();
+  if(be||!business)return res.status(404).json({error:'Business not found'});
+  let customerId=null;const token=String(req.headers.authorization||'').replace(/^Bearer\s+/i,'').trim();
+  if(token){try{const {data}=await supabaseAdmin.auth.getUser(token);customerId=data?.user?.id||null}catch{}}
+  const leadId=crypto.randomUUID();
+  const metadata={lead_id:leadId,customer_id:customerId,customer_name:customerName,customer_phone:customerPhone,customer_email:customerEmail,message,status:'new',source:'business_profile'};
+  const {error}=await supabaseAdmin.from('business_analytics').insert({business_id:businessId,event_type:'lead',metadata});
+  if(error)return res.status(400).json({error:error.message});
+  res.status(201).json({ok:true,lead:{id:leadId,business_id:businessId,customer_name:customerName,status:'new'}});
+});
+app.get('/api/leads',requireUser,async(req,res)=>{
+  const b=await ownedBusiness(req.user.id);if(!b)return res.status(404).json({error:'Business not found'});
+  const {data,error}=await supabaseAdmin.from('business_analytics').select('id,metadata,created_at,updated_at').eq('business_id',b.id).eq('event_type','lead').order('created_at',{ascending:false}).limit(100);
+  if(error)return res.status(500).json({error:error.message});
+  const leads=(data||[]).map(x=>({id:x.metadata?.lead_id||x.id,customer_name:x.metadata?.customer_name||'Customer',customer_phone:x.metadata?.customer_phone||'',customer_email:x.metadata?.customer_email||'',message:x.metadata?.message||'',status:x.metadata?.status||'new',source:x.metadata?.source||'business_profile',created_at:x.created_at,updated_at:x.updated_at||x.created_at,analytics_id:x.id}));
+  res.json({leads});
+});
+app.patch('/api/leads/:id',requireUser,async(req,res)=>{
+  const b=await ownedBusiness(req.user.id);if(!b)return res.status(404).json({error:'Business not found'});
+  const status=String(req.body.status||'');if(!['new','contacted','qualified','closed','spam'].includes(status))return res.status(400).json({error:'Invalid lead status'});
+  const {data,error}=await supabaseAdmin.from('business_analytics').select('id,metadata').eq('business_id',b.id).eq('event_type','lead').limit(1000);
+  if(error)return res.status(500).json({error:error.message});
+  const row=(data||[]).find(x=>x.metadata?.lead_id===req.params.id);
+  if(!row)return res.status(404).json({error:'Lead not found'});
+  const metadata={...(row.metadata||{}),status};
+  const {error:updateError}=await supabaseAdmin.from('business_analytics').update({metadata,updated_at:new Date().toISOString()}).eq('id',row.id).eq('business_id',b.id);
+  if(updateError)return res.status(400).json({error:updateError.message});
+  res.json({lead:{id:req.params.id,status}});
+});
 app.post('/api/analytics/event',publicEventLimiter,async(req,res)=>{const id=String(req.body.business_id||'');const event=String(req.body.event_type||'').slice(0,40);if(!id||!event)return res.status(400).json({error:'business_id and event_type required'});const {data:business}=await supabaseAdmin.from('businesses').select('id').eq('id',id).eq('is_published',true).maybeSingle();if(!business)return res.status(404).json({error:'Business not found'});const allowed=['view','product_view','story_view','save','enquiry','call','whatsapp','offer_click'];if(!allowed.includes(event))return res.status(400).json({error:'Unsupported event'});const {error}=await supabaseAdmin.from('business_analytics').insert({business_id:id,event_type:event,metadata:req.body.metadata||{}});if(error)return res.status(400).json({error:error.message});res.json({ok:true})});
 app.get('/api/analytics/owner',requireUser,async(req,res)=>{const b=await ownedBusiness(req.user.id);if(!b)return res.status(404).json({error:'Business not found'});const {data,error}=await supabaseAdmin.from('business_analytics').select('event_type').eq('business_id',b.id);if(error)return res.status(500).json({error:error.message});const totals={views:0,enquiries:0,saves:0,product_views:0,story_views:0,call:0,whatsapp:0,offer_click:0};for(const x of data||[]){if(x.event_type==='view')totals.views++;if(x.event_type==='enquiry')totals.enquiries++;if(x.event_type==='save')totals.saves++;if(x.event_type==='product_view')totals.product_views++;if(x.event_type==='story_view')totals.story_views++;if(x.event_type==='call')totals.call++;if(x.event_type==='whatsapp')totals.whatsapp++;if(x.event_type==='offer_click')totals.offer_click++}res.json({business:b,totals})});
 
