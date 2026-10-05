@@ -82,7 +82,7 @@ function moneyValue(v){
   return Number.isFinite(n)?n:null;
 }
 function eventAmount(event){
-  const candidates=[event?.amount,event?.amount_paid,event?.paid_amount,event?.transaction_amount,event?.credited_amount,event?.credit_amount,event?.value,event?.payment_amount];
+  const candidates=[event?.amount,event?.amount_paid,event?.paid_amount,event?.transaction_amount,event?.credited_amount,event?.credit_amount,event?.amount_captured,event?.value,event?.payment_amount];
   for(const v of candidates){const n=moneyValue(v);if(n!==null)return n}
   return null;
 }
