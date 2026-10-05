@@ -10,7 +10,7 @@ import { createClient } from '@supabase/supabase-js';
 const app=express();
 const PORT=Number(process.env.PORT||8080);
 const APP_URL=process.env.APP_URL||`http://localhost:${PORT}`;
-const required=['SUPABASE_URL','SUPABASE_PUBLISHABLE_KEY','SUPABASE_SERVICE_ROLE_KEY','CASHFREE_CLIENT_ID','CASHFREE_CLIENT_SECRET'];
+const required=['SUPABASE_URL','SUPABASE_PUBLISHABLE_KEY','SUPABASE_SERVICE_ROLE_KEY'];
 const missing=required.filter(k=>!process.env[k]);
 if(missing.length) console.warn(`Missing environment variables: ${missing.join(', ')}`);
 const supabaseAdmin=createClient(process.env.SUPABASE_URL||'https://placeholder.invalid',process.env.SUPABASE_SERVICE_ROLE_KEY||'service-role-placeholder',{auth:{autoRefreshToken:false,persistSession:false}});
@@ -58,7 +58,7 @@ app.use(express.json({limit:'2mb'}));
 app.use(express.static('public',{extensions:['html']}));
 
 app.get('/api/health',(_req,res)=>res.json({ok:true,service:'imphal-connect',version:'2.2.0',time:new Date().toISOString()}));
-app.get('/api/config',(_req,res)=>res.json({supabase:{url:process.env.SUPABASE_URL||'',key:publicSupabaseKey()},cashfree:{mode:String(process.env.CASHFREE_ENV||'production').toLowerCase()==='sandbox'?'sandbox':'production'}}));
+app.get('/api/config',(_req,res)=>res.json({supabase:{url:process.env.SUPABASE_URL||'',key:publicSupabaseKey()},uropay:{apiKey:process.env.UROPAY_API_KEY||'',proButtonId:process.env.UROPAY_PRO_BUTTON_ID||'',eliteButtonId:process.env.UROPAY_ELITE_BUTTON_ID||'',environment:String(process.env.UROPAY_ENV||'LIVE').toUpperCase()==='TEST'?'TEST':'LIVE'}}));
 
 app.get('/api/me',requireUser,async(req,res)=>{const profile=await profileFor(req.user.id);const business=await ownedBusiness(req.user.id);res.json({user:{id:req.user.id,email:req.user.email},profile,business})});
 app.post('/api/business',authLimiter,requireUser,async(req,res)=>{const existing=await ownedBusiness(req.user.id);if(existing)return res.status(409).json({error:'Business already exists',business:existing});const name=String(req.body.name||'').trim();if(name.length<2||name.length>120)return res.status(400).json({error:'Business name must be 2-120 characters'});const payload={owner_id:req.user.id,name,slug:slugify(name),category:String(req.body.category||'Services').slice(0,60),description:String(req.body.description||'').slice(0,4000),phone:String(req.body.phone||'').slice(0,40),whatsapp:String(req.body.whatsapp||'').slice(0,40),address:String(req.body.address||'').slice(0,300),city:String(req.body.city||'Imphal').slice(0,80),latitude:req.body.latitude==null||req.body.latitude===''?null:Number(req.body.latitude),longitude:req.body.longitude==null||req.body.longitude===''?null:Number(req.body.longitude),is_published:false};const {data,error}=await supabaseAdmin.from('businesses').insert(payload).select('*').single();if(error)return res.status(400).json({error:error.message});res.status(201).json({business:data})});
