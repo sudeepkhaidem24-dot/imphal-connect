@@ -58,6 +58,23 @@ app.use(express.json({limit:'2mb'}));
 app.use(express.static('public',{extensions:['html']}));
 
 app.get('/api/health',(_req,res)=>res.json({ok:true,service:'imphal-connect',version:'2.2.0',time:new Date().toISOString()}));
+// UroRelay webhook: Companion confirms UPI credits and posts transaction details here.
+// Do not activate a subscription from amount alone; the same plan button is shared by multiple customers.
+app.post('/api/payments/uropay',express.json({limit:'64kb'}),async(req,res)=>{
+  try{
+    const event=req.body&&typeof req.body==='object'?req.body:{};
+    const providerRef=String(event?.upi_reference||event?.upi_ref||event?.reference_number||event?.transaction_id||event?.transactionId||event?.order_id||event?.orderId||'').slice(0,160)||null;
+    await supabaseAdmin.from('payment_events').insert({
+      event_name:String(event?.event||event?.status||'URORELAY_TRANSACTION').slice(0,120),
+      provider_ref:providerRef,
+      payload:event
+    });
+    return res.status(200).json({ok:true});
+  }catch(e){
+    console.error('UroRelay webhook error',e);
+    return res.status(500).json({error:'Webhook processing failed'});
+  }
+});
 app.get('/api/config',(_req,res)=>res.json({supabase:{url:process.env.SUPABASE_URL||'',key:publicSupabaseKey()},uropay:{apiKey:process.env.UROPAY_API_KEY||'',proButtonId:process.env.UROPAY_PRO_BUTTON_ID||'',eliteButtonId:process.env.UROPAY_ELITE_BUTTON_ID||'',environment:String(process.env.UROPAY_ENV||'LIVE').toUpperCase()==='TEST'?'TEST':'LIVE'}}));
 
 app.get('/api/me',requireUser,async(req,res)=>{const profile=await profileFor(req.user.id);const business=await ownedBusiness(req.user.id);res.json({user:{id:req.user.id,email:req.user.email},profile,business})});
