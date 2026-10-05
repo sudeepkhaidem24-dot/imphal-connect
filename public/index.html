@@ -489,7 +489,7 @@ header .icon{background:#ffffff18;border-color:#ffffff30;color:#fff;backdrop-fil
  <span class="eyebrow"><i class="live"></i> LIVE FROM IMPHAL</span>
  <h1>Everything Imphal.<br>One beautiful place.</h1>
  <p>Discover places worth knowing, people worth meeting and experiences happening around you.</p>
- <div class="search"><span>⌕</span><input id="search" placeholder="Search cafés, shops, stays, events…" oninput="searchAll()"><button onclick="go('explore')">→</button></div>
+ <div class="search"><span>⌕</span><input id="searchAlt" placeholder="Search cafés, shops, stays, events…" oninput="searchAll()"><button onclick="go('explore')">→</button></div>
 </section>
 
 <section class="section"><div class="section-head"><h2>Explore your city</h2><button onclick="go('explore')">See all</button></div>
@@ -1087,11 +1087,11 @@ window.trackBusinessEvent=async function(businessId,eventType,meta={}){try{await
   IC.addStory=async function(){
     await ICPRO.refreshMe();const b=ICPRO.P.me?.business;if(!b)return toast('Create your business first');
     if(!['pro','elite'].includes(b.plan)||b.subscription_status!=='active')return toast('Activate Pro or Elite to publish stories');
-    openCustom('<div class="grab"></div><span class="pill">24-HOUR STORY</span><h2>Publish a story</h2><p>Show customers what is happening today.</p><form class="ic-launch-form" onsubmit="submitStory(event)"><label>Story title</label><input id="storyTitle" maxlength="120" placeholder="Today at our business…"><label>Photo *</label><input id="storyImage" required type="file" accept="image/jpeg,image/png,image/webp"><button class="primary" type="submit">Publish for 24 hours</button></form>');
+    openCustom('<div class="grab"></div><span class="pill">24-HOUR STORY</span><h2>Publish a story</h2><p>Show customers what is happening today.</p><form class="ic-launch-form" onsubmit="submitStory(event)"><label>Story title</label><input id="launchStoryTitle" maxlength="120" placeholder="Today at our business…"><label>Photo *</label><input id="storyImage" required type="file" accept="image/jpeg,image/png,image/webp"><button class="primary" type="submit">Publish for 24 hours</button></form>');
   };
   window.submitStory=async function(e){
     e.preventDefault();const btn=e.target.querySelector('button');btn.disabled=true;btn.textContent='Publishing…';
-    try{const image_url=await launchUpload($('storyImage').files?.[0]);await ICPRO.api('/api/stories',{method:'POST',body:JSON.stringify({title:$('storyTitle').value.trim(),image_url})});closeSheet();toast('Story published for 24 hours');await ICPRO_RENDER_OWNER();}catch(err){toast(err.message);btn.disabled=false;btn.textContent='Publish for 24 hours'}
+    try{const image_url=await launchUpload($('storyImage').files?.[0]);await ICPRO.api('/api/stories',{method:'POST',body:JSON.stringify({title:$('launchStoryTitle').value.trim(),image_url})});closeSheet();toast('Story published for 24 hours');await ICPRO_RENDER_OWNER();}catch(err){toast(err.message);btn.disabled=false;btn.textContent='Publish for 24 hours'}
   };
 
   const oldOwnerRender=window.ICPRO_RENDER_OWNER;
