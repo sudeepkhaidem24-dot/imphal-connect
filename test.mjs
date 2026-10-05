@@ -26,10 +26,10 @@ for(const [name,src] of [['index',html],['admin',admin]]){
 const manifest=JSON.parse(fs.readFileSync('public/manifest.json','utf8'));assert.ok(manifest.icons?.length,'PWA icon missing');
 const pkg=JSON.parse(fs.readFileSync('package.json','utf8'));assert.equal(pkg.version,'2.1.0');assert.ok(pkg.dependencies['express']);
 const sql=fs.readFileSync('sql/schema.sql','utf8');
-for(const t of ['profiles','businesses','business_items','business_stories','business_offers','business_analytics','funding_applications','payment_events'])assert.match(sql,new RegExp(`create table if not exists public\\.${t}`));
+for(const t of ['profiles','businesses','business_items','business_stories','business_offers','business_analytics','funding_applications','business_leads','payment_events','payment_intents'])assert.match(sql,new RegExp(`create table if not exists public\\.${t}`));
 assert.match(sql,/businesses_owner_unique_idx/);assert.match(sql,/business-media/);
 const server=fs.readFileSync('server.js','utf8');
-for(const route of ['/api/health','/api/config','/api/me','/api/businesses','/api/items','/api/stories','/api/offers','/api/analytics/event','/api/analytics/owner','/api/funding/applications','/api/ai/chat','/api/admin/overview','/api/admin/businesses','/api/admin/payments','/api/admin/users','/api/admin/funding','/api/payments/webhook'])assert.ok(server.includes(route),`missing ${route}`);
+for(const route of ['/api/health','/api/config','/api/me','/api/businesses','/api/items','/api/stories','/api/offers','/api/analytics/event','/api/analytics/owner','/api/funding/applications','/api/ai/chat','/api/admin/overview','/api/admin/businesses','/api/admin/payments','/api/admin/users','/api/admin/funding','/api/payments/webhook','/api/payments/uropay','/api/payments/uropay/intents','/api/payments/uropay/confirm'])assert.ok(server.includes(route),`missing ${route}`);
 assert.match(server,/AbortSignal\.timeout\(25000\)/);assert.match(server,/Only JPG, PNG and WebP/);assert.match(server,/publicEventLimiter/);
 assert.match(server,/supabaseAdmin=createClient\([^;]*process\.env\.SUPABASE_SERVICE_ROLE_KEY/);
 assert.match(server,/supabasePublic=createClient\([^;]*process\.env\.SUPABASE_PUBLISHABLE_KEY/);
@@ -40,7 +40,7 @@ assert.doesNotMatch(html,/SUPABASE_SERVICE_ROLE_KEY/);assert.doesNotMatch(html,/
 async function fetchTestConfig(publishableKey,serviceRoleKey){
   const listener=net.createServer();listener.listen(0,'127.0.0.1');await once(listener,'listening');const port=listener.address().port;await new Promise(resolve=>listener.close(resolve));
   const appUrl=`http://127.0.0.1:${port}`;
-  const app=spawn(process.execPath,['server.js'],{env:{...process.env,PORT:String(port),APP_URL:appUrl,SUPABASE_URL:'https://test.supabase.co',SUPABASE_PUBLISHABLE_KEY:publishableKey,SUPABASE_SERVICE_ROLE_KEY:serviceRoleKey,uropay_CLIENT_ID:'test-uropay-client',uropay_CLIENT_SECRET:'test-uropay-secret',uropay_ENV:'sandbox',AI_API_KEY:''},stdio:'ignore'});
+  const app=spawn(process.execPath,['server.js'],{env:{...process.env,PORT:String(port),APP_URL:appUrl,SUPABASE_URL:'https://test.supabase.co',SUPABASE_PUBLISHABLE_KEY:publishableKey,SUPABASE_SERVICE_ROLE_KEY:serviceRoleKey,UROPAY_API_KEY:'test-key',UROPAY_PRO_BUTTON_ID:'pro-button',UROPAY_ELITE_BUTTON_ID:'elite-button',UROPAY_ENV:'LIVE',AI_API_KEY:''},stdio:'ignore'});
   try{
     let response;
     for(let attempt=0;attempt<40;attempt++){
