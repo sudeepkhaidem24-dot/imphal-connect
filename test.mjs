@@ -16,7 +16,7 @@ function checkInlineJS(file){
 }
 const {html}=checkInlineJS('public/index.html');
 const {html:admin}=checkInlineJS('public/admin.html');
-assert.match(html,/\/api\/ai\/chat/);assert.match(html,/\/api\/businesses/);assert.match(html,/\/api\/upload\/sign/);assert.match(html,/cashfree/i);assert.match(html,/openBusinessProfile/);assert.match(html,/ICPRO/);
+assert.match(html,/\/api\/ai\/chat/);assert.match(html,/\/api\/businesses/);assert.match(html,/\/api\/upload\/sign/);assert.match(html,/uropay/i);assert.match(html,/openBusinessProfile/);assert.match(html,/ICPRO/);
 assert.match(admin,/\/api\/admin\/overview/);assert.match(admin,/Funding/);assert.match(admin,/signOut/);
 
 for(const [name,src] of [['index',html],['admin',admin]]){
@@ -40,7 +40,7 @@ assert.doesNotMatch(html,/SUPABASE_SERVICE_ROLE_KEY/);assert.doesNotMatch(html,/
 async function fetchTestConfig(publishableKey,serviceRoleKey){
   const listener=net.createServer();listener.listen(0,'127.0.0.1');await once(listener,'listening');const port=listener.address().port;await new Promise(resolve=>listener.close(resolve));
   const appUrl=`http://127.0.0.1:${port}`;
-  const app=spawn(process.execPath,['server.js'],{env:{...process.env,PORT:String(port),APP_URL:appUrl,SUPABASE_URL:'https://test.supabase.co',SUPABASE_PUBLISHABLE_KEY:publishableKey,SUPABASE_SERVICE_ROLE_KEY:serviceRoleKey,CASHFREE_CLIENT_ID:'test-cashfree-client',CASHFREE_CLIENT_SECRET:'test-cashfree-secret',CASHFREE_ENV:'sandbox',AI_API_KEY:''},stdio:'ignore'});
+  const app=spawn(process.execPath,['server.js'],{env:{...process.env,PORT:String(port),APP_URL:appUrl,SUPABASE_URL:'https://test.supabase.co',SUPABASE_PUBLISHABLE_KEY:publishableKey,SUPABASE_SERVICE_ROLE_KEY:serviceRoleKey,uropay_CLIENT_ID:'test-uropay-client',uropay_CLIENT_SECRET:'test-uropay-secret',uropay_ENV:'sandbox',AI_API_KEY:''},stdio:'ignore'});
   try{
     let response;
     for(let attempt=0;attempt<40;attempt++){
@@ -56,7 +56,7 @@ async function fetchTestConfig(publishableKey,serviceRoleKey){
 const publishableKey='test-supabase-publishable-key';
 const serviceRoleKey='test-service-role-secret-sentinel';
 const {config,appUrl}=await fetchTestConfig(publishableKey,serviceRoleKey);
-assert.deepEqual(config,{supabase:{url:'https://test.supabase.co',key:publishableKey},cashfree:{mode:'sandbox'}});
+assert.deepEqual(config,{supabase:{url:'https://test.supabase.co',key:publishableKey},uropay:{apiKey:'test-key',proButtonId:'pro-button',eliteButtonId:'elite-button',environment:'LIVE'}});
 assert.ok(!JSON.stringify(config).includes(serviceRoleKey),'/api/config exposed the Supabase service-role key');
 const misconfiguredSecret=['sb','secret'].join('_')+'_misconfigured-publishable-value';
 const {config:misconfigured}=await fetchTestConfig(misconfiguredSecret,serviceRoleKey);
