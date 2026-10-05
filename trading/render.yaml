@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: indian-algo-trader-paper
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    rootDir: trading
+    envVars:
+      - key: TRADING_MODE
+        value: PAPER
+      - key: LIVE_TRADING_ENABLED
+        value: "false"
+      - key: INITIAL_CAPITAL
+        value: "10000"
