@@ -373,7 +373,7 @@ header .icon{background:#ffffff18;border-color:#ffffff30;color:#fff;backdrop-fil
         <span class="eyebrow"><i class="live"></i> THE DIGITAL HEART OF IMPHAL</span>
         <h1>Your city.<br>Beautifully connected.</h1>
         <p>Discover places, people, products and experiences across Imphal — then use Imphal Connect to turn local attention into real business.</p>
-        <div class="search"><span>⌕</span><input id="search" placeholder="Search cafés, shops, stays, services…" oninput="searchAll()"><button onclick="go('explore')">→</button></div>
+        <div class="search"><span>⌕</span><input id="search" placeholder="Search cafés, shops, stays, services…" ><button type="button" onclick="window.searchAll&&window.searchAll()">→</button></div>
         <div class="ic-hero-meta"><span class="ic-hero-chip">Explore locally</span><span class="ic-hero-chip">Meet local businesses</span><span class="ic-hero-chip">Ask Imphi AI</span></div>
         <div class="ic-ai-dock">
           <div class="dock-top"><div class="ic-ai-dot"></div><div><b>Imphi AI</b><small>Your intelligent Imphal concierge</small></div></div>
@@ -506,7 +506,7 @@ header .icon{background:#ffffff18;border-color:#ffffff30;color:#fff;backdrop-fil
 </section>
 
 <section class="section"><div class="section-head"><h2>Explore your city</h2><button onclick="go('explore')">See all</button></div>
-<div class="chips"><button class="chip active" onclick="filterCat('All',this)">All</button><button class="chip" onclick="filterCat('Food',this)">🍜 Food</button><button class="chip" onclick="filterCat('Shopping',this)">🛍 Shopping</button><button class="chip" onclick="filterCat('Services',this)">✦ Services</button><button class="chip" onclick="filterCat('Stay',this)">⌂ Stay</button><button class="chip" onclick="filterCat('Events',this)">◉ Events</button></div></section>
+<div class="chips"><button class="chip active" onclick="filterCat('All',this)">All</button><button class="chip" onclick="filterCat('Food',this)">🍜 Food</button><button class="chip" onclick="filterCat('Shopping',this)">🛍 Shopping</button><button class="chip" onclick="filterCat('Services',this)">✦ Services</button><button class="chip" onclick="filterCat('Stay',this)">⌂ Stay</button><button class="chip" onclick="filterCat('Resorts',this)">🏝 Resorts</button><button class="chip" onclick="filterCat('Events',this)">◉ Events</button></div></section>
 
 <section class="section"><div class="section-head"><h2>Trending around Imphal</h2><button onclick="go('explore')">View all</button></div><div class="grid" id="homeCards"></div></section>
 
@@ -616,6 +616,16 @@ header .icon{background:#ffffff18;border-color:#ffffff30;color:#fff;backdrop-fil
  </div>
  <div class="plan-locked">Available after a business owner activates a paid Pro or Elite plan.</div>
 </div>
+</section>
+<section class="section">
+<div class="section-head"><div><h2>Business workspace</h2><small style="display:block;color:var(--muted);font-size:9px;margin-top:4px">Every button below is a working workspace, not decoration.</small></div><button onclick="go('profile')">Profile</button></div>
+<div class="chips ic-business-tabs">
+<button class="chip active" data-btab="profile" onclick="openBusinessTab('profile',this)">Profile</button>
+<button class="chip" data-btab="catalog" onclick="openBusinessTab('catalog',this)">Catalog</button>
+<button class="chip" data-btab="leads" onclick="openBusinessTab('leads',this)">Leads</button>
+<button class="chip" data-btab="insights" onclick="openBusinessTab('insights',this)">Insights</button>
+</div>
+<div id="businessWorkspace" class="feature" style="margin-top:12px"></div>
 </section>
 <section class="section"><div class="ai"><span class="pill" style="background:#ffffff17;color:#fff">BUSINESS INTELLIGENCE</span><h3>Know what people want.</h3><p>Views, saves, enquiries, offer taps and category demand become your local growth dashboard.</p><button onclick="openSheet('dashboard')" style="background:var(--cyan);color:#063b61;border-radius:11px;padding:10px 13px;font-size:10px;font-weight:900">Preview dashboard</button></div></section>
 </main>
