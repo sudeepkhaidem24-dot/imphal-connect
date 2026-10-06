@@ -3,7 +3,7 @@
   "short_name": "Imphal Connect",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#f2fbff",
-  "theme_color": "#0879d1",
+  "background_color": "#f8faf7",
+  "theme_color": "#1e6b4d",
   "icons": [{"src":"/icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]
 }
