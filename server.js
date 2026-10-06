@@ -125,8 +125,10 @@ function normalisePlace(p){
       name:photo?.name||'',
       widthPx:photo?.widthPx||null,
       heightPx:photo?.heightPx||null,
+      googleMapsUri:photo?.googleMapsUri||'',
       authorAttributions:Array.isArray(photo?.authorAttributions)?photo.authorAttributions.slice(0,3).map(a=>({displayName:a?.displayName||'',uri:a?.uri||'',photoUri:a?.photoUri||''})):[]
-    })).filter(photo=>photo.name):[]
+    })).filter(photo=>photo.name):[],
+    reviews:Array.isArray(p?.reviews)?p.reviews.slice(0,5).map(review=>({rating:review?.rating??null,text:review?.text?.text||'',relativePublishTimeDescription:review?.relativePublishTimeDescription||'',googleMapsUri:review?.googleMapsUri||'',flagContentUri:review?.flagContentUri||'',authorAttribution:{displayName:review?.authorAttribution?.displayName||'Google user',uri:review?.authorAttribution?.uri||'',photoUri:review?.authorAttribution?.photoUri||''}})).filter(review=>review.text||review.authorAttribution.displayName):[]
   };
 }
 async function googlePlacesRequest(body,fieldMask=GOOGLE_FIELD_MASK){
@@ -182,7 +184,7 @@ app.get('/api/discovery/google/:placeId',async(req,res)=>{
     if(!placeId)return res.status(400).json({error:'Invalid place id'});
     const key=googleKey();
     if(!key)return res.status(503).json({error:'Google Places is not configured on the server yet.'});
-    const mask=['id','displayName','formattedAddress','location','googleMapsUri','primaryType','primaryTypeDisplayName','types','businessStatus','currentOpeningHours','regularOpeningHours','nationalPhoneNumber','internationalPhoneNumber','websiteUri','rating','userRatingCount','photos'].join(',');
+    const mask=['id','displayName','formattedAddress','location','googleMapsUri','primaryType','primaryTypeDisplayName','types','businessStatus','currentOpeningHours','regularOpeningHours','nationalPhoneNumber','internationalPhoneNumber','websiteUri','rating','userRatingCount','photos','reviews'].join(',');
     const r=await fetch(GOOGLE_PLACE_DETAILS_URL+encodeURIComponent(placeId),{headers:{'x-goog-api-key':key,'x-goog-fieldmask':mask},signal:AbortSignal.timeout(15000)});
     const data=await r.json().catch(()=>({}));
     if(!r.ok)return res.status(r.status).json({error:data?.error?.message||'Google Place Details failed'});
