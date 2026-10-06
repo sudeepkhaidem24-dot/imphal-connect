@@ -374,11 +374,11 @@ header .icon{background:#ffffff18;border-color:#ffffff30;color:#fff;backdrop-fil
         <h1>Your city.<br>Beautifully connected.</h1>
         <p>Discover places, people, products and experiences across Imphal — then use Imphal Connect to turn local attention into real business.</p>
         <div class="search"><span>⌕</span><input id="search" placeholder="Search cafés, shops, stays, services…" oninput="searchAll()"><button onclick="go('explore')">→</button></div>
-        <div class="ic-hero-meta"><span class="ic-hero-chip">Explore locally</span><span class="ic-hero-chip">Meet local businesses</span><span class="ic-hero-chip">Ask Imphi AI</span></div>
+        <div class="ic-hero-meta"><span class="ic-hero-chip">Explore locally</span><span class="ic-hero-chip">Meet local businesses</span><span class="ic-hero-chip">Ask Imphal AI</span></div>
         <div class="ic-ai-dock">
-          <div class="dock-top"><div class="ic-ai-dot"></div><div><b>Imphi AI</b><small>Your intelligent Imphal concierge</small></div></div>
+          <div class="dock-top"><div class="ic-ai-dot"></div><div><b>Imphal AI</b><small>Your intelligent Imphal concierge</small></div></div>
           <p>“I have three hours, ₹1,500 and want the best local experience.”</p>
-          <button onclick="openAI()">Ask Imphi →</button>
+          <button onclick="openAI()">Ask Imphal AI →</button>
         </div>
       </section>`;
     const enterprise=document.getElementById('icEnterpriseBand'); if(enterprise)enterprise.remove();
@@ -386,7 +386,7 @@ header .icon{background:#ffffff18;border-color:#ffffff30;color:#fff;backdrop-fil
     if(anchor&&!document.getElementById('icLuxuryStory')){
       const sec=document.createElement('section');sec.id='icLuxuryStory';sec.className='section';
       sec.innerHTML=`
-        <div class="section-head"><h2>Made for the way Imphal lives.</h2><button onclick="openAI()">Ask Imphi</button></div>
+        <div class="section-head"><h2>Made for the way Imphal lives.</h2><button onclick="openAI()">Ask Imphal AI</button></div>
         <div class="ic-luxury-section">
           <article class="ic-luxury-card" style="background-image:url('https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=1200&q=90')"><div class="copy"><span>LOCAL · CRAFT · IDENTITY</span><h3>Discover what makes this city different.</h3><p>From makers and food to everyday services — find the people behind the places.</p></div></article>
           <article class="ic-luxury-card" style="background-image:url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1200&q=90')"><div class="copy"><span>BUSINESS · GROWTH · CONNECTION</span><h3>Local attention should become local growth.</h3><p>Business owners get a professional storefront, products, enquiries, analytics and promotion.</p></div></article>
@@ -1275,7 +1275,109 @@ window.trackBusinessEvent=async function(businessId,eventType,meta={}){try{await
     sendAI(new Event('submit',{cancelable:true}));
   };
 })();
-</script></body>
+</script>
+<style id="ic-particle-reference">
+:root{--px-black:#030405;--px-panel:#090b0e;--px-white:#f5f5f2;--px-muted:#8f959d;--px-blue:#3e83ff;--px-gold:#f2b84b}
+html{background:var(--px-black)}body{background:var(--px-black)!important;color:var(--px-white)!important}
+#home{background:var(--px-black);color:var(--px-white);position:relative;overflow:clip}
+#home .section{position:relative;z-index:2}#home .section-head h2{color:#fff}
+#home .section-head button,#home .section-head a{color:#8eb8ff}
+#home .chip,#home .card,#home .feature,#home .offer,#home .money-card,#home .business,#home .product{background:#0a0c0f;border-color:#20242a;color:#fff;box-shadow:0 18px 60px #0008}
+#home .body h3,#home .feature h3,#home .offer h3,#home .money-card b,#home .product-body h3{color:#fff}
+#home .meta,#home .feature p,#home .offer p,#home .product-body p,#home .money-card small{color:#8f959d}
+#home .map{background-color:#080a0d;border-color:#20242a;filter:grayscale(.8) brightness(.55)}
+.ic-particle-hero{position:relative;width:calc(100% + 44px);margin-left:-22px;height:min(940px,100svh);min-height:680px;overflow:hidden;background:#030405;isolation:isolate}
+.ic-particle-canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.ic-particle-vignette{position:absolute;inset:0;pointer-events:none;z-index:1;background:radial-gradient(circle at 55% 44%,transparent 0 26%,rgba(0,0,0,.12) 52%,rgba(0,0,0,.72) 100%),linear-gradient(180deg,rgba(0,0,0,.5),transparent 28%,transparent 65%,rgba(0,0,0,.72))}
+.ic-particle-grid{position:absolute;inset:0;z-index:2;pointer-events:none;opacity:.14;background-image:linear-gradient(rgba(255,255,255,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.045) 1px,transparent 1px);background-size:80px 80px;mask-image:linear-gradient(to bottom,transparent,black 24%,black 76%,transparent)}
+.ic-particle-top{position:absolute;z-index:5;left:clamp(20px,5vw,72px);right:clamp(20px,5vw,72px);top:clamp(86px,10vh,118px);display:flex;align-items:center;justify-content:space-between;pointer-events:none}
+.ic-particle-kicker{font:800 10px/1 DM Sans;letter-spacing:2px;color:#fff;text-transform:uppercase}
+.ic-particle-status{display:flex;align-items:center;gap:8px;font:700 9px DM Sans;letter-spacing:1.2px;color:#9ca2aa;text-transform:uppercase}
+.ic-particle-status i{width:6px;height:6px;border-radius:50%;background:#4bff9b;box-shadow:0 0 16px #4bff9b;animation:pxPulse 1.8s ease-in-out infinite}
+@keyframes pxPulse{50%{opacity:.35;transform:scale(.7)}}
+.ic-particle-copy{position:absolute;z-index:5;left:clamp(20px,6vw,88px);bottom:clamp(84px,11vh,122px);max-width:min(760px,75vw);pointer-events:none}
+.ic-particle-overline{font:800 10px DM Sans;letter-spacing:3px;color:#aeb4bd;text-transform:uppercase;margin-bottom:17px}
+.ic-particle-title{margin:0;font-family:"Arial Narrow","Roboto Condensed",Impact,Haettenschweiler,sans-serif;font-size:clamp(54px,9.2vw,150px);line-height:.82;letter-spacing:-.055em;text-transform:uppercase;color:#f4f4f1;text-shadow:0 5px 30px #000}
+.ic-particle-title span{display:block}.ic-particle-sub{margin:20px 0 0;max-width:540px;color:#9da3ab;font:500 12px/1.65 DM Sans}
+.ic-particle-actions{display:flex;gap:8px;pointer-events:auto;margin-top:20px}
+.ic-particle-actions button{padding:11px 15px;border-radius:999px;background:#fff;color:#050608;font:900 9px DM Sans;letter-spacing:.8px;text-transform:uppercase}
+.ic-particle-actions button.alt{background:#ffffff0d;color:#fff;border:1px solid #ffffff25;backdrop-filter:blur(10px)}
+.ic-particle-side{position:absolute;z-index:5;right:clamp(20px,5vw,72px);bottom:clamp(88px,12vh,132px);width:220px;color:#fff;pointer-events:none;text-align:right}
+.ic-particle-side b{font:900 11px DM Sans;letter-spacing:2px;text-transform:uppercase}.ic-particle-side p{font:500 9px/1.6 DM Sans;color:#7f858d;margin:8px 0 0}.ic-particle-side .line{height:1px;background:#ffffff24;margin:14px 0}
+.ic-particle-scroll{position:absolute;z-index:5;right:clamp(20px,5vw,72px);top:50%;transform:translateY(-50%);writing-mode:vertical-rl;font:800 8px DM Sans;letter-spacing:2px;color:#727881;text-transform:uppercase;display:flex;align-items:center;gap:10px}
+.ic-particle-scroll:before{content:"";width:1px;height:62px;background:linear-gradient(#ffffff70,transparent)}
+.ic-particle-word{position:absolute;z-index:4;left:50%;top:51%;transform:translate(-50%,-50%);font:900 clamp(34px,6vw,84px)/.8 "Arial Narrow",Impact,sans-serif;letter-spacing:.04em;color:#fff;opacity:.05;pointer-events:none;white-space:nowrap}
+.ic-particle-meter{position:absolute;z-index:5;left:50%;bottom:28px;transform:translateX(-50%);display:flex;gap:6px;align-items:center;pointer-events:none}
+.ic-particle-meter i{width:22px;height:2px;background:#ffffff22;border-radius:9px;transition:.35s}.ic-particle-meter i.active{background:#fff;width:42px}
+@media(max-width:760px){.ic-particle-hero{width:calc(100% + 20px);margin-left:-10px;min-height:680px;height:calc(100svh - 2px)}.ic-particle-top{top:74px}.ic-particle-copy{left:20px;right:20px;bottom:92px;max-width:none}.ic-particle-title{font-size:clamp(50px,15.5vw,78px);letter-spacing:-.045em}.ic-particle-sub{font-size:11px;max-width:330px}.ic-particle-side,.ic-particle-scroll{display:none}.ic-particle-actions button{padding:10px 13px}.ic-particle-meter{bottom:30px}}
+@media(prefers-reduced-motion:reduce){.ic-particle-status i{animation:none}}
+</style>\n
+<script id="ic-particle-reference-engine">
+(function(){
+  const CDN='https://cdn.jsdelivr.net/npm/three@0.186.1/build/three.module.js';
+  let booted=false,started=false,raf=0;
+  function makeHero(){
+    const home=document.getElementById('home'); if(!home||document.getElementById('icParticleHero')) return document.getElementById('icParticleHero');
+    const old=home.querySelector('.hero'); if(!old) return null;
+    const hero=document.createElement('section'); hero.id='icParticleHero'; hero.className='ic-particle-hero';
+    hero.innerHTML=`
+      <canvas class="ic-particle-canvas" aria-hidden="true"></canvas>
+      <div class="ic-particle-vignette"></div><div class="ic-particle-grid"></div>
+      <div class="ic-particle-top"><div class="ic-particle-kicker">IMPHAL CONNECT / DIGITAL CITY</div><div class="ic-particle-status"><i></i> Live in Imphal</div></div>
+      <div class="ic-particle-copy">
+        <div class="ic-particle-overline" id="pxOverline">DISCOVER · CONNECT · EXPERIENCE</div>
+        <h1 class="ic-particle-title"><span id="pxTitleA">IMPHAL</span><span id="pxTitleB">CONNECT</span></h1>
+        <p class="ic-particle-sub">A living digital layer for Imphal — discover places, local businesses, events, makers and experiences through one beautifully connected city.</p>
+        <div class="ic-particle-actions"><button onclick="go('explore')">Explore Imphal</button><button class="alt" onclick="openAI()">Ask Imphal AI</button></div>
+      </div>
+      <div class="ic-particle-side"><b id="pxSideTitle">A CITY IN MOTION</b><div class="line"></div><p id="pxSideCopy">Thousands of tiny points become a map, a pulse, a place — then dissolve and form something new.</p></div>
+      <div class="ic-particle-scroll">Move · drag · scroll</div><div class="ic-particle-word">IMPHAL</div>
+      <div class="ic-particle-meter"><i class="active"></i><i></i><i></i><i></i></div>`;
+    old.replaceWith(hero); return hero;
+  }
+  function fallback(){const h=document.getElementById('icParticleHero');if(h){h.style.background='radial-gradient(circle at 58% 42%,#182a45 0,#07090d 38%,#030405 72%)';const c=h.querySelector('canvas');if(c)c.style.display='none'}}
+  function load(){if(booted)return;booted=true;makeHero();if(window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;import(CDN).then(start).catch(fallback)}
+  function start(THREE){
+    if(started)return;started=true;const hero=document.getElementById('icParticleHero'),canvas=hero?.querySelector('canvas');if(!hero||!canvas)return;
+    const scene=new THREE.Scene(),camera=new THREE.PerspectiveCamera(42,1,.1,100);camera.position.set(0,0,15);
+    let renderer;try{renderer=new THREE.WebGLRenderer({canvas,alpha:true,antialias:false,powerPreference:'high-performance'})}catch(e){fallback();return}
+    renderer.setPixelRatio(Math.min(devicePixelRatio||1,1.5));renderer.setClearColor(0x030405,1);
+    const mobile=matchMedia('(max-width:760px)').matches,count=mobile?3600:7600;
+    const positions=new Float32Array(count*3),shapes=[0,1,2,3].map(()=>new Float32Array(count*3)),colors=new Float32Array(count*3);
+    for(let i=0;i<count;i++){const y=1-i/(count-1)*2,r=Math.sqrt(Math.max(0,1-y*y)),a=i*Math.PI*(3-Math.sqrt(5)),j=i*3,s=3.35+Math.random()*.22;shapes[0][j]=Math.cos(a)*r*s;shapes[0][j+1]=y*s;shapes[0][j+2]=Math.sin(a)*r*s}
+    for(let i=0;i<count;i++){const u=i/count*Math.PI*26,v=i/count*Math.PI*10,R=2.65,r=.78,j=i*3;shapes[1][j]=(R+r*Math.cos(v))*Math.cos(u);shapes[1][j+1]=r*Math.sin(v);shapes[1][j+2]=(R+r*Math.cos(v))*Math.sin(u)}
+    for(let i=0;i<count;i++){const t=i/(count-1)*Math.PI*12,side=i%2,j=i*3,rad=1.9;shapes[2][j]=Math.cos(t+side*Math.PI)*rad;shapes[2][j+1]=(i/(count-1)-.5)*6.4;shapes[2][j+2]=Math.sin(t+side*Math.PI)*rad}
+    const wc=document.createElement('canvas');wc.width=1200;wc.height=250;const wctx=wc.getContext('2d');wctx.fillStyle='#000';wctx.fillRect(0,0,wc.width,wc.height);wctx.fillStyle='#fff';wctx.textAlign='center';wctx.textBaseline='middle';wctx.font='900 185px Arial Black,Arial,sans-serif';wctx.fillText('IMPHAL',600,132);
+    const px=wctx.getImageData(0,0,wc.width,wc.height).data,samples=[];for(let y=0;y<wc.height;y+=5)for(let x=0;x<wc.width;x+=5)if(px[(y*wc.width+x)*4+3]>180)samples.push([x,y]);
+    for(let i=0;i<count;i++){const p=samples[i%samples.length],j=i*3;shapes[3][j]=(p[0]-600)/125;shapes[3][j+1]=-(p[1]-132)/125;shapes[3][j+2]=(Math.random()-.5)*.75}
+    for(let i=0;i<count;i++){const j=i*3;positions[j]=shapes[0][j];positions[j+1]=shapes[0][j+1];positions[j+2]=shapes[0][j+2];const q=i/count,blue=Math.max(0,1-Math.abs(q-.28)*3.2),gold=Math.max(0,1-Math.abs(q-.76)*3.4);colors[j]=.68+gold*.30;colors[j+1]=.76+gold*.18;colors[j+2]=.82+blue*.18}
+    const geometry=new THREE.BufferGeometry();geometry.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));geometry.setAttribute('color',new THREE.Float32BufferAttribute(colors,3));
+    const material=new THREE.PointsMaterial({size:mobile?.045:.052,sizeAttenuation:true,vertexColors:true,transparent:true,opacity:.88,depthWrite:false,blending:THREE.AdditiveBlending});
+    const points=new THREE.Points(geometry,material);scene.add(points);
+    const starsCount=mobile?450:900,starPos=new Float32Array(starsCount*3);for(let i=0;i<starsCount;i++){const j=i*3;starPos[j]=(Math.random()-.5)*28;starPos[j+1]=(Math.random()-.5)*16;starPos[j+2]=(Math.random()-.5)*20-4}
+    const starGeo=new THREE.BufferGeometry();starGeo.setAttribute('position',new THREE.Float32BufferAttribute(starPos,3));const stars=new THREE.Points(starGeo,new THREE.PointsMaterial({color:0x8e9aaa,size:mobile?.018:.025,transparent:true,opacity:.28,depthWrite:false}));scene.add(stars);
+    const mouse={x:0,y:0,tx:0,ty:0};hero.addEventListener('pointermove',e=>{const r=hero.getBoundingClientRect();mouse.tx=e.clientX/r.width*2-1;mouse.ty=e.clientY/r.height*2-1},{passive:true});hero.addEventListener('pointerleave',()=>{mouse.tx=0;mouse.ty=0},{passive:true});
+    const titles=[['DISCOVER · CONNECT · EXPERIENCE','IMPHAL','CONNECT','A CITY IN MOTION','Every street, business and experience becomes part of one living local network.'],['PLACES · PEOPLE · STORIES','DISCOVER','IMPHAL','FIND YOUR NEXT PLACE','Search the city through a visual layer that feels alive, not like another directory.'],['BUSINESS · COMMUNITY · GROWTH','CONNECT','LOCALLY','LOCAL PRESENCE, AMPLIFIED','Give Imphal businesses a digital home where attention can turn into real enquiries.'],['THE DIGITAL HEART OF IMPHAL','IMPHAL','2026','ONE CITY. ONE CONNECTED LAYER.','A premium discovery platform built around the people and places that make Imphal itself.']];
+    const titleA=document.getElementById('pxTitleA'),titleB=document.getElementById('pxTitleB'),over=document.getElementById('pxOverline'),sideT=document.getElementById('pxSideTitle'),sideC=document.getElementById('pxSideCopy'),meters=[...hero.querySelectorAll('.ic-particle-meter i')];
+    let progress=0,target=0,drag=false,lastX=0;
+    hero.addEventListener('pointerdown',e=>{drag=true;lastX=e.clientX;hero.setPointerCapture?.(e.pointerId)});hero.addEventListener('pointerup',()=>drag=false);hero.addEventListener('pointercancel',()=>drag=false);hero.addEventListener('pointermove',e=>{if(drag){target=(target+(e.clientX-lastX)*.002)%4;if(target<0)target+=4;lastX=e.clientX}});
+    function resize(){const w=hero.clientWidth,h=hero.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix()}resize();addEventListener('resize',resize,{passive:true});
+    function shapeAt(p){p=((p%4)+4)%4;const a=Math.floor(p),b=(a+1)%4,t=p-a,e=t*t*(3-2*t);return[a,b,e]}
+    function render(){
+      raf=requestAnimationFrame(render);
+      const rect=hero.getBoundingClientRect();if(document.hidden||rect.bottom<=0||rect.top>=innerHeight)return;
+      const max=Math.max(1,hero.offsetHeight-innerHeight),pageP=Math.min(1,Math.max(0,-rect.top/max));target=Math.max(0,Math.min(3.92,target*.72+pageP*3.15));progress+=(target-progress)*.055;
+      const [a,b,t]=shapeAt(progress),A=shapes[a],B=shapes[b],pos=geometry.attributes.position.array,now=performance.now()*.00045;
+      for(let i=0;i<pos.length;i++)pos[i]+=((A[i]*(1-t)+B[i]*t)-pos[i])*.075+Math.sin(i*.013+now)*.012;
+      geometry.attributes.position.needsUpdate=true;mouse.x+=(mouse.tx-mouse.x)*.035;mouse.y+=(mouse.ty-mouse.y)*.035;points.rotation.y+=.0012+mouse.x*.002;points.rotation.x+=(mouse.y*.08-points.rotation.x)*.025;stars.rotation.y-=.00012;stars.rotation.x+=.00005;camera.position.x+=(mouse.x*.65-camera.position.x)*.018;camera.position.y+=(-mouse.y*.38-camera.position.y)*.018;camera.lookAt(0,0,0);renderer.render(scene,camera);
+      const s=Math.min(3,Math.floor(progress+.18)),d=titles[s];if(titleA)titleA.textContent=d[1];if(titleB)titleB.textContent=d[2];if(over)over.textContent=d[0];if(sideT)sideT.textContent=d[3];if(sideC)sideC.textContent=d[4];meters.forEach((m,i)=>m.classList.toggle('active',i===s));
+    }
+    render();
+  }
+  function install(){makeHero();load();const originalGo=window.go;if(originalGo&&!originalGo.__pxWrapped){const wrapped=function(id){const out=originalGo.apply(this,arguments);setTimeout(()=>{const h=document.getElementById('icParticleHero');if(h)h.style.visibility=id==='home'?'visible':'hidden'},0);return out};wrapped.__pxWrapped=true;window.go=wrapped}}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install);else install();setTimeout(install,1200);
+})();
+</script>\n</body>
 </html<div class="bottom">
 <nav class="mobile-nav" aria-label="Mobile navigation">
 <button class="nav active" data-go="home" onclick="go('home')"><span class="nav-icon">⌂</span><span>Home</span></button>
