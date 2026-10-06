@@ -1,7 +1,7 @@
 create extension if not exists pgcrypto;
 
 create table if not exists public.profiles(id uuid primary key references auth.users(id) on delete cascade,full_name text,phone text,role text not null default 'customer' check(role in('customer','business','admin')),created_at timestamptz not null default now(),updated_at timestamptz not null default now());
-create table if not exists public.businesses(id uuid primary key default gen_random_uuid(),owner_id uuid not null references public.profiles(id) on delete cascade,name text not null,slug text unique not null,category text not null default 'Services',description text,phone text,whatsapp text,address text,city text not null default 'Imphal',latitude double precision,longitude double precision,logo_url text,cover_url text,is_verified boolean not null default false,is_published boolean not null default false,plan text not null default 'free' check(plan in('free','owner','pro','elite')),subscription_status text not null default 'inactive',subscription_id text unique,subscription_current_end timestamptz,created_at timestamptz not null default now(),updated_at timestamptz not null default now());
+create table if not exists public.businesses(id uuid primary key default gen_random_uuid(),owner_id uuid not null references public.profiles(id) on delete cascade,name text not null,slug text unique not null,category text not null default 'Services',description text,phone text,whatsapp text,address text,city text not null default 'Imphal',latitude double precision,longitude double precision,logo_url text,cover_url text,is_verified boolean not null default false,is_published boolean not null default false,plan text not null default 'free' check(plan in('free','owner')),subscription_status text not null default 'inactive',subscription_id text unique,subscription_current_end timestamptz,created_at timestamptz not null default now(),updated_at timestamptz not null default now());
 -- Production lifecycle status: draft → pending_review → published, with suspended/rejected states.
 alter table public.businesses add column if not exists status text not null default 'draft' check(status in('draft','pending_review','published','suspended','rejected'));
 -- Extended business profile fields for production owner editing.
@@ -63,7 +63,7 @@ create table if not exists public.payment_intents(
  id uuid primary key default gen_random_uuid(),
  user_id uuid not null references public.profiles(id) on delete cascade,
  business_id uuid not null references public.businesses(id) on delete cascade,
- plan text not null check(plan in('owner','pro','elite')),
+ plan text not null check(plan='owner'),
  amount numeric(12,2) not null,
  status text not null default 'pending' check(status in('pending','paid','expired','cancelled')),
  provider_ref text,
@@ -74,3 +74,27 @@ create table if not exists public.payment_intents(
 create unique index if not exists payment_intents_provider_ref_unique_idx on public.payment_intents(provider_ref) where provider_ref is not null;
 create index if not exists payment_intents_user_status_idx on public.payment_intents(user_id,status,created_at);
 alter table public.payment_intents enable row level security;
+
+
+-- Single production business subscription: ₹120/year only.
+create table if not exists public.subscriptions(
+ id uuid primary key default gen_random_uuid(),
+ user_id uuid not null references public.profiles(id) on delete cascade,
+ business_id uuid not null references public.businesses(id) on delete cascade,
+ plan_id text not null default 'business_owner_annual',
+ amount integer not null default 12000 check(amount=12000),
+ currency text not null default 'INR' check(currency='INR'),
+ payment_id text,
+ order_id text,
+ status text not null default 'pending' check(status in('pending','active','failed','expired','cancelled')),
+ started_at timestamptz,
+ expires_at timestamptz,
+ created_at timestamptz not null default now(),
+ updated_at timestamptz not null default now()
+);
+create unique index if not exists subscriptions_payment_unique on public.subscriptions(payment_id) where payment_id is not null;
+create index if not exists subscriptions_user_status_idx on public.subscriptions(user_id,status,expires_at);
+alter table public.subscriptions enable row level security;
+drop policy if exists "subscription owner read" on public.subscriptions;
+create policy "subscription owner read" on public.subscriptions for select to authenticated using(auth.uid()=user_id);
+grant select on public.subscriptions to authenticated;
