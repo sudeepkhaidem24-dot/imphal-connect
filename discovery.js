@@ -228,7 +228,7 @@ function filterSnapshot(places,q,category){
     return qOk&&cOk;
   }).map(enrichSnapshotRow);
 }
-export async function catalog(req,res){
+export async function warmCatalogIfMissing(){return getCatalog(false);}\n\nexport async function catalog(req,res){
   try{
     const payload=await getCatalog(req.query.refresh==='1'),places=filterSnapshot(payload.places||[],req.query.q||'',req.query.category||'all');
     res.set('Cache-Control','public, max-age=86400, stale-while-revalidate=604800');
