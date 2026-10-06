@@ -450,7 +450,11 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
  .section-heading{align-items:flex-end!important}
 }
 </style>
-</head>
+<style id="ic-timber-no-duplicates">
+/* Timber category: warm, material-led imagery; never repeat one image across café cards. */
+.timber-thumb{background-size:cover;background-position:center}
+.cafe-grid .card .thumb{background-color:#6b4a32}
+</style></head>
 <body><div class="ambient-orbs"><i></i><i></i><i></i></div>
 <div class="app">
 <header class="site-header">
@@ -534,10 +538,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
     <div class="grid editorial-cards" id="homeCards"></div>
   </section>
 
-  <section class="editorial-section map-section">
-    <div class="section-heading"><div><p class="eyebrow-text">MAP</p><h2>See places around Imphal.</h2></div><button class="text-link" onclick="go('map')">Open map</button></div>
-    <div class="map editorial-map"><div class="map-grid"></div><div class="map-pin ep1">01</div><div class="map-pin ep2">02</div><div class="map-pin ep3">03</div><div class="map-caption"><strong>Imphal</strong><span>Places, food, stays & experiences</span></div></div>
-  </section>
+  
 
   <section class="editorial-section">
     <div class="section-heading"><div><p class="eyebrow-text">EVENTS</p><h2>What’s happening?</h2></div><button class="text-link" onclick="go('events')">All events</button></div>
@@ -1423,5 +1424,29 @@ function boot(){renderHome();if(document.getElementById('explore')?.classList.co
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
 })();
 </script>
-</body>
+<script id="ic-image-uniqueness">
+(function(){
+ const timber=[
+  'https://imphalsmartcitylimited.com/Assets/img/gallery/Ima_Keithel.jpg',
+  'https://s7ap1.scene7.com/is/image/incredibleindia/kangla-fort-imphal-manipur-1-city-attr?qlt=82&ts=1742163661040',
+  'https://images.mindtrip.ai/attractions/e745/fb64/f31b/0a21/f4ff/cc0d/b365/f4ff'
+ ];
+ function dedupe(){
+   const imgs=[...document.querySelectorAll('.card .thumb[style*="background-image"],.feature-img[style*="background-image"],.product-img[style*="background-image"],img')];
+   const seen=new Set(), candidates=[...document.querySelectorAll('.card .thumb')];
+   candidates.forEach((el,i)=>{
+     const style=el.getAttribute('style')||'', m=style.match(/url\((['"]?)(.*?)\1\)/i);
+     if(!m)return;
+     const url=m[2];
+     if(seen.has(url)){
+       const replacement=timber.find(x=>!seen.has(x));
+       if(replacement){el.style.backgroundImage='url("'+replacement+'")';seen.add(replacement)}
+     } else seen.add(url);
+   });
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(dedupe,250));
+ else setTimeout(dedupe,250);
+ window.addEventListener('load',()=>setTimeout(dedupe,250));
+})();
+</script></body>
 </html>
