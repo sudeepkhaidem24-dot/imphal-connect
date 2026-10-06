@@ -598,39 +598,191 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
   .hero-copy{padding-top:126px!important}
   .hero-credit{display:none!important}
 }
+</style><style id="ic-hero-master-redesign">
+.ic-cinematic-hero{
+  min-height:760px!important;margin:0!important;border-radius:0 0 34px 34px!important;
+  overflow:hidden!important;position:relative!important;background:#10141d!important;
+}
+.ic-cinematic-hero .hero-media{
+  position:absolute!important;inset:0!important;
+  background-image:url('https://s7ap1.scene7.com/is/image/incredibleindia/kangla-fort-imphal-manipur-1-city-attr?qlt=82&ts=1742163661040')!important;
+  background-position:center 42%!important;background-size:cover!important;
+  filter:saturate(.78) contrast(1.08)!important;
+  transform:scale(1.025)!important;
+}
+.ic-cinematic-hero .hero-media:after{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(90deg,rgba(6,11,20,.68) 0%,rgba(6,11,20,.30) 46%,rgba(6,11,20,.12) 100%),
+             linear-gradient(0deg,rgba(5,9,16,.84) 0%,rgba(5,9,16,.08) 52%,rgba(5,9,16,.42) 100%)!important;
+}
+.ic-cinematic-hero .hero-overlay{display:none!important}
+.hero-grain{
+  position:absolute;inset:0;z-index:2;pointer-events:none;opacity:.12;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.35'/%3E%3C/svg%3E");
+  mix-blend-mode:soft-light;
+}
+.hero-editorial-type{
+  position:absolute;z-index:3;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:100%;pointer-events:none;text-align:center;overflow:hidden;
+}
+.hero-editorial-type span{
+  display:block;font-family:"Arial Narrow","Roboto Condensed","DM Sans",sans-serif;
+  font-size:clamp(150px,25vw,390px);font-weight:900;line-height:.76;
+  letter-spacing:-.065em;color:rgba(255,251,241,.92);
+  white-space:nowrap;text-shadow:0 12px 45px rgba(0,0,0,.22);
+}
+.ic-cinematic-hero .hero-copy{
+  position:absolute!important;z-index:5!important;left:7vw!important;bottom:125px!important;
+  max-width:680px!important;padding:0!important;
+}
+.ic-cinematic-hero .kicker{
+  color:#fff!important;font-size:10px!important;letter-spacing:3.2px!important;
+  margin-bottom:9px!important;opacity:.86!important;
+}
+.hero-location{
+  margin:0 0 18px!important;color:#fff!important;font-size:clamp(34px,4vw,58px)!important;
+  line-height:.92!important;font-weight:800!important;letter-spacing:-2.5px!important;
+  text-transform:uppercase!important;
+}
+.ic-cinematic-hero .hero-dek{
+  max-width:510px!important;color:rgba(255,255,255,.82)!important;
+  font-size:15px!important;line-height:1.5!important;margin-bottom:24px!important;
+}
+.ic-cinematic-hero .hero-search{
+  width:min(610px,88vw)!important;max-width:none!important;height:58px!important;
+  border-radius:999px!important;background:rgba(255,255,255,.95)!important;
+  border:1px solid rgba(255,255,255,.55)!important;box-shadow:0 18px 55px rgba(0,0,0,.28)!important;
+}
+.ic-cinematic-hero .hero-search button{
+  background:#151923!important;color:#fff!important;border-radius:999px!important;
+  padding:0 22px!important;text-transform:uppercase!important;letter-spacing:1.5px!important;
+  font-size:10px!important;font-weight:800!important;
+}
+.hero-destination-strip{
+  position:absolute;z-index:6;right:6vw;bottom:42px;display:flex;align-items:center;gap:12px;
+}
+.hero-destination-strip button{
+  width:62px;height:62px;border-radius:50%;padding:3px;border:1px solid rgba(255,255,255,.48);
+  background:rgba(255,255,255,.10);box-shadow:0 10px 28px rgba(0,0,0,.28);backdrop-filter:blur(8px);
+}
+.hero-destination-strip button span{
+  display:block;width:100%;height:100%;border-radius:50%;background-position:center;background-size:cover;
+  filter:saturate(.78);
+}
+.hero-destination-strip button.active{width:78px;height:78px;border-color:#fff}
+.hero-destination-strip button:hover{transform:translateY(-4px)}
+.hero-credit{
+  z-index:6!important;right:6vw!important;bottom:18px!important;font-size:8px!important;
+  letter-spacing:2.2px!important;text-transform:uppercase!important;color:rgba(255,255,255,.62)!important;
+}
+.cinematic-site-header{
+  position:absolute!important;top:0!important;left:0!important;right:0!important;
+  background:linear-gradient(180deg,rgba(4,8,15,.52),transparent)!important;
+  border:0!important;border-radius:0!important;box-shadow:none!important;padding:20px 0 16px!important;
+}
+.cinematic-header-inner{
+  max-width:1380px!important;margin:auto!important;padding:0 34px!important;
+  display:grid!important;grid-template-columns:1fr auto 1fr!important;
+}
+.cinematic-brand{min-width:0!important}
+.cinematic-brand .brand-copy strong{
+  font-size:14px!important;letter-spacing:1.4px!important;font-weight:800!important;
+}
+.cinematic-brand .brand-copy small{font-size:6.5px!important;letter-spacing:2.4px!important}
+.cinematic-nav{grid-column:2!important;gap:28px!important;flex:none!important}
+.cinematic-nav button{
+  color:rgba(255,255,255,.84)!important;font-size:9px!important;letter-spacing:1.7px!important;
+  font-weight:800!important;padding:9px 0!important;background:none!important;
+}
+.cinematic-actions{grid-column:3!important;justify-content:flex-end!important;gap:20px!important}
+.hero-search-link{
+  color:#fff;background:none;border:0;font-size:9px;font-weight:800;letter-spacing:1.8px;
+  padding:10px 0;cursor:pointer;
+}
+.hero-menu-btn{
+  width:34px;height:34px;border:0;background:none;padding:7px;display:flex;flex-direction:column;
+  justify-content:center;gap:5px;cursor:pointer;
+}
+.hero-menu-btn span{height:1px;width:20px;background:#fff;display:block}
+.hero-menu{
+  position:absolute;right:34px;top:72px;width:220px;padding:14px;border:1px solid rgba(255,255,255,.16);
+  border-radius:18px;background:rgba(12,15,23,.92);backdrop-filter:blur(22px);
+  box-shadow:0 24px 70px rgba(0,0,0,.34);display:none;flex-direction:column;z-index:90;
+}
+.hero-menu.open{display:flex}
+.hero-menu button,.hero-menu a{
+  color:#fff;background:none;border:0;text-align:left;text-decoration:none;padding:12px 10px;
+  font-size:10px;font-weight:800;letter-spacing:1.4px;
+}
+@media(max-width:900px){
+  .ic-cinematic-hero{min-height:700px!important;border-radius:0 0 28px 28px!important}
+  .cinematic-site-header{padding:14px 0 10px!important}
+  .cinematic-header-inner{display:flex!important;padding:0 16px!important}
+  .cinematic-nav{display:none!important}
+  .cinematic-actions{margin-left:auto!important}
+  .hero-search-link{display:none!important}
+  .ic-cinematic-hero .hero-media{background-position:center center!important}
+  .hero-editorial-type{top:43%!important}
+  .hero-editorial-type span{font-size:clamp(92px,25vw,190px)!important}
+  .ic-cinematic-hero .hero-copy{left:6%!important;right:6%!important;bottom:118px!important}
+  .hero-location{font-size:clamp(34px,10vw,54px)!important}
+  .hero-destination-strip{right:6%;bottom:34px!important;gap:8px!important}
+  .hero-destination-strip button{width:48px;height:48px!important}
+  .hero-destination-strip button.active{width:62px;height:62px!important}
+  .hero-credit{display:none!important}
+}
+@media(max-width:520px){
+  .ic-cinematic-hero{min-height:690px!important}
+  .cinematic-brand .premium-brand-mark{width:38px!important;height:38px!important}
+  .cinematic-brand .brand-copy strong{font-size:12px!important;letter-spacing:1px!important}
+  .cinematic-brand .brand-copy small{display:none!important}
+  .hero-editorial-type{top:39%!important}
+  .hero-editorial-type span{font-size:29vw!important;letter-spacing:-.08em!important}
+  .ic-cinematic-hero .hero-copy{bottom:106px!important}
+  .hero-location{font-size:34px!important}
+  .ic-cinematic-hero .hero-dek{font-size:13px!important;margin-bottom:17px!important}
+  .ic-cinematic-hero .hero-search{height:52px!important}
+  .hero-destination-strip{right:50%;transform:translateX(50%);bottom:24px!important}
+}
 </style></head>
 <body><div class="ambient-orbs"><i></i><i></i><i></i></div>
 <div class="app">
-<header class="site-header">
-  <div class="header-inner">
-    <a class="brand" href="#" onclick="go('home');return false" aria-label="Imphal Connect home">
+<header class="site-header cinematic-site-header">
+  <div class="header-inner cinematic-header-inner">
+    <a class="brand cinematic-brand" href="#" onclick="go('home');return false" aria-label="Imphal Connect home">
       <span class="brand-mark premium-brand-mark" aria-hidden="true">
         <svg viewBox="0 0 64 64" role="img" aria-label="Imphal Connect monogram">
-          <defs>
-            <linearGradient id="icGold" x1="8" y1="8" x2="56" y2="56"><stop offset="0" stop-color="#fff4c7"/><stop offset=".45" stop-color="#d8b46a"/><stop offset="1" stop-color="#9b7131"/></linearGradient>
-          </defs>
-          <circle cx="32" cy="32" r="27.5" fill="none" stroke="url(#icGold)" stroke-width="1.25"/>
+          <defs><linearGradient id="icGoldHero" x1="8" y1="8" x2="56" y2="56"><stop offset="0" stop-color="#fff4c7"/><stop offset=".48" stop-color="#d8b46a"/><stop offset="1" stop-color="#9b7131"/></linearGradient></defs>
+          <circle cx="32" cy="32" r="27.5" fill="none" stroke="url(#icGoldHero)" stroke-width="1.25"/>
           <path d="M21 19v26M21 19h8.5c5.4 0 8.7 3.2 8.7 7.6s-3.3 7.5-8.7 7.5H21" fill="none" stroke="#fff8df" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M48 21.5a13.5 13.5 0 1 0 0 21" fill="none" stroke="url(#icGold)" stroke-width="3" stroke-linecap="round"/>
+          <path d="M48 21.5a13.5 13.5 0 1 0 0 21" fill="none" stroke="url(#icGoldHero)" stroke-width="3" stroke-linecap="round"/>
           <path d="M36.5 34.2 44 41.5" fill="none" stroke="#fff8df" stroke-width="2" stroke-linecap="round"/>
         </svg>
       </span>
-      <span class="brand-copy"><strong>Imphal Connect</strong><small>IMPHAL · MANIPUR</small></span>
+      <span class="brand-copy"><strong>IMPHAL CONNECT</strong><small>IMPHAL · MANIPUR</small></span>
     </a>
-    <nav class="desktop-nav" aria-label="Primary">
-      <button data-go="home" onclick="go('home')">Home</button>
-      <button data-go="explore" onclick="go('explore')">Explore</button>
-      <button data-go="events" onclick="go('events')">Events</button>
-      <button data-go="shop" onclick="go('shop')">Shop</button>
-      <button data-go="community" onclick="go('community')">Community</button>
+    <nav class="desktop-nav cinematic-nav" aria-label="Primary">
+      <button onclick="go('explore')">EXPLORE</button>
+      <button onclick="go('explore')">PLACES</button>
+      <button onclick="filterCat('Food')">FOOD</button>
+      <button onclick="go('travel')">EXPERIENCES</button>
+      <button onclick="go('events')">EVENTS</button>
     </nav>
-    <div class="head-actions">
-      <button class="lang-toggle" type="button" onclick="toggleLanguage()" aria-label="Switch language"><span>EN</span><span>মৈ</span></button>
-      <button class="icon-btn" onclick="openSheet('notifications')" aria-label="Notifications"><svg viewBox="0 0 24 24"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg></button>
-      <button class="profile-btn" onclick="openSheet('profile')" aria-label="Account"><span>IC</span></button>
+    <div class="head-actions cinematic-actions">
+      <button class="hero-search-link" onclick="document.getElementById('searchLegacy').focus()" aria-label="Search Imphal">SEARCH</button>
+      <button class="hero-menu-btn" onclick="document.getElementById('heroMenu').classList.toggle('open')" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
     </div>
   </div>
-  <div class="location-line"><span class="line-icon">⌖</span><span>Location</span><strong>Imphal, Manipur</strong></div>
+  <div id="heroMenu" class="hero-menu" aria-label="Menu">
+    <button onclick="go('home');document.getElementById('heroMenu').classList.remove('open')">HOME</button>
+    <button onclick="go('explore');document.getElementById('heroMenu').classList.remove('open')">EXPLORE PLACES</button>
+    <button onclick="go('events');document.getElementById('heroMenu').classList.remove('open')">EVENTS</button>
+    <button onclick="go('shop');document.getElementById('heroMenu').classList.remove('open')">SHOP LOCAL</button>
+    <button onclick="go('community');document.getElementById('heroMenu').classList.remove('open')">COMMUNITY</button>
+    <a href="/business.html">FOR BUSINESSES</a>
+  </div>
 </header>
 <!-- CINEMATIC HERO MEDIA + IMPHAL AI -->
 <div class="video-stage premium-video-stage">
@@ -653,19 +805,33 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 
 <!-- HOME -->
 <main id="home" class="view active">
-  <section class="editorial-hero">
+  <section class="editorial-hero ic-cinematic-hero" aria-label="Imphal Connect city guide">
     <div class="hero-media" aria-hidden="true"></div>
-    <div class="hero-overlay"></div>
+    <div class="hero-overlay" aria-hidden="true"></div>
+    <div class="hero-grain" aria-hidden="true"></div>
+
+    <div class="hero-editorial-type" aria-hidden="true">
+      <span>IMPHAL</span>
+    </div>
+
     <div class="hero-copy">
-      <p class="kicker">IMPHAL · MANIPUR</p>
-      <h1>Find the city<br><em>worth knowing.</em></h1>
-      <p class="hero-dek">Find places, food, events and local businesses in Imphal — all in one place.</p>
+      <p class="kicker">MANIPUR · INDIA</p>
+      <p class="hero-location">THE CITY, CONNECTED</p>
+      <p class="hero-dek">Discover places, food, experiences and events worth knowing.</p>
       <div class="hero-search">
         <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
         <input id="searchLegacy" aria-label="Search Imphal" placeholder="Search places, food, events…" oninput="searchAll()">
-        <button onclick="go('explore')" aria-label="Search"><span>Search</span><svg viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg></button>
+        <button onclick="go('explore')" aria-label="Search"><span>EXPLORE</span><svg viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg></button>
       </div>
     </div>
+
+    <div class="hero-destination-strip" aria-label="Explore Imphal">
+      <button onclick="go('explore')" aria-label="Explore Imphal places"><span style="background-image:url('https://imphalsmartcitylimited.com/Assets/img/gallery/Ima_Keithel.jpg')"></span></button>
+      <button onclick="go('explore')" aria-label="Explore Kangla"><span style="background-image:url('https://s7ap1.scene7.com/is/image/incredibleindia/kangla-fort-imphal-manipur-1-city-attr?qlt=82&ts=1742163661040')"></span></button>
+      <button class="active" onclick="go('explore')" aria-label="Explore local Imphal"><span style="background-image:url('/media/imphal-hero.webp')"></span></button>
+      <button onclick="go('explore')" aria-label="Explore Loktak"><span style="background-image:url('https://images.mindtrip.ai/attractions/e745/fb64/f31b/0a21/f4ff/cc0d/b365/f4ff')"></span></button>
+    </div>
+
     <div class="hero-credit">A city guide for residents & visitors</div>
   </section>
 
