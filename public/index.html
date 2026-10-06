@@ -454,14 +454,76 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 /* Timber category: warm, material-led imagery; never repeat one image across café cards. */
 .timber-thumb{background-size:cover;background-position:center}
 .cafe-grid .card .thumb{background-color:#6b4a32}
-</style><style id="ic-no-map-view">#map{display:none!important}.map{display:none!important}</style></head>
+</style><style id="ic-no-map-view">#map{display:none!important}.map{display:none!important}</style><style id="ic-premium-header">
+/* Premium brand system: restrained, architectural, non-illustrative. */
+.site-header{
+  background:linear-gradient(180deg,rgba(27,24,34,.97),rgba(20,18,26,.95))!important;
+  border:1px solid rgba(255,255,255,.13)!important;
+  box-shadow:0 22px 70px rgba(8,7,12,.30), inset 0 1px 0 rgba(255,255,255,.07)!important;
+  backdrop-filter:blur(24px) saturate(130%)!important;
+}
+.header-inner{min-height:54px!important}
+.brand{gap:13px!important;min-width:230px!important}
+.premium-brand-mark{
+  width:46px!important;height:46px!important;border-radius:50%!important;
+  background:radial-gradient(circle at 35% 25%,#8d63ff 0%,#5d32d8 44%,#28155f 100%)!important;
+  box-shadow:0 0 0 1px rgba(255,255,255,.14),0 10px 34px rgba(99,55,232,.42),inset 0 1px 0 rgba(255,255,255,.28)!important;
+}
+.premium-brand-mark svg{width:36px!important;height:36px!important;display:block!important;stroke:none!important}
+.brand-copy strong{
+  font-family:"DM Sans",system-ui,sans-serif!important;
+  font-size:17px!important;font-weight:700!important;letter-spacing:-.45px!important;color:#fff!important;
+}
+.brand-copy small{
+  margin-top:3px!important;color:#a9a3b1!important;font-size:7.5px!important;
+  letter-spacing:2px!important;font-weight:800!important;
+}
+.head-actions{gap:7px!important}
+.head-actions .icon-btn,.head-actions .profile-btn{
+  width:42px!important;height:42px!important;
+  background:rgba(255,255,255,.055)!important;
+  border:1px solid rgba(255,255,255,.12)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.05)!important;
+}
+.profile-btn span{font-size:8px!important;letter-spacing:1px!important;color:#bdb7c7!important}
+.lang-toggle{background:rgba(255,255,255,.045)!important}
+.lang-toggle span:first-child{background:#fff!important;color:#251d31!important}
+@media(max-width:900px){
+  .site-header{
+    margin:8px 4px 0!important;top:0!important;
+    border-radius:24px!important;padding:9px 10px!important;
+  }
+  .header-inner{min-height:52px!important}
+  .brand{min-width:0!important;gap:11px!important}
+  .premium-brand-mark{width:46px!important;height:46px!important}
+  .brand-copy strong{font-size:17px!important}
+  .brand-copy small{font-size:7px!important;letter-spacing:1.7px!important}
+  .head-actions .icon-btn{display:none!important}
+  .head-actions .profile-btn{width:42px!important;height:42px!important}
+  .lang-toggle{display:none!important}
+}
+@media(max-width:380px){
+  .brand-copy small{display:none!important}
+  .brand-copy strong{font-size:16px!important}
+}
+</style></head>
 <body><div class="ambient-orbs"><i></i><i></i><i></i></div>
 <div class="app">
 <header class="site-header">
   <div class="header-inner">
     <a class="brand" href="#" onclick="go('home');return false" aria-label="Imphal Connect home">
-      <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M24 3c11.6 0 21 8.7 21 20.4 0 12.8-11.8 19.1-21 21.1C14.8 42.5 3 36.2 3 23.4 3 11.7 12.4 3 24 3Z"/><path d="M14 31V17h4v8.3L24 17h5v14h-4v-8.4L19 31h-5Zm17 0V17h4v14h-4Z"/></svg></span>
-      <span><strong>Imphal Connect</strong><small>THE CITY, CURATED</small></span>
+      <span class="brand-mark premium-brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 64 64" role="img" aria-label="Imphal Connect monogram">
+          <defs>
+            <linearGradient id="icGold" x1="8" y1="8" x2="56" y2="56"><stop offset="0" stop-color="#fff4c7"/><stop offset=".45" stop-color="#d8b46a"/><stop offset="1" stop-color="#9b7131"/></linearGradient>
+          </defs>
+          <circle cx="32" cy="32" r="27.5" fill="none" stroke="url(#icGold)" stroke-width="1.25"/>
+          <path d="M21 19v26M21 19h8.5c5.4 0 8.7 3.2 8.7 7.6s-3.3 7.5-8.7 7.5H21" fill="none" stroke="#fff8df" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M48 21.5a13.5 13.5 0 1 0 0 21" fill="none" stroke="url(#icGold)" stroke-width="3" stroke-linecap="round"/>
+          <path d="M36.5 34.2 44 41.5" fill="none" stroke="#fff8df" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </span>
+      <span class="brand-copy"><strong>Imphal Connect</strong><small>IMPHAL · MANIPUR</small></span>
     </a>
     <nav class="desktop-nav" aria-label="Primary">
       <button data-go="home" onclick="go('home')">Home</button>
