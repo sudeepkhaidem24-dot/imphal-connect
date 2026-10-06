@@ -152,7 +152,7 @@ function openingStatus(hours,now=new Date()){
     const off=/\b(off|closed)\b/i.test(part);
     const dayMatch=part.match(/^(Mo|Tu|We|Th|Fr|Sa|Su)(?:\s*[-,]\s*(?:Mo|Tu|We|Th|Fr|Sa|Su))*\b/);
     if(dayMatch&&!dayMatches(dayMatch[0],weekday))continue;
-    const times=[...part.matchAll(/(\d{1,2}):(\d{2})\s*-\s*(\d{1,2}):(\d{2})/g)].map(m=>[+m[1]*60++m[2],+m[3]*60++m[4]]);
+    const times=[...part.matchAll(/(\d{1,2}):(\d{2})\s*-\s*(\d{1,2}):(\d{2})/g)].map(m=>[+m[1]*60 + +m[2],+m[3]*60 + +m[4]]);
     if(off)applicable={off:true};
     else if(times.length)applicable={times};
   }
