@@ -18,7 +18,7 @@ const CATEGORY={
  education:'["amenity"~"school|college|university|kindergarten"]',automotive:'["shop"~"car|car_repair|motorcycle|tyres"]',
  services:'["office"]',banks:'["amenity"~"bank|atm"]',handloom:'["shop"~"fabric|clothes|tailor|art"]',tourism:'["tourism"]'
 };
-const LOCAL_TERMS={food:['food','restaurant','cafe','bakery','fast food'],shopping:['shop','store','market','shopping'],services:['service','office','repair'],hotels:['hotel','guest','hostel','resort','lodge'],cafes:['cafe','coffee'],restaurants:['restaurant','food'],groceries:['grocery','supermarket','convenience','market'],fashion:['fashion','clothes','tailor','shoe'],electronics:['electronics','computer','mobile','phone','appliance'],hardware:['hardware','building','plumbing','electrical'],books:['book','stationery'],pharmacies:['pharmacy','chemist'],health:['health','clinic','doctor','dentist','pharmacy'],clinics:['clinic','doctor','dentist'],hospitals:['hospital'],gyms:['gym','fitness'],salons:['salon','hair','beauty'],education:['school','college','university','education'],automotive:['car','auto','motor','repair','tyre'],banks:['bank','atm'],handloom:['handloom','fabric','tailor','textile'],tourism:['tourism','travel','attraction']};
+const LOCAL_TERMS={food:['food','restaurant','cafe','bakery','fast food'],shopping:['shop','store','market','shopping'],services:['service','office','repair'],hotels:['hotel','guest','hostel','resort','lodge'],resorts:['resort','hotel','farmhouse','retreat'],cafes:['cafe','coffee'],restaurants:['restaurant','food'],groceries:['grocery','supermarket','convenience','market'],fashion:['fashion','clothes','tailor','shoe'],electronics:['electronics','computer','mobile','phone','appliance'],hardware:['hardware','building','plumbing','electrical'],books:['book','stationery'],pharmacies:['pharmacy','chemist'],health:['health','clinic','doctor','dentist','pharmacy'],clinics:['clinic','doctor','dentist'],hospitals:['hospital'],gyms:['gym','fitness'],salons:['salon','hair','beauty'],education:['school','college','university','education'],automotive:['car','auto','motor','repair','tyre'],banks:['bank','atm'],handloom:['handloom','fabric','tailor','textile'],tourism:['tourism','travel','attraction']};
 const ALIAS={
  cafe:'amenity="cafe"',cafes:'amenity="cafe"',coffee:'amenity="cafe"',restaurant:'amenity~"restaurant|fast_food"',restaurants:'amenity~"restaurant|fast_food"',food:'amenity~"restaurant|cafe|fast_food"',
  hotel:'tourism~"hotel|guest_house|hostel|resort"',hotels:'tourism~"hotel|guest_house|hostel|resort"',stay:'tourism~"hotel|guest_house|hostel|resort"',
@@ -87,6 +87,14 @@ function localSnapshotRow(b){
     phone:b.phone||b.whatsapp||'',website:b.website||'',logoUrl:b.logo_url||'',coverUrl:b.cover_url||'',
     isVerified:!!b.is_verified,mapsUrl:maps(b.name,b.address,b.latitude,b.longitude),openingHours:b.opening_hours||null};
 }
+const OFFICIAL_STAYS=[
+  ['Hotel Imphal','Hotel','Imphal East'],['The Classic Hotel','Hotel','Imphal East'],['Classic Grande','Hotel','Imphal East'],
+  ['Hotel Sangai Continental','Hotel','Imphal West'],['Hotel Nirmala','Hotel','Imphal West'],['Hotel Yaisana','Hotel','Imphal West'],
+  ['Hotel Yaiphaba','Hotel','Imphal West'],['Hotel Anand Continental','Hotel','Imphal West'],['Hotel Bheigo','Hotel','Imphal West'],
+  ['Hotel Lanchenba','Hotel','Imphal East'],['The Sangai Hotel','Hotel','Imphal West'],['Sendra Resort','Resort','Bishnupur'],
+  ['The Giving Tree','Homestay','Imphal West']
+];
+function officialStayRows(){return OFFICIAL_STAYS.map(([name,type,city],i)=>({placeId:'gov-stay-'+i,source:'manipur-tourism',name,type,category:type==='Resort'?'Resorts':'Hotels',address:city+', Manipur',city,latitude:null,longitude:null,phone:'',website:'https://manipurtourism.gov.in/find-accommodation/',mapsUrl:maps(name,city+', Manipur'),openingHours:null,officialSource:'Manipur Tourism'}))}
 async function extractImphalSnapshot(){
   const query='[out:json][timeout:60];nwr(around:18000,'+CENTER.lat+','+CENTER.lng+')[name];out center tags qt;';
   const resp=await fetch(OVERPASS_URL,{method:'POST',headers:{'content-type':'application/x-www-form-urlencoded;charset=UTF-8','user-agent':'ImphalConnect/1.0 (+https://imphal-connect.onrender.com)'},body:'data='+encodeURIComponent(query),signal:AbortSignal.timeout(75000)});
@@ -100,7 +108,7 @@ async function extractImphalSnapshot(){
       if(!x.error)localRows=(x.data||[]).map(localSnapshotRow);
     }catch{}
   }
-  const seen=new Set(),places=[...localRows,...osmRows].filter(p=>{
+  const seen=new Set(),places=[...localRows,...osmRows,...officialStayRows()].filter(p=>{
     const key=(p.name+'|'+(p.address||'')).toLowerCase().replace(/[^a-z0-9]+/g,'');
     if(seen.has(key))return false;seen.add(key);return true;
   });
