@@ -235,3 +235,189 @@
 
   setTimeout(()=>{ if(typeof window.renderHome==='function')window.renderHome(); },150);
 })();
+
+/* ===== INSTAGRAM-STYLE DISCOVERY SHELL ===== */
+(() => {
+  'use strict';
+
+  const esc = s => String(s ?? '').replace(/[&<>'"]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[ch]));
+  const categoryMap = {
+    All:'all', Cafes:'cafes', Restaurants:'restaurants', Books:'books', Shopping:'shopping',
+    Hardware:'hardware', Clinics:'health', Hospitals:'hospitals', Pharmacies:'pharmacies',
+    Gyms:'gyms', Salons:'salons', Electronics:'electronics', Fashion:'fashion',
+    Hotels:'hotels', Education:'education', Automotive:'automotive', Services:'services',
+    Banks:'banks', Groceries:'groceries', Handloom:'handloom', Tourism:'tourism'
+  };
+
+  const style=document.createElement('style');
+  style.textContent=`
+    .ic-segment-shell{margin:8px 0 24px}
+    .ic-segment-title{display:flex;align-items:end;justify-content:space-between;gap:12px;margin:0 0 10px}
+    .ic-segment-title h2{margin:0;font:900 18px/1.1 Manrope;color:#07365d}
+    .ic-segment-title span{font-size:9px;color:#6d8492;font-weight:800;text-transform:uppercase;letter-spacing:.08em}
+    .ic-segment-tabs{display:flex;gap:8px;overflow-x:auto;scroll-snap-type:x proximity;scrollbar-width:none;padding:2px 2px 9px}
+    .ic-segment-tabs::-webkit-scrollbar{display:none}
+    .ic-segment-tab{flex:0 0 auto;scroll-snap-align:start;border:1px solid #d9edf5;background:#fff;color:#426275;border-radius:999px;padding:9px 13px;font:800 10px Manrope;white-space:nowrap}
+    .ic-segment-tab.active{background:#07365d;color:#fff;border-color:#07365d;box-shadow:0 7px 18px rgba(7,54,93,.16)}
+    .ic-hscroll{display:flex!important;gap:13px;overflow-x:auto!important;overflow-y:hidden!important;scroll-snap-type:x mandatory!important;scroll-behavior:smooth;padding:3px 2px 15px!important;scrollbar-width:none!important;grid-template-columns:none!important}
+    .ic-hscroll::-webkit-scrollbar{display:none}
+    .ic-hscroll>.ic-google-card{flex:0 0 min(82vw,320px)!important;scroll-snap-align:start!important;min-height:238px}
+    .ic-hscroll>.ic-live-empty,.ic-hscroll>.ic-google-error{flex:0 0 88vw!important;min-width:280px}
+    .ic-swipe-hint{display:flex;align-items:center;gap:7px;font-size:9px;color:#8095a1;font-weight:800;margin:-5px 0 8px}
+    .ic-swipe-hint:after{content:'→';font-size:15px}
+    .ic-feature-strip{display:flex;gap:13px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;padding:4px 2px 13px}
+    .ic-feature-strip::-webkit-scrollbar{display:none}
+    .ic-feature-card{flex:0 0 min(76vw,280px);scroll-snap-align:start;border-radius:20px;padding:16px;background:linear-gradient(135deg,#07365d,#0879d1);color:#fff;min-height:112px;box-shadow:0 12px 26px rgba(7,54,93,.16)}
+    .ic-feature-card b{font:900 13px Manrope}.ic-feature-card p{font-size:10px;opacity:.88;line-height:1.45;margin:7px 0 0}
+    .ic-loading-strip{display:flex;gap:13px;overflow:hidden}
+    .ic-loading-card{flex:0 0 min(82vw,320px);height:238px;border-radius:22px;background:linear-gradient(90deg,#edf5f8,#fff,#edf5f8);background-size:200% 100%;animation:ic-load 1.2s infinite}
+    @keyframes ic-load{to{background-position:-200% 0}}
+    @media(min-width:900px){.ic-hscroll>.ic-google-card{flex-basis:300px}.ic-segment-shell{margin-bottom:30px}}
+  `;
+  document.head.appendChild(style);
+
+  function shell(targetId,title,subtitle){
+    const target=document.getElementById(targetId); if(!target)return null;
+    let s=target.closest('.ic-segment-shell');
+    if(!s){
+      s=document.createElement('div');s.className='ic-segment-shell';
+      target.parentNode.insertBefore(s,target);
+      s.appendChild(target);
+    }
+    s.innerHTML=`
+      <div class="ic-segment-title"><h2>${esc(title)}</h2><span>${esc(subtitle||'LIVE · IMPHAL')}</span></div>
+      <div class="ic-segment-tabs" data-tabs></div>
+      <div class="ic-swipe-hint">Swipe to explore</div>
+      <div id="${target.id}" class="ic-hscroll"></div>`;
+    return s;
+  }
+
+  function tabs(container,active,onPick){
+    const cats=['All','Cafes','Restaurants','Books','Shopping','Hardware','Clinics','Hospitals','Pharmacies','Gyms','Salons','Electronics','Fashion','Hotels','Education','Automotive','Services','Banks','Groceries','Handloom'];
+    container.innerHTML=cats.map(c=>'<button type="button" class="ic-segment-tab '+(c===active?'active':'')+'" data-cat="'+esc(c)+'">'+esc(c)+'</button>').join('');
+    container.querySelectorAll('[data-cat]').forEach(b=>b.addEventListener('click',()=>onPick(b.dataset.cat)));
+  }
+
+  function googleCard(p){
+    const status=p.openNow===true?'<span class="ic-google-status ic-google-open">OPEN</span>':p.openNow===false?'<span class="ic-google-status ic-google-closed">CLOSED</span>':'<span class="ic-google-status ic-google-unknown">HOURS —</span>';
+    const rating=p.rating!=null?'<div class="ic-google-rating"><span class="ic-google-star">★</span><b>'+Number(p.rating).toFixed(1)+'</b><span>'+Number(p.reviewCount||0).toLocaleString('en-IN')+' reviews</span></div>':'<div class="ic-google-rating">No rating yet</div>';
+    const maps=p.mapsUrl||('https://www.google.com/maps/search/?api=1&query='+encodeURIComponent([p.name,p.address].filter(Boolean).join(', ')));
+    const phone=p.phone?'<a href="tel:'+esc(p.phone)+'">Call</a>':'';
+    return '<article class="ic-google-card" data-place-id="'+esc(p.placeId)+'">'+
+      '<div class="ic-google-live">LIVE GOOGLE DATA</div>'+
+      '<div class="ic-google-top"><div><h3 class="ic-google-name">'+esc(p.name)+'</h3><div class="ic-google-type">'+esc(p.type||'Local business')+'</div></div>'+status+'</div>'+
+      '<div class="ic-google-address">'+esc(p.address||'Imphal, Manipur')+'</div>'+rating+
+      '<div class="ic-google-actions"><a class="primary" href="'+esc(maps)+'" target="_blank" rel="noopener">Directions</a>'+phone+(p.website?'<a href="'+esc(p.website)+'" target="_blank" rel="noopener">Website</a>':'')+'</div>'+
+      '<div class="ic-google-attribution">Google Maps</div></article>';
+  }
+
+  async function query(cat,q='',pages=1){
+    const all=[];let token='';
+    for(let i=0;i<pages;i++){
+      const p=new URLSearchParams({category:categoryMap[cat]||'all',pageSize:'20'});
+      if(q)p.set('q',q);if(token)p.set('pageToken',token);
+      const r=await fetch('/api/discovery/google?'+p,{cache:'no-store'});
+      const d=await r.json().catch(()=>({}));
+      if(!r.ok)throw new Error(d.error||'Live discovery unavailable');
+      all.push(...(d.places||[]));token=d.nextPageToken||'';if(!token)break;
+    }
+    const seen=new Set();return all.filter(x=>x.placeId&&!seen.has(x.placeId)&&seen.add(x.placeId));
+  }
+
+  function loading(el){
+    el.innerHTML='<div class="ic-loading-strip">'+[1,2,3].map(()=>'<div class="ic-loading-card"></div>').join('')+'</div>';
+  }
+
+  function installAutoScroll(el){
+    if(el.dataset.autoScroll)return;
+    el.dataset.autoScroll='1';
+    let timer=setInterval(()=>{
+      if(document.hidden)return;
+      const max=el.scrollWidth-el.clientWidth;
+      if(max<20)return;
+      const step=Math.min(335,Math.max(250,el.clientWidth*.82));
+      el.scrollLeft+step>=max-10?el.scrollTo({left:0,behavior:'smooth'}):el.scrollBy({left:step,behavior:'smooth'});
+    },4800);
+    const stop=()=>{clearInterval(timer);timer=setInterval(()=>{
+      const max=el.scrollWidth-el.clientWidth;if(max<20)return;
+      const step=Math.min(335,Math.max(250,el.clientWidth*.82));
+      el.scrollLeft+step>=max-10?el.scrollTo({left:0,behavior:'smooth'}):el.scrollBy({left:step,behavior:'smooth'});
+    },4800)};
+    ['touchstart','pointerdown','wheel'].forEach(e=>el.addEventListener(e,stop,{passive:true}));
+  }
+
+  async function renderSegment(targetId,cat,q=''){
+    const el=document.getElementById(targetId);if(!el)return;
+    loading(el);
+    try{
+      const places=await query(cat,q,2);
+      if(!places.length){
+        el.innerHTML='<div class="ic-live-empty"><b>No '+esc(cat.toLowerCase())+' found.</b>Try another segment or search term.</div>';
+        return;
+      }
+      el.innerHTML=places.map(googleCard).join('');
+      installAutoScroll(el);
+    }catch(e){
+      el.innerHTML='<div class="ic-google-error"><b>Live discovery is temporarily unavailable.</b><br>'+esc(e.message)+'</div>';
+    }
+  }
+
+  async function mixedHome(targetId){
+    const el=document.getElementById(targetId);if(!el)return;
+    loading(el);
+    try{
+      const cats=['Cafes','Restaurants','Shopping','Services','Clinics','Gyms','Books'];
+      const results=await Promise.all(cats.map(c=>query(c,'',1).catch(()=>[])));
+      const mixed=[];const seen=new Set();let round=0;
+      while(mixed.length<24&&round<20){
+        let added=false;
+        for(const arr of results){
+          if(arr[round]&&!seen.has(arr[round].placeId)){mixed.push(arr[round]);seen.add(arr[round].placeId);added=true;}
+          if(mixed.length>=24)break;
+        }
+        if(!added)break;round++;
+      }
+      el.innerHTML=mixed.length?mixed.map(googleCard).join(''):'<div class="ic-live-empty"><b>Live places are loading.</b>Try Explore in a moment.</div>';
+      installAutoScroll(el);
+    }catch(e){
+      el.innerHTML='<div class="ic-google-error"><b>Live discovery is temporarily unavailable.</b><br>'+esc(e.message)+'</div>';
+    }
+  }
+
+  async function buildHome(){
+    const target=document.getElementById('homeCards');if(!target)return;
+    const s=shell('homeCards','Explore Imphal','SWIPE · LIVE PLACES');
+    const t=s.querySelector('[data-tabs]');
+    tabs(t,'All',async cat=>{
+      t.querySelectorAll('.ic-segment-tab').forEach(x=>x.classList.toggle('active',x.dataset.cat===cat));
+      await renderSegment('homeCards',cat);
+    });
+    await mixedHome('homeCards');
+  }
+
+  async function buildExplore(){
+    const target=document.getElementById('exploreCards');if(!target)return;
+    const s=shell('exploreCards','Discover by category','SWIPE · LIVE PLACES');
+    const t=s.querySelector('[data-tabs]');
+    const search=()=>document.getElementById('exploreSearch')?.value?.trim()||'';
+    const initial=window.exploreCat||'All';
+    tabs(t,initial,async cat=>{
+      window.exploreCat=cat;
+      t.querySelectorAll('.ic-segment-tab').forEach(x=>x.classList.toggle('active',x.dataset.cat===cat));
+      await renderSegment('exploreCards',cat,search());
+    });
+    await renderSegment('exploreCards',initial,search());
+  }
+
+  document.addEventListener('click',e=>{
+    const card=e.target.closest('.ic-google-card[data-place-id]');
+    if(card&&!e.target.closest('a,button')){
+      if(window.openGooglePlaceProfile)window.openGooglePlaceProfile(card.dataset.placeId);
+    }
+  });
+
+  window.renderHome=buildHome;
+  window.renderExplore=buildExplore;
+
+  setTimeout(()=>{buildHome().catch(()=>{});},350);
+})();
