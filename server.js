@@ -54,6 +54,134 @@ function publicSupabaseKey(){
 // Cashfree subscription webhook. Keep the raw request body for signature verification.
 app.post('/api/payments/webhook',express.raw({type:'application/json'}),async(req,res)=>{try{const raw=req.body?.toString('utf8')||'';const sig=req.get('x-webhook-signature')||'';const ts=req.get('x-webhook-timestamp')||'';if(!cashfreeWebhookValid(sig,ts,raw))return res.status(400).json({error:'Invalid Cashfree webhook signature'});const event=JSON.parse(raw);const type=String(event?.type||event?.event||'');const data=event?.data||{};const subscriptionId=String(data?.subscription_id||data?.subscriptionId||data?.subscription?.subscription_id||data?.subscription?.id||'');await supabaseAdmin.from('payment_events').insert({event_name:type||'CASHFREE_WEBHOOK',cashfree_id:subscriptionId||null,payload:event});if(subscriptionId){const {data:business}=await supabaseAdmin.from('businesses').select('id,plan,subscription_current_end').eq('subscription_id',subscriptionId).maybeSingle();if(business){const success=type==='SUBSCRIPTION_PAYMENT_SUCCESS'||type==='SUBSCRIPTION_AUTH_STATUS'||type==='SUBSCRIPTION_STATUS_CHANGED';const failed=type==='SUBSCRIPTION_PAYMENT_FAILED'||type==='SUBSCRIPTION_PAYMENT_CANCELLED';let patch={updated_at:new Date().toISOString()};if(success){patch.subscription_status='active';const base=business.subscription_current_end&&new Date(business.subscription_current_end)>new Date()?new Date(business.subscription_current_end):new Date();patch.subscription_current_end=addOneMonth(base)}if(failed){patch.subscription_status=type==='SUBSCRIPTION_PAYMENT_CANCELLED'?'cancelled':'past_due'}if(type==='SUBSCRIPTION_STATUS_CHANGED'){const status=String(data?.subscription_status||data?.status||'').toUpperCase();if(['CANCELLED','COMPLETED','EXPIRED'].includes(status)){patch.subscription_status=status.toLowerCase();patch.plan='free'}}await supabaseAdmin.from('businesses').update(patch).eq('id',business.id)}}return res.json({ok:true})}catch(e){console.error('Cashfree webhook error',e);return res.status(400).json({error:'Webhook processing failed'})}});
 
+
+/* Google Places (New) — live discovery layer. Google place content is fetched on demand
+   and is not persisted in Supabase. Keep the web-service key server-side. */
+const GOOGLE_PLACES_URL='https://places.googleapis.com/v1/places:searchText';
+const GOOGLE_PLACE_DETAILS_URL='https://places.googleapis.com/v1/places/';
+const IMPHAL_CENTER={latitude:24.8170,longitude:93.9368};
+const IMPHAL_RADIUS_METERS=18000;
+const GOOGLE_FIELD_MASK=[
+  'places.id','places.displayName','places.formattedAddress','places.location',
+  'places.googleMapsUri','places.primaryType','places.primaryTypeDisplayName',
+  'places.types','places.businessStatus','places.currentOpeningHours',
+  'places.nationalPhoneNumber','places.internationalPhoneNumber',
+  'places.websiteUri','places.rating','places.userRatingCount',
+  'nextPageToken'
+].join(',');
+
+const DISCOVERY_CATEGORIES={
+  all:'businesses',
+  restaurants:'restaurants',
+  cafes:'cafes coffee shops',
+  shopping:'shops stores shopping',
+  groceries:'grocery stores supermarkets',
+  fashion:'clothing stores fashion',
+  electronics:'electronics stores mobile phone stores computer shops',
+  pharmacies:'pharmacies',
+  health:'clinics hospitals doctors diagnostic centres',
+  gyms:'gyms fitness centres',
+  salons:'salons beauty parlours barbers',
+  books:'bookstores libraries',
+  hotels:'hotels homestays',
+  automotive:'car repair automobile services',
+  education:'schools coaching centres tutors',
+  services:'local services repair services',
+  banks:'banks ATMs',
+  food:'restaurants cafes bakeries food',
+  tourism:'tourist attractions travel services',
+  handloom:'handloom handicrafts local crafts'
+};
+
+function googleKey(){
+  return String(process.env.GOOGLE_MAPS_API_KEY||'').trim();
+}
+function normalisePlace(p){
+  const oh=p?.currentOpeningHours||{};
+  const coords=p?.location||{};
+  return {
+    source:'google',
+    placeId:p?.id||null,
+    name:p?.displayName?.text||'Unnamed place',
+    address:p?.formattedAddress||'',
+    latitude:coords?.latitude??null,
+    longitude:coords?.longitude??null,
+    rating:p?.rating??null,
+    reviewCount:p?.userRatingCount??0,
+    openNow:typeof oh?.openNow==='boolean'?oh.openNow:null,
+    nextOpenTime:oh?.nextOpenTime||null,
+    nextCloseTime:oh?.nextCloseTime||null,
+    hours:oh?.weekdayDescriptions||[],
+    phone:p?.internationalPhoneNumber||p?.nationalPhoneNumber||'',
+    website:p?.websiteUri||'',
+    mapsUrl:p?.googleMapsUri||'',
+    type:p?.primaryTypeDisplayName?.text||p?.primaryType||'Local business',
+    businessStatus:p?.businessStatus||null,
+    types:Array.isArray(p?.types)?p.types.slice(0,12):[]
+  };
+}
+async function googlePlacesRequest(body,fieldMask=GOOGLE_FIELD_MASK){
+  const key=googleKey();
+  if(!key)throw Object.assign(new Error('Google Places is not configured on the server yet.'),{status:503});
+  const r=await fetch(GOOGLE_PLACES_URL,{
+    method:'POST',
+    headers:{'content-type':'application/json','x-goog-api-key':key,'x-goog-fieldmask':fieldMask},
+    body:JSON.stringify(body),
+    signal:AbortSignal.timeout(15000)
+  });
+  const data=await r.json().catch(()=>({}));
+  if(!r.ok){
+    const msg=data?.error?.message||('Google Places request failed ('+r.status+')');
+    const e=new Error(msg);e.status=r.status;e.data=data;throw e;
+  }
+  return data;
+}
+app.get('/api/discovery/google',async(req,res)=>{
+  try{
+    const q=String(req.query.q||'').trim().slice(0,100);
+    const rawCategory=String(req.query.category||'all').toLowerCase().trim();
+    const category=DISCOVERY_CATEGORIES[rawCategory]||DISCOVERY_CATEGORIES.all;
+    const openNow=String(req.query.openNow||'').toLowerCase()==='true';
+    const minRating=Number(req.query.minRating);
+    const pageSize=Math.min(20,Math.max(1,Number(req.query.pageSize)||20));
+    const pageToken=String(req.query.pageToken||'').trim();
+    const textQuery=(q?q:category)+' in Imphal, Manipur, India';
+    const body={
+      textQuery,
+      pageSize,
+      languageCode:'en',
+      regionCode:'IN',
+      locationBias:{circle:{center:IMPHAL_CENTER,radius:IMPHAL_RADIUS_METERS}}
+    };
+    if(pageToken)body.pageToken=pageToken;
+    if(openNow)body.openNow=true;
+    if(Number.isFinite(minRating)&&minRating>=0&&minRating<=5)body.minRating=minRating;
+    const data=await googlePlacesRequest(body);
+    res.set('Cache-Control','no-store');
+    res.json({ok:true,source:'Google Places (New)',query:textQuery,fetchedAt:new Date().toISOString(),places:(data.places||[]).map(normalisePlace),nextPageToken:data.nextPageToken||null});
+  }catch(e){
+    console.error('Google discovery:',e.message);
+    res.status(e.status||502).json({ok:false,error:e.message||'Google Places unavailable'});
+  }
+});
+app.get('/api/discovery/google/:placeId',async(req,res)=>{
+  try{
+    const placeId=String(req.params.placeId||'').replace(/[^A-Za-z0-9_-]/g,'');
+    if(!placeId)return res.status(400).json({error:'Invalid place id'});
+    const key=googleKey();
+    if(!key)return res.status(503).json({error:'Google Places is not configured on the server yet.'});
+    const mask=['id','displayName','formattedAddress','location','googleMapsUri','primaryType','primaryTypeDisplayName','types','businessStatus','currentOpeningHours','regularOpeningHours','nationalPhoneNumber','internationalPhoneNumber','websiteUri','rating','userRatingCount'].join(',');
+    const r=await fetch(GOOGLE_PLACE_DETAILS_URL+encodeURIComponent(placeId),{headers:{'x-goog-api-key':key,'x-goog-fieldmask':mask},signal:AbortSignal.timeout(15000)});
+    const data=await r.json().catch(()=>({}));
+    if(!r.ok)return res.status(r.status).json({error:data?.error?.message||'Google Place Details failed'});
+    res.set('Cache-Control','no-store');
+    res.json({ok:true,place:normalisePlace(data),fetchedAt:new Date().toISOString()});
+  }catch(e){
+    console.error('Google place details:',e.message);
+    res.status(502).json({ok:false,error:e.message||'Google Place Details unavailable'});
+  }
+});
+
 app.use(express.json({limit:'2mb'}));
 app.use(express.static('public',{extensions:['html']}));
 
