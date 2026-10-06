@@ -4,7 +4,7 @@ import { gzipSync, gunzipSync } from 'node:zlib';
 const supabaseUrl=process.env.SUPABASE_URL||'';
 const supabaseSecret=process.env.SUPABASE_SERVICE_ROLE_KEY||'';
 const admin=supabaseUrl&&supabaseSecret?createClient(supabaseUrl,supabaseSecret,{auth:{autoRefreshToken:false,persistSession:false}}):null;
-const OVERPASS_URL=process.env.OVERPASS_URL||'https://overpass.private.coffee/api/interpreter';
+const OVERPASS_URLS=[process.env.OVERPASS_URL,'https://overpass-api.de/api/interpreter','https://overpass.kumi.systems/api/interpreter','https://overpass.private.coffee/api/interpreter'].filter(Boolean);
 const cache=new Map();
 const CENTER={lat:24.817,lng:93.9368};
 const CATEGORY={
@@ -97,9 +97,15 @@ const OFFICIAL_STAYS=[
 function officialStayRows(){return OFFICIAL_STAYS.map(([name,type,city],i)=>({placeId:'gov-stay-'+i,source:'manipur-tourism',name,type,category:type==='Resort'?'Resorts':'Hotels',address:city+', Manipur',city,latitude:null,longitude:null,phone:'',website:'https://manipurtourism.gov.in/find-accommodation/',mapsUrl:maps(name,city+', Manipur'),openingHours:null,officialSource:'Manipur Tourism'}))}
 async function extractImphalSnapshot(){
   const query='[out:json][timeout:60];nwr(around:18000,'+CENTER.lat+','+CENTER.lng+')[name];out center tags qt;';
-  const resp=await fetch(OVERPASS_URL,{method:'POST',headers:{'content-type':'application/x-www-form-urlencoded;charset=UTF-8','user-agent':'ImphalConnect/1.0 (+https://imphal-connect.onrender.com)'},body:'data='+encodeURIComponent(query),signal:AbortSignal.timeout(75000)});
-  if(!resp.ok)throw new Error('OpenStreetMap HTTP '+resp.status);
-  const json=await resp.json();
+  let json=null,lastErr=null;
+  for(const endpoint of OVERPASS_URLS){
+    try{
+      const resp=await fetch(endpoint,{method:'POST',headers:{'content-type':'application/x-www-form-urlencoded;charset=UTF-8','user-agent':'ImphalConnect/1.0 (+https://imphal-connect.onrender.com)'},body:'data='+encodeURIComponent(query),signal:AbortSignal.timeout(45000)});
+      if(!resp.ok){lastErr=new Error('OpenStreetMap HTTP '+resp.status);continue}
+      json=await resp.json();break;
+    }catch(e){lastErr=e}
+  }
+  if(!json)throw lastErr||new Error('No map data source available');
   const osmRows=(json.elements||[]).map(osmSnapshotRow).filter(Boolean);
   let localRows=[];
   if(admin){
