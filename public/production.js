@@ -68,7 +68,7 @@
     catch(e){status.textContent='Discovery temporarily unavailable';grid.innerHTML='<div class="ic-prod-error"><b>Discovery is temporarily unavailable.</b><br>'+esc(e.message||'Unknown error')+'<br><button type="button" onclick="window.renderExplore&&window.renderExplore()">Try again</button></div>'}
   }
   let exploreCat='All';
-  window.renderHome=async function(){if(!$('homeCards'))return;shell('homeCards','Live around Imphal','All',c=>render('homeCards',c,''));await render('homeCards','All','')};
+  window.renderHome=async function(){if(!$('homeCards'))return;shell('homeCards','Life around you','All',c=>render('homeCards',c,''));await render('homeCards','All','')};
   window.renderExplore=async function(){if(!$('exploreCards'))return;if(!$('exploreCards').querySelector('.ic-prod-shell'))shell('exploreCards','Discover Imphal',exploreCat,c=>{exploreCat=c;render('exploreCards',c,$('exploreSearch')?.value||'')});await render('exploreCards',exploreCat,$('exploreSearch')?.value||'')};
   window.searchAll=function(){const q=String($('search')?.value||'').trim();if(!q)return;if(typeof window.go==='function')window.go('explore');if($('exploreSearch'))$('exploreSearch').value=q;exploreCat='All';window.renderExplore()};
   window.setExploreCat=function(cat,el){exploreCat=cat;document.querySelectorAll('#explore .chip').forEach(x=>x.classList.remove('active'));if(el)el.classList.add('active');window.renderExplore()};
