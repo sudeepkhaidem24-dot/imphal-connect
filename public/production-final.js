@@ -158,3 +158,87 @@ window.renderEvents=async()=>{const h=$('eventList');if(!h)return;h.innerHTML='<
 
   addEventListener('load',()=>setTimeout(()=>{window.renderHome?.();window.renderExplore?.();window.renderEvents?.();window.renderDeals?.();window.renderCommunity?.()},80),{once:true});
 })();
+/* ===== ELITE PRODUCTION EXPERIENCE LAYER ===== */
+(() => {
+  'use strict';
+  const $=id=>document.getElementById(id);
+  const style=document.createElement('style');
+  style.id='ic-elite-production-skin';
+  style.textContent=`
+    :root{--bg:#f8faf7!important;--card:#fff!important;--blue:#1e6b4d!important;--cyan:#b7d7b8!important;--navy:#173a2c!important;--ink:#17241d!important;--muted:#66736b!important;--line:#dfe7e0!important;--green:#1e6b4d!important;--gold:#b48a43!important;--shadow:0 12px 34px rgba(23,58,44,.07)!important}
+    body{background:#f8faf7!important;color:#17241d!important}
+    header{background:linear-gradient(#f8faf7 78%,transparent)!important}
+    .logo{background:#1e6b4d!important;box-shadow:none!important}
+    .hero{background:#fff!important;border:1px solid #e1e8e2!important;box-shadow:0 18px 50px rgba(23,58,44,.06)!important}
+    .hero h1,.section-head h2,.ic-final-card h2{color:#173a2c!important}
+    .hero p{color:#5f6d64!important}
+    .search{border:1px solid #d8e3da!important;box-shadow:0 10px 30px rgba(23,58,44,.07)!important}
+    .search button,.chip.active,.ic-final-toolbar button.active,.business button{background:#1e6b4d!important;border-color:#1e6b4d!important}
+    .chip,.ic-final-toolbar button{border-color:#dfe7e0!important}
+    .card,.feature,.offer,.money-card,.plan,.business,.product,.ic-final-card{box-shadow:0 10px 30px rgba(23,58,44,.055)!important;border-color:#e0e7e1!important}
+    .bottom{height:62px!important;border-radius:19px!important;background:rgba(255,255,255,.96)!important;border-color:#dbe5dd!important;box-shadow:0 16px 38px rgba(23,58,44,.12)!important}
+    .nav{border-radius:14px!important}.nav.active{background:#edf5ef!important;color:#1e6b4d!important}
+    .imphi-hero-wrap,#aiFab,.ai,#icCityStory,.ambient-orbs{display:none!important}
+    #home .instant-studio,#home .ic-business-tabs{display:none!important}
+    .ic-final-actions .primary,.sheet .primary{background:#1e6b4d!important;border-color:#1e6b4d!important}
+    .pill,.eyebrow{background:#f0f6f1!important;color:#1e6b4d!important}
+    .ic-elite-nav{display:none}
+    @media(min-width:900px){
+      .ic-elite-nav{display:flex;align-items:center;justify-content:center;gap:28px;margin:2px auto 0;padding:8px 0;color:#52635a;font:700 12px Manrope}
+      .ic-elite-nav a{padding:6px 0}.ic-elite-nav a:hover{color:#1e6b4d}
+      .app{padding-bottom:50px!important}
+      .bottom{display:none!important}
+      .grid{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+      .hero{min-height:330px!important}
+    }
+    @media(max-width:899px){.app{padding-bottom:100px!important}.ic-elite-nav{display:none}}
+  `;
+  document.head.appendChild(style);
+
+  function installNav(){
+    const top=document.querySelector('header .top');
+    if(top&&!document.querySelector('.ic-elite-nav')){
+      const n=document.createElement('nav');n.className='ic-elite-nav';n.innerHTML='<a href="javascript:go(\'home\')">Home</a><a href="javascript:go(\'explore\')">Explore</a><a href="javascript:go(\'categories\')">Categories</a><a href="javascript:go(\'offers\')">Offers</a><a href="/business.html">For Business</a>';
+      top.parentElement.appendChild(n);
+    }
+    const s=$('search');if(s){s.placeholder='Search restaurants, shops, doctors, salons, services…';s.setAttribute('aria-label','Search Imphal businesses and services')}
+  }
+
+  const categoryMap={All:'all',Food:'food',Shopping:'shopping',Health:'services',Beauty:'services',Fitness:'services',Stay:'stay',Education:'services',Automotive:'services',Technology:'shopping','Local Products':'shopping',Services:'services'};
+  function upgradeExploreToolbar(){
+    const bars=document.querySelectorAll('.ic-primary-cats');
+    bars.forEach(bar=>{
+      if(bar.dataset.eliteDone==='1')return;
+      bar.dataset.eliteDone='1';
+      const labels=['All','Food','Shopping','Health','Beauty','Fitness','Stay','Education','Automotive','Technology','Local Products','Services'];
+      bar.innerHTML=labels.map(x=>'<button type="button" role="tab" data-elite-cat="'+x+'">'+x+'</button>').join('');
+      bar.querySelectorAll('button').forEach(btn=>btn.onclick=()=>{
+        const mapped=categoryMap[btn.dataset.eliteCat]||'all';
+        window.exploreCat=mapped;
+        bar.querySelectorAll('button').forEach(x=>x.classList.toggle('active',x===btn));
+        const q=$('exploreSearch');if(q&&mapped!=='all')q.value='';
+        if(typeof window.renderExplore==='function')window.renderExplore();
+      });
+      bar.querySelector('button')?.classList.add('active');
+    });
+  }
+
+  function normalizeBusinessCopy(){
+    document.querySelectorAll('a,button,span,.ic-trust,.ic-enterprise-primary').forEach(el=>{
+      if(!el.childNodes.length)return;
+      const t=el.textContent||'';
+      if(/Business plans · ₹499\/mo|Pro · ₹499\/month|Elite · ₹1,499\/month|Free listing/i.test(t) && !/product|service/i.test(t)){
+        el.textContent=t.replace(/Business plans · ₹499\/mo/g,'Business Owner · ₹120/year').replace(/Free listing/g,'₹120/year owner membership').replace(/Pro · ₹499\/month/g,'No monthly billing').replace(/Elite · ₹1,499\/month/g,'Secure account');
+      }
+    });
+  }
+
+  function init(){
+    installNav();upgradeExploreToolbar();normalizeBusinessCopy();
+    if(location.search.includes('owner=1') && window.IC?.createBusiness){setTimeout(()=>window.IC.createBusiness(),500)}
+    const obs=new MutationObserver(()=>{installNav();upgradeExploreToolbar();normalizeBusinessCopy()});
+    obs.observe(document.body,{childList:true,subtree:true});
+    setTimeout(()=>obs.disconnect(),15000);
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+})();
