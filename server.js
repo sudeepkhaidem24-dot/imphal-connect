@@ -66,7 +66,7 @@ const GOOGLE_FIELD_MASK=[
   'places.googleMapsUri','places.primaryType','places.primaryTypeDisplayName',
   'places.types','places.businessStatus','places.currentOpeningHours',
   'places.nationalPhoneNumber','places.internationalPhoneNumber',
-  'places.websiteUri','places.rating','places.userRatingCount',
+  'places.websiteUri','places.rating','places.userRatingCount','places.photos',
   'nextPageToken'
 ].join(',');
 
@@ -75,11 +75,14 @@ const DISCOVERY_CATEGORIES={
   restaurants:'restaurants',
   cafes:'cafes coffee shops',
   shopping:'shops stores shopping',
+  hardware:'hardware stores building material stores plumbing electrical hardware',
   groceries:'grocery stores supermarkets',
   fashion:'clothing stores fashion',
   electronics:'electronics stores mobile phone stores computer shops',
   pharmacies:'pharmacies',
   health:'clinics hospitals doctors diagnostic centres',
+  clinics:'clinics medical clinics doctors',
+  hospitals:'hospitals medical centres',
   gyms:'gyms fitness centres',
   salons:'salons beauty parlours barbers',
   books:'bookstores libraries',
@@ -117,7 +120,13 @@ function normalisePlace(p){
     mapsUrl:p?.googleMapsUri||'',
     type:p?.primaryTypeDisplayName?.text||p?.primaryType||'Local business',
     businessStatus:p?.businessStatus||null,
-    types:Array.isArray(p?.types)?p.types.slice(0,12):[]
+    types:Array.isArray(p?.types)?p.types.slice(0,12):[],
+    photos:Array.isArray(p?.photos)?p.photos.slice(0,5).map(photo=>({
+      name:photo?.name||'',
+      widthPx:photo?.widthPx||null,
+      heightPx:photo?.heightPx||null,
+      authorAttributions:Array.isArray(photo?.authorAttributions)?photo.authorAttributions.slice(0,3).map(a=>({displayName:a?.displayName||'',uri:a?.uri||'',photoUri:a?.photoUri||''})):[]
+    })).filter(photo=>photo.name):[]
   };
 }
 async function googlePlacesRequest(body,fieldMask=GOOGLE_FIELD_MASK){
@@ -170,7 +179,7 @@ app.get('/api/discovery/google/:placeId',async(req,res)=>{
     if(!placeId)return res.status(400).json({error:'Invalid place id'});
     const key=googleKey();
     if(!key)return res.status(503).json({error:'Google Places is not configured on the server yet.'});
-    const mask=['id','displayName','formattedAddress','location','googleMapsUri','primaryType','primaryTypeDisplayName','types','businessStatus','currentOpeningHours','regularOpeningHours','nationalPhoneNumber','internationalPhoneNumber','websiteUri','rating','userRatingCount'].join(',');
+    const mask=['id','displayName','formattedAddress','location','googleMapsUri','primaryType','primaryTypeDisplayName','types','businessStatus','currentOpeningHours','regularOpeningHours','nationalPhoneNumber','internationalPhoneNumber','websiteUri','rating','userRatingCount','photos'].join(',');
     const r=await fetch(GOOGLE_PLACE_DETAILS_URL+encodeURIComponent(placeId),{headers:{'x-goog-api-key':key,'x-goog-fieldmask':mask},signal:AbortSignal.timeout(15000)});
     const data=await r.json().catch(()=>({}));
     if(!r.ok)return res.status(r.status).json({error:data?.error?.message||'Google Place Details failed'});
@@ -179,6 +188,33 @@ app.get('/api/discovery/google/:placeId',async(req,res)=>{
   }catch(e){
     console.error('Google place details:',e.message);
     res.status(502).json({ok:false,error:e.message||'Google Place Details unavailable'});
+  }
+});
+
+
+app.get('/api/discovery/google-photo',async(req,res)=>{
+  try{
+    const photoName=decodeURIComponent(String(req.query.name||'')).trim();
+    if(!/^places\/[A-Za-z0-9_-]+\/photos\/[A-Za-z0-9_-]+$/.test(photoName))return res.status(400).json({error:'Invalid Google photo reference'});
+    const key=googleKey();
+    if(!key)return res.status(503).json({error:'Google Places is not configured on the server yet.'});
+    const w=Math.min(1200,Math.max(240,Number(req.query.w)||720));
+    const h=Math.min(900,Math.max(160,Number(req.query.h)||480));
+    const url='https://places.googleapis.com/v1/'+photoName+'/media?key='+encodeURIComponent(key)+'&maxWidthPx='+w+'&maxHeightPx='+h;
+    const r=await fetch(url,{redirect:'manual',signal:AbortSignal.timeout(15000)});
+    if(r.status>=300&&r.status<400&&r.headers.get('location')){
+      res.set('Cache-Control','no-store');
+      return res.redirect(302,r.headers.get('location'));
+    }
+    const buf=Buffer.from(await r.arrayBuffer());
+    if(!r.ok)return res.status(r.status).send(buf);
+    res.set('Cache-Control','no-store');
+    res.set('Content-Type',r.headers.get('content-type')||'image/jpeg');
+    res.set('X-Content-Type-Options','nosniff');
+    return res.send(buf);
+  }catch(e){
+    console.error('Google photo:',e.message);
+    return res.status(502).json({error:'Google photo unavailable'});
   }
 });
 
