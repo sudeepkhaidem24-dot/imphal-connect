@@ -160,7 +160,7 @@ async function getCatalog(){
     }catch(e){console.warn('Snapshot read:',e.message)}
   }
   if(!catalogBuildPromise)catalogBuildPromise=extractImphalSnapshot().finally(()=>{catalogBuildPromise=null});
-  const payload=await catalogBuildPromise;catalogCache.set(CATALOG_ID,payload);return payload;
+  const payload=await catalogBuildPromise;catalogCache.set(CATALOG_ID,payload);return withCurrentLocal(payload);
 }
 function dayMatches(selector,day){
   if(!selector)return true;
