@@ -32,7 +32,7 @@ express.static = function patchedStatic(root, options) {
       const contentType = String(res.getHeader('content-type') || '');
       if (contentType.includes('text/html')) {
         const html = body.toString('utf8');
-        const tag = '<script defer src="/upgrade.js?v=20261006"></script>';
+        const tag = '<script defer src="/upgrade.js?build=20261006-2"></script>';
         const upgraded = html.includes('/upgrade.js') ? html : html.replace(/<\/body>/i, tag + '</body>');
         res.setHeader('content-length', Buffer.byteLength(upgraded));
         return originalEnd(Buffer.from(upgraded), undefined, callback);
