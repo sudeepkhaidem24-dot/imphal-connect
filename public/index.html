@@ -3,10 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#eaf8ff">
 <meta name="description" content="Imphal Connect — the digital city platform for Imphal. Discover local businesses, places and experiences, or grow your business with profiles, products, enquiries, analytics and promotion.">
 <link rel="manifest" href="manifest.json">
-<title>Imphal Connect — The city, curated.</title><meta name="theme-color" content="#f5f0e6"><meta property="og:title" content="Imphal Connect — The city, curated."><meta property="og:description" content="Discover places, people, events and local makers in Imphal, Manipur."><meta property="og:type" content="website"><meta property="og:url" content="https://imphal-connect.onrender.com/"><meta property="og:image" content="/media/imphal-hero.webp"><meta name="twitter:card" content="summary_large_image">
+<title>Imphal Connect — The city, curated.</title><meta name="theme-color" content="#17131e"><meta property="og:title" content="Imphal Connect — The city, curated."><meta property="og:description" content="Discover places, people, events and local makers in Imphal, Manipur."><meta property="og:type" content="website"><meta property="og:url" content="https://imphal-connect.onrender.com/"><meta property="og:image" content="/media/imphal-hero.webp"><meta name="twitter:card" content="summary_large_image">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap');
 :root{--bg:#f2fbff;--card:#fff;--blue:#0879d1;--cyan:#5bd7f7;--navy:#07365d;--ink:#09263b;--muted:#71899a;--line:#dceef5;--green:#0ca978;--gold:#e9a72d;--danger:#d64a5c;--shadow:0 18px 50px rgba(24,101,133,.11);--r:24px}
@@ -195,80 +194,7 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:999;ba
 @media(min-width:760px){.item-grid{grid-template-columns:repeat(4,1fr)}.instant-item img{height:140px}}
 </style>
 
-<style id="ic-enterprise-layer">
-/* ===== IMphal Connect Enterprise Launch Layer ===== */
-.ic-enterprise-band{margin-top:18px;padding:24px;border-radius:28px;background:linear-gradient(135deg,#ffffff 0%,#eefaff 55%,#dff6ff 100%);border:1px solid #cfeaf4;box-shadow:0 18px 48px rgba(24,101,133,.09);position:relative;overflow:hidden}
-.ic-enterprise-band:after{content:"";position:absolute;width:230px;height:230px;border-radius:50%;right:-110px;top:-100px;background:radial-gradient(circle,#5bd7f733,transparent 68%);pointer-events:none}
-.ic-enterprise-kicker{display:inline-flex;padding:7px 10px;border-radius:999px;background:#e5f7ff;color:#0879d1;font-size:9px;font-weight:900;letter-spacing:.7px}
-.ic-enterprise-band h2{font:800 clamp(22px,4vw,32px)/1.05 Manrope;color:#07365d;letter-spacing:-1px;margin:11px 0 8px}
-.ic-enterprise-band p{font-size:11px;line-height:1.65;color:#5d7787;max-width:700px;margin:0}
-.ic-enterprise-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:17px}
-.ic-enterprise-mini{background:#ffffffd9;border:1px solid #d9edf5;border-radius:16px;padding:12px}
-.ic-enterprise-mini b{display:block;font:800 12px Manrope;color:#07365d;margin-bottom:3px}.ic-enterprise-mini span{font-size:8px;color:#71899a;line-height:1.4}
-.ic-enterprise-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}.ic-enterprise-actions a{padding:11px 14px;border-radius:12px;font-size:9px;font-weight:900}.ic-enterprise-primary{background:#0879d1;color:#fff;box-shadow:0 10px 24px #0879d12b}.ic-enterprise-secondary{background:#fff;border:1px solid #d7eaf2;color:#07588e}
-.ic-city-story{display:grid;grid-template-columns:1.2fr .8fr;gap:10px;margin-top:10px}
-.ic-city-story-card{min-height:190px;border-radius:24px;overflow:hidden;position:relative;background:#07365d center/cover;box-shadow:0 14px 34px #196c8f14}
-.ic-city-story-card:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 30%,rgba(3,30,49,.78))}
-.ic-city-story-card div{position:absolute;left:16px;right:16px;bottom:15px;z-index:2;color:#fff}.ic-city-story-card small{font-size:8px;font-weight:900;letter-spacing:.7px;opacity:.78}.ic-city-story-card h3{font:800 17px Manrope;margin:6px 0 0}
-.ic-trust-strip{display:flex;gap:7px;flex-wrap:wrap;margin-top:13px}.ic-trust{padding:7px 9px;border-radius:999px;background:#fff;border:1px solid #dceef5;color:#567384;font-size:8px;font-weight:800}
-.ic-footer{margin:35px 0 95px;padding:20px 2px;border-top:1px solid #dceef5;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;color:#6b8594;font-size:9px}.ic-footer b{color:#07365d;font:800 13px Manrope}.ic-footer-links{display:flex;gap:12px;flex-wrap:wrap}.ic-footer-links a:hover{color:#0879d1}
-@media(max-width:760px){.ic-enterprise-grid{grid-template-columns:1fr 1fr}.ic-city-story{grid-template-columns:1fr}.ic-city-story-card{min-height:165px}}
-@media(prefers-reduced-motion:reduce){.ic-enterprise-band *{animation:none!important}}
-</style>
-<script id="ic-enterprise-launch">
-(function(){
-  function mountEnterpriseLayer(){
-    const hero=document.querySelector('#home .hero');
-    if(hero && !document.getElementById('icEnterpriseBand')){
-      const band=document.createElement('section');band.id='icEnterpriseBand';band.className='ic-enterprise-band';
-      band.innerHTML=`
-        <span class="ic-enterprise-kicker">FOR LOCAL BUSINESSES · BUILT IN IMPHAL</span>
-        <h2>Get discovered. Get enquiries. Grow locally.</h2>
-        <p>Imphal Connect is a digital business platform for local merchants, restaurants, stays, makers and service providers. Create a professional presence, showcase products and services, receive customer enquiries and understand demand — all in one place.</p>
-        <div class="ic-enterprise-grid">
-          <div class="ic-enterprise-mini"><b>Profile</b><span>Your professional local business page.</span></div>
-          <div class="ic-enterprise-mini"><b>Catalogue</b><span>Products, services, prices and photos.</span></div>
-          <div class="ic-enterprise-mini"><b>Leads</b><span>Real customer enquiries in your inbox.</span></div>
-          <div class="ic-enterprise-mini"><b>Insights</b><span>Analytics and promotional tools.</span></div>
-        </div>
-        <div class="ic-enterprise-actions">
-          <a class="ic-enterprise-primary" href="/business.html">Business plans · ₹499/mo</a>
-          <a class="ic-enterprise-secondary" href="javascript:IC.openOwner()">Manage my business</a>
-        </div>
-        <div class="ic-trust-strip"><span class="ic-trust">Free listing</span><span class="ic-trust">Pro · ₹499/month</span><span class="ic-trust">Elite · ₹1,499/month</span><span class="ic-trust">Secure account</span></div>`;
-      hero.after(band);
-    }
-    const h1=document.querySelector('#home .hero h1'), p=document.querySelector('#home .hero p'), eye=document.querySelector('#home .hero .eyebrow');
-    if(h1) h1.innerHTML='Everything Imphal.<br>One digital home.';
-    if(p) p.textContent='Discover local businesses, places and experiences — or give your own business the digital tools to get found, receive enquiries and grow.';
-    if(eye) eye.innerHTML='<i class="live"></i> LIVE FROM IMPHAL · LOCAL BUSINESSES & PEOPLE';
-    const search=document.getElementById('search'); if(search) search.placeholder='Search businesses, food, stays, services…';
-    const aiTitle=document.querySelector('#home .ai h3'); if(aiTitle) aiTitle.textContent='Ask Imphal AI anything.';
-    const aiText=document.querySelector('#home .ai p'); if(aiText) aiText.textContent='Plan your day, discover local businesses, compare options, understand something, or ask for a practical recommendation.';
-    
-    if(!document.getElementById('icCityStory')){
-      const anchor=document.querySelector('#home .section .map')?.closest('.section');
-      if(anchor){
-        const s=document.createElement('section');s.id='icCityStory';s.className='section';
-        s.innerHTML=`
-          <div class="section-head"><h2>See Imphal differently</h2><button onclick="openAI()">Ask Imphal AI</button></div>
-          <div class="ic-city-story">
-            <article class="ic-city-story-card" style="background-image:url('https://imphalsmartcitylimited.com/Assets/img/gallery/Ima_Keithel.jpg')"><div><small>DISCOVER · EXPLORE · EXPERIENCE</small><h3>From everyday places to memorable days.</h3></div></article>
-            <article class="ic-city-story-card" style="background-image:url('https://imphalsmartcitylimited.com/Assets/img/gallery/Ima_Keithel.jpg')"><div><small>LOCAL BUSINESS</small><h3>Support the people building Imphal.</h3></div></article>
-          </div>`;
-        anchor.after(s);
-      }
-    }
-    if(!document.getElementById('icFooter')){
-      const f=document.createElement('footer');f.id='icFooter';f.className='ic-footer';
-      f.innerHTML='<div><b>Imphal Connect</b><br><span>Imphal’s digital city platform.</span></div><div class="ic-footer-links"><a href="/business.html">For Businesses</a><a href="/terms.html">Terms</a><a href="/privacy.html">Privacy</a><a href="/refund.html">Refunds</a><a href="/contact.html">Support</a></div>';
-      document.querySelector('.app')?.appendChild(f);
-    }
-  }
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',mountEnterpriseLayer); else mountEnterpriseLayer();
-  setTimeout(mountEnterpriseLayer,900);
-})();
-</script>
+
 <style id="ic-luxury-system">
 /* ===== IMPhAL CONNECT — LUXURY CITY OS ===== */
 :root{--lux-ink:#071a2a;--lux-white:#fbfdff;--lux-blue:#1687d9;--lux-cyan:#74e8ff;--lux-glass:rgba(255,255,255,.74)}
@@ -502,6 +428,44 @@ button,.btn,.solid-btn,.outline-btn,.text-link{min-height:44px}
   .logo-mark svg,.logo-mark:after,.ambient-orbs i,.hero:after,.ai-fab,.ai-orb{animation:none!important}
 }
 </style>
+<style id="imphal-unified-design-system">
+/* IMphal Connect — single visual contract */
+:root{
+  --bg:#f2eee7;--surface:#fffdf8;--surface-2:#eee9df;--ink:#17131e;--ink-2:#3f3a45;
+  --muted:#625d68;--line:#ddd7cd;--dark:#17131e;--purple:#6337e8;--purple-2:#8f5cff;
+  --lime:#c7f27c;--cyan:#55d7ee;--radius:26px;--shadow:0 18px 55px rgba(24,19,30,.10)
+}
+html,body{background:var(--bg)!important;color:var(--ink)!important}
+body{font-family:"DM Sans",system-ui,sans-serif;overflow-x:hidden}
+h1,h2,h3,h4,h5,h6,.brand strong,.brand b{font-family:"Manrope",system-ui,sans-serif}
+.app{max-width:1440px!important;padding:0 28px 120px!important}
+.site-header{background:rgba(23,19,30,.94)!important;border:1px solid rgba(255,255,255,.12)!important;border-radius:22px!important;box-shadow:0 18px 55px rgba(17,16,22,.16)!important}
+.desktop-nav button{color:#c7c2cd!important}.desktop-nav button:hover{color:#fff!important;background:#ffffff10!important}
+.section-heading h2,.section-intro h2,.section-head h2{color:var(--ink)!important}
+.section-heading p,.section-intro p,.section>p,.meta,.muted{color:var(--muted)!important}
+.text-link,.section-head button,.section-head a,.link{color:var(--purple)!important}
+.card,.feature,.product,.offer,.money-card,.plan,.faq-list details,.business,.search,.chip{background:var(--surface)!important;border-color:var(--line)!important;color:var(--ink)!important}
+.card h3,.feature h3,.product h3,.business h3,.money-card b,.faq-list summary,.plan h3{color:var(--ink)!important}
+.card .meta,.feature p,.product p,.business p,.money-card small,.plan small,.plan ul,.faq-list p{color:var(--muted)!important}
+.card,.feature,.product,.offer,.money-card,.plan,.business{box-shadow:var(--shadow)!important}
+.card:hover,.product:hover,.offer:hover,.money-card:hover{transform:translateY(-4px)!important;box-shadow:0 24px 65px rgba(24,19,30,.15)!important}
+.chip{font-weight:800!important}.chip.active{background:var(--dark)!important;color:#fff!important;border-color:var(--dark)!important}
+.hero-search{border:1px solid rgba(23,19,30,.09)!important}.hero-search input{color:var(--ink)!important}.hero-search input::placeholder{color:#746e79!important}
+.solid-btn,.primary{background:var(--purple)!important;color:#fff!important}.solid-btn:hover,.primary:hover{background:#5427cf!important}
+.outline-btn{border-color:rgba(255,255,255,.32)!important;color:#fff!important}
+.event-editorial-list .event{background:linear-gradient(135deg,#17131e,#6337e8)!important;color:#fff!important}.event-editorial-list .event h3,.event-editorial-list .event p{color:#fff!important}
+.travel-copy,.dashboard-card{background:var(--dark)!important;color:#fff!important}.travel-copy h2,.dashboard-card h2,.dashboard-card h3{color:#fff!important}
+.business-cta{background:linear-gradient(135deg,#c7f27c,#96cf5c)!important;color:#17131e!important}
+.business-cta h2,.business-cta p{color:#17131e!important}
+.global-footer,.editorial-footer{border-color:var(--line)!important}.global-footer strong,.footer-brand{color:var(--ink)!important}
+.bottom{background:rgba(23,19,30,.94)!important;border-color:rgba(255,255,255,.12)!important}.nav{color:#aaa3b0!important}.nav.active{color:#fff!important;background:linear-gradient(135deg,var(--purple),var(--purple-2))!important}
+.ai-fab{background:linear-gradient(135deg,var(--purple),var(--cyan))!important;color:#fff!important}
+input,textarea,select{color:var(--ink)!important;background:#fff!important;border-color:var(--line)!important}input::placeholder,textarea::placeholder{color:#746e79!important}
+button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid rgba(99,55,232,.35)!important;outline-offset:2px}
+@media(max-width:900px){.app{padding:0 14px 105px!important}.site-header{top:8px!important;margin-top:8px!important}.desktop-nav{display:none!important}}
+@media(max-width:560px){.app{padding-left:10px!important;padding-right:10px!important}.editorial-hero,.business-hero{border-radius:26px!important}.section-heading h2,.section-intro h2{font-size:36px!important}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+</style>
 </head>
 <body><div class="ambient-orbs"><i></i><i></i><i></i></div>
 <div class="app">
@@ -546,7 +510,6 @@ button,.btn,.solid-btn,.outline-btn,.text-link{min-height:44px}
 </div>
 
 
-<!-- HOME -->
 <!-- HOME -->
 <main id="home" class="view active">
   <section class="editorial-hero">
@@ -1945,9 +1908,7 @@ cleanExpiredStories();
     <div id="icOwnerContent"></div>
   </div>
 </div>
-<style>
-.ic-prod-modal{position:fixed;inset:0;background:rgba(4,35,65,.45);backdrop-filter:blur(18px);z-index:9999;display:grid;place-items:center;padding:18px}.ic-prod-modal[hidden]{display:none}.ic-prod-card{position:relative;width:min(520px,100%);background:rgba(255,255,255,.96);border:1px solid rgba(255,255,255,.8);border-radius:28px;padding:28px;box-shadow:0 30px 90px rgba(0,55,110,.3);color:#07365d}.ic-prod-wide{width:min(860px,100%);max-height:88vh;overflow:auto}.ic-prod-close{position:absolute;right:16px;top:12px;border:0;background:#eef8ff;width:36px;height:36px;border-radius:50%;font-size:24px;color:#23618f}.ic-prod-kicker{font-size:11px;font-weight:900;letter-spacing:.16em;color:#0879d1;margin-bottom:8px}.ic-prod-card h2{margin:0 0 8px;font-size:28px}.ic-prod-card p{color:#5c7891}.ic-prod-input{width:100%;box-sizing:border-box;margin:7px 0;padding:14px 15px;border:1px solid #cfe5f4;border-radius:14px;background:#f8fcff;outline:none}.ic-prod-input:focus{border-color:#4ebce9;box-shadow:0 0 0 4px rgba(91,215,247,.15)}.ic-prod-actions{display:flex;gap:10px;margin-top:12px}.ic-prod-primary,.ic-prod-secondary{border:0;border-radius:14px;padding:13px 18px;font-weight:800;cursor:pointer}.ic-prod-primary{background:linear-gradient(135deg,#0879d1,#43c7ed);color:#fff;box-shadow:0 10px 25px rgba(8,121,209,.22)}.ic-prod-secondary{background:#eef8ff;color:#0870ba}.ic-prod-msg{min-height:24px;margin-top:12px;font-size:13px}.ic-auth-forgot{margin-top:10px;border:0;background:none;color:#0879d1;font-size:12px;font-weight:800;padding:6px 0;cursor:pointer;text-align:left}.ic-auth-forgot:hover{text-decoration:underline}.ic-owner-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.ic-owner-stat{padding:18px;border-radius:20px;background:linear-gradient(145deg,#f3fbff,#e8f6ff);border:1px solid #d6edf9}.ic-owner-stat b{font-size:25px}.ic-owner-box{margin-top:14px;padding:18px;border:1px solid #dceef8;border-radius:20px}.ic-owner-box h3{margin:0 0 10px}.ic-owner-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid #e8f2f8}.ic-owner-row:last-child{border-bottom:0}.ic-badge{display:inline-block;padding:5px 9px;border-radius:999px;background:#e8f7ee;color:#17854a;font-size:11px;font-weight:900}.ic-badge.off{background:#fff1e7;color:#b65c18}.ic-plan-btn{border:0;border-radius:12px;padding:10px 13px;background:#0879d1;color:#fff;font-weight:800;cursor:pointer}.ic-danger{background:#fff0f0;color:#c23b3b}.ic-mini{font-size:12px;color:#698398}@media(max-width:650px){.ic-owner-grid{grid-template-columns:1fr}.ic-prod-card{padding:22px}}
-</style>
+
 
 
 <script>
@@ -2054,13 +2015,7 @@ const _oldSubmitAuth=IC.submitAuth;
 IC.submitAuth=async function(){await _oldSubmitAuth(); if(window.__icPendingPlan && IC.loadMe){await IC.loadMe(); if(window.ICPRO?.P?.session){const p=window.__icPendingPlan;window.__icPendingPlan=null;IC.subscribe(p)}}};
 </script>
 
-<style>
-/* ===== FINAL PRODUCTION V2 LAYER ===== */
-.prod-pill{display:inline-flex;align-items:center;gap:6px;padding:7px 10px;border-radius:999px;background:#eef9ff;color:#0879d1;font-size:9px;font-weight:900}
-.prod-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.prod-card{background:#fff;border:1px solid #dceef5;border-radius:20px;padding:13px}.prod-card h4{font:800 13px Manrope;margin:0 0 5px;color:#07365d}.prod-card p{font-size:9px;color:#71899a;line-height:1.5;margin:0}.prod-card button,.prod-btn{border:0;border-radius:11px;padding:9px 11px;background:#0879d1;color:#fff;font-size:9px;font-weight:900}.prod-btn.alt{background:#e9f7ff;color:#07588e}.prod-btn.danger{background:#fff0f0;color:#b63c45}
-.prod-table{width:100%;border-collapse:separate;border-spacing:0 7px;font-size:9px}.prod-table td{background:#fff;padding:9px;border-top:1px solid #dceef5;border-bottom:1px solid #dceef5}.prod-table td:first-child{border-left:1px solid #dceef5;border-radius:10px 0 0 10px}.prod-table td:last-child{border-right:1px solid #dceef5;border-radius:0 10px 10px 0}.status{display:inline-block;padding:4px 7px;border-radius:999px;background:#eaf8ef;color:#14814b;font-size:8px;font-weight:900}.status.off{background:#fff0ed;color:#b54c35}.status.blue{background:#eaf5ff;color:#086dc0}.admin-shell{min-height:calc(100vh - 80px)}.admin-hero{background:linear-gradient(135deg,#07365d,#0879d1 60%,#5bd7f7);color:#fff;border-radius:28px;padding:22px;position:relative;overflow:hidden}.admin-hero h1{font:800 32px Manrope;margin:7px 0}.admin-nav{display:flex;gap:7px;overflow:auto;padding:13px 0;scrollbar-width:none}.admin-nav button{white-space:nowrap;padding:10px 13px;border-radius:13px;background:#fff;border:1px solid #dceef5;color:#315a70;font-size:9px;font-weight:900}.admin-nav button.active{background:#0879d1;color:#fff;border-color:#0879d1}.admin-section{display:none}.admin-section.active{display:block}.funding-card{background:linear-gradient(135deg,#f0fbff,#fff);border:1px solid #dceef5;border-radius:22px;padding:17px}.funding-card h3{font:800 16px Manrope;color:#07365d;margin:4px 0}.funding-card label{font-size:9px;font-weight:800;color:#557184;display:block;margin:8px 0 4px}.funding-card input,.funding-card textarea,.funding-card select{width:100%;border:1px solid #d7eaf3;border-radius:11px;padding:10px;outline:none;background:#fff;font-size:11px}.funding-card textarea{min-height:80px;resize:vertical}.mini-kpi{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.mini-kpi div{background:#fff;border:1px solid #dceef5;border-radius:15px;padding:10px}.mini-kpi b{font:800 17px Manrope;color:#07365d;display:block}.mini-kpi span{font-size:8px;color:#71899a}.hidden-prod{display:none!important}
-@media(min-width:760px){.prod-grid{grid-template-columns:repeat(3,1fr)}}
-</style>
+
 <script>
 /* ===== PRODUCTION APP BRIDGE ===== */
 (function(){
@@ -2180,11 +2135,7 @@ window.trackBusinessEvent=async function(businessId,eventType,meta={}){try{await
 </script>
 
 
-<style>
-/* CUSTOMER READY LAUNCH LAYER */
-.ic-launch-form{display:grid;gap:10px}.ic-launch-form label{font-size:10px;font-weight:800;color:#416276}.ic-launch-form input,.ic-launch-form select,.ic-launch-form textarea{width:100%;border:1px solid #dceef5;background:#fff;border-radius:14px;padding:12px;outline:0;color:#09263b}.ic-launch-form textarea{min-height:90px;resize:vertical}.ic-launch-actions{display:flex;gap:8px}.ic-launch-actions button{flex:1}.ic-lead{background:#fff;border:1px solid #dceef5;border-radius:18px;padding:13px;margin-top:9px}.ic-lead-top{display:flex;justify-content:space-between;gap:8px}.ic-lead-name{font-weight:900;font-size:12px}.ic-lead-msg{font-size:10px;line-height:1.5;color:#526f80;margin:7px 0}.ic-lead-meta{font-size:9px;color:#8299a6}.ic-lead-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.ic-lead-actions button{background:#eaf8ff;color:#0879d1;border-radius:10px;padding:7px 9px;font-size:9px;font-weight:900}.ic-live-empty{grid-column:1/-1;background:#fff;border:1px solid #dceef5;border-radius:20px;padding:28px;text-align:center;color:#71899a;font-size:11px}.ic-live-empty b{display:block;color:#07365d;font:800 15px Manrope;margin-bottom:6px}.ic-status-new{color:#0879d1}.ic-status-contacted{color:#b77700}.ic-status-qualified{color:#0b9a6b}.ic-status-closed{color:#71899a}
-@media(max-width:700px){.ic-prod-modal{padding:10px}.ic-prod-card{padding:20px;border-radius:23px}.ic-owner-grid{grid-template-columns:1fr 1fr}.ic-launch-actions{flex-direction:column}.ic-lead-top{align-items:flex-start}}
-</style>
+
 <script>
 /* ===== CUSTOMER READY LAUNCH LAYER ===== */
 (function(){
