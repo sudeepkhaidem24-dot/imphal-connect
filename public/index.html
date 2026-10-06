@@ -454,7 +454,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 /* Timber category: warm, material-led imagery; never repeat one image across café cards. */
 .timber-thumb{background-size:cover;background-position:center}
 .cafe-grid .card .thumb{background-color:#6b4a32}
-</style></head>
+</style><style id="ic-no-map-view">#map{display:none!important}.map{display:none!important}</style></head>
 <body><div class="ambient-orbs"><i></i><i></i><i></i></div>
 <div class="app">
 <header class="site-header">
@@ -569,22 +569,15 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 
 <!-- EXPLORE -->
 <main id="explore" class="view">
-<section class="section"><div class="section-head"><h2>Explore Imphal</h2><button onclick="go('map')">Map</button></div><div class="search" style="margin:0"><span>⌕</span><input id="exploreSearch" placeholder="Search everything…" oninput="renderExplore()"></div></section>
+<section class="section"><div class="section-head"><h2>Explore Imphal</h2><button onclick="go('explore')">See places</button></div><div class="search" style="margin:0"><span>⌕</span><input id="exploreSearch" placeholder="Search everything…" oninput="renderExplore()"></div></section>
 <section class="section"><div class="chips"><button class="chip active" onclick="setExploreCat('All',this)">All</button><button class="chip" onclick="setExploreCat('Food',this)">Food</button><button class="chip" onclick="setExploreCat('Shopping',this)">Shopping</button><button class="chip" onclick="setExploreCat('Services',this)">Services</button><button class="chip" onclick="setExploreCat('Stay',this)">Stay</button><button class="chip" onclick="setExploreCat('Events',this)">Events</button></div></section>
 <section class="section"><div class="grid" id="exploreCards"></div><div id="exploreEmpty" class="empty hidden">No places matched your search.</div></section>
-</main>
-
-<!-- MAP -->
-<main id="map" class="view">
-<section class="section"><div class="section-head"><h2>Map of Imphal</h2><button onclick="showToast('Location access can be connected in production')">Near me</button></div>
-<div class="map" style="height:520px"><div class="pin p1"><i>⌖</i></div><div class="pin p2"><i>⌖</i></div><div class="pin p3"><i>⌖</i></div><div class="maplabel">Kangla · Thangmeiband · Keishampat · Imphal</div></div></section>
-<section class="section"><div class="feature"><div class="feature-img" style="background-image:url('https://s7ap1.scene7.com/is/image/incredibleindia/kangla-fort-imphal-manipur-1-city-attr?qlt=82&ts=1742163661040')"></div><div><span class="pill">DISCOVER MANIPUR</span><h3>Go beyond the city.</h3><p>Build a route to Loktak, Keibul Lamjao, Ukhrul and more.</p><button class="darkbtn" onclick="go('travel')">Open travel guide</button></div></div></section>
 </main>
 
 <!-- TRAVEL -->
 <main id="travel" class="view">
 <section class="hero" style="margin-top:8px;min-height:300px"><span class="eyebrow">MANIPUR TRAVEL GUIDE</span><h1>Your first 48 hours.</h1><p>Heritage, markets, food, nature and experiences—built around your time and budget.</p><button class="darkbtn" onclick="openSheet('trip')">Build my itinerary →</button></section>
-<section class="section"><div class="section-head"><h2>Places worth the journey</h2><button onclick="go('map')">Map</button></div><div class="grid">
+<section class="section"><div class="section-head"><h2>Places worth the journey</h2><button onclick="go('explore')">See places</button></div><div class="grid">
 <div class="card"><div class="thumb" style="background-image:url('https://s7ap1.scene7.com/is/image/incredibleindia/kangla-fort-imphal-manipur-1-city-attr?qlt=82&ts=1742163661040')"><span class="badge">LOKTAK</span></div><div class="body"><h3>Loktak Lake</h3><div class="meta">Floating islands · Nature</div></div></div>
 <div class="card"><div class="thumb" style="background-image:url('https://images.mindtrip.ai/attractions/e745/fb64/f31b/0a21/f4ff/cc0d/b365/f4ff')"><span class="badge">WILDLIFE</span></div><div class="body"><h3>Keibul Lamjao</h3><div class="meta">Sangai · National Park</div></div></div>
 <div class="card"><div class="thumb" style="background-image:url('https://images.mindtrip.ai/attractions/e745/fb64/f31b/0a21/f4ff/cc0d/b365/f4ff')"><span class="badge">UKHRUL</span></div><div class="body"><h3>Shirui Hills</h3><div class="meta">Hills · Trails · Nature</div></div></div>
@@ -1427,10 +1420,10 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 <script id="ic-image-uniqueness">
 (function(){
  const timber=[
-  'https://imphalsmartcitylimited.com/Assets/img/gallery/Ima_Keithel.jpg',
-  'https://s7ap1.scene7.com/is/image/incredibleindia/kangla-fort-imphal-manipur-1-city-attr?qlt=82&ts=1742163661040',
-  'https://images.mindtrip.ai/attractions/e745/fb64/f31b/0a21/f4ff/cc0d/b365/f4ff'
- ];
+  'https://mindtrip.ai/restaurants/4f6c/2f24/8d90/270b/ad60/d01b/982d/d8e2',
+  'https://mindtrip.ai/restaurants/0ef8/030f/e79f/c803/b0c4/7f7f/494e/a7bb',
+  'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/22/69/0a/0e/caption.jpg?h=1200&s=1&w=1200'
+];
  function dedupe(){
    const imgs=[...document.querySelectorAll('.card .thumb[style*="background-image"],.feature-img[style*="background-image"],.product-img[style*="background-image"],img')];
    const seen=new Set(), candidates=[...document.querySelectorAll('.card .thumb')];
