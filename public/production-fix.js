@@ -7,7 +7,7 @@
       const host=document.getElementById('icHomeLiveMap');
       host.innerHTML='<div style="width:100%;height:100%"></div>';
       const map=L.map(host.firstElementChild,{zoomControl:false,dragging:true,scrollWheelZoom:true}).setView([24.817,93.9368],13);
-      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap contributors'}).addTo(map);
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{maxZoom:19,attribution:'© OpenStreetMap contributors © CARTO'}).addTo(map);
       window.__IC_HOME_MAP_READY__=true;
       setTimeout(()=>map.invalidateSize(),100);
     }
@@ -18,7 +18,7 @@
         if(home&&!window.__IC_HOME_MAP_READY__&&window.L){
           home.innerHTML='<div style="width:100%;height:100%"></div>';
           const map=L.map(home.firstElementChild,{zoomControl:false,dragging:true,scrollWheelZoom:true}).setView([24.817,93.9368],13);
-          L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap contributors'}).addTo(map);
+          L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{maxZoom:19,attribution:'© OpenStreetMap contributors © CARTO'}).addTo(map);
           window.__IC_HOME_MAP_READY__=true;
         }
         return old();
