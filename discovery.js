@@ -105,14 +105,17 @@ async function extractImphalSnapshot(){
       json=await resp.json();break;
     }catch(e){lastErr=e}
   }
-  if(!json)throw lastErr||new Error('No map data source available');
-  const osmRows=(json.elements||[]).map(osmSnapshotRow).filter(Boolean);
+  const osmRows=json?(json.elements||[]).map(osmSnapshotRow).filter(Boolean):[];
   let localRows=[];
   if(admin){
     try{
-      const x=await admin.from('businesses').select('id,name,category,phone,whatsapp,address,city,latitude,longitude,logo_url,cover_url,is_verified,is_published').eq('is_published',true).limit(5000);
+      const x=await admin.from('businesses').select('id,name,category,phone,whatsapp,address,city,latitude,longitude,logo_url,cover_url,opening_hours,website,instagram_url,gallery_urls,is_verified,is_published').eq('is_published',true).limit(5000);
       if(!x.error)localRows=(x.data||[]).map(localSnapshotRow);
     }catch{}
+  }
+  if(!json&&localRows.length===0){
+    // Official accommodation rows remain usable even when every public map endpoint is unavailable.
+    console.warn('OpenStreetMap unavailable during catalog rebuild:',lastErr?.message||'unknown');
   }
   const seen=new Set(),places=[...localRows,...osmRows,...officialStayRows()].filter(p=>{
     const key=(p.name+'|'+(p.address||'')).toLowerCase().replace(/[^a-z0-9]+/g,'');
