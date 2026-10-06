@@ -319,3 +319,12 @@
   };
   window.addEventListener('load',()=>{updateBack();if($('businessWorkspace'))window.openBusinessTab('profile',document.querySelector('[data-btab="profile"]'))},{once:true});
 })();
+
+(() => {
+  window.openOwnerStudio=function(){
+    if(typeof window.openCustom==='function')window.openCustom('<div class="grab"></div><span class="pill">CATALOG EDITOR</span><h2>Add to your public catalog</h2><p>Create a product or service with a name, price, category and availability.</p><input id="icItemName" placeholder="Product / service name"><input id="icItemPrice" placeholder="Price (₹)"><select id="icItemType"><option>Product</option><option>Service</option><option>Rate</option></select><button class="primary" onclick="toast(\'Catalog item saved locally\');closeSheet()">Save to catalog</button>');
+  };
+  window.openStoryStudio=function(){
+    if(typeof window.openCustom==='function')window.openCustom('<div class="grab"></div><span class="pill">INSTANT STORY</span><h2>Post a business story</h2><p>Share a product, offer, opening update or local moment.</p><textarea id="icStoryText" placeholder="What is happening at your business?"></textarea><button class="primary" onclick="toast(\'Story saved\');closeSheet()">Publish story</button>');
+  };
+})();
