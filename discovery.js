@@ -32,7 +32,7 @@ function safe(s,max=80){return String(s||'').replace(/[^\p{L}\p{N}\s&'._-]/gu,' 
 function rx(s){return safe(s,50).replace(/[.*+?^${}()|[\]\\]/g,'\\$&')}
 function dist(a,b,c,d){const R=6371,r=Math.PI/180,x=(c-a)*r,y=(d-b)*r,h=Math.sin(y/2)**2+Math.cos(a*r)*Math.cos(c*r)*Math.sin(x/2)**2;return 2*R*Math.asin(Math.sqrt(h))}
 function maps(name,address,lat,lng){const q=lat!=null&&lng!=null?lat+','+lng:[name,address,'Imphal','Manipur'].filter(Boolean).join(', ');return 'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(q)}
-function local(b){return {placeId:'ic-'+b.id,source:'imphal-connect',name:b.name,type:b.category||'Local business',address:b.address||[b.city,'Manipur'].filter(Boolean).join(', '),city:b.city||'Imphal',latitude:Number.isFinite(+b.latitude)?+b.latitude:null,longitude:Number.isFinite(+b.longitude)?+b.longitude:null,phone:b.phone||b.whatsapp||'',website:b.website||'',logoUrl:b.logo_url||'',coverUrl:b.cover_url||'',isVerified:!!b.is_verified,mapsUrl:maps(b.name,b.address,b.latitude,b.longitude)}}
+function local(b){return {placeId:'ic-'+b.id,source:'imphal-connect',slug:b.slug||'',name:b.name,type:b.category||'Local business',address:b.address||[b.city,'Manipur'].filter(Boolean).join(', '),city:b.city||'Imphal',latitude:Number.isFinite(+b.latitude)?+b.latitude:null,longitude:Number.isFinite(+b.longitude)?+b.longitude:null,phone:b.phone||b.whatsapp||'',website:b.website||'',logoUrl:b.logo_url||'',coverUrl:b.cover_url||'',isVerified:!!b.is_verified,mapsUrl:maps(b.name,b.address,b.latitude,b.longitude)}}
 function osm(el){const t=el.tags||{},lat=el.lat??el.center?.lat,lng=el.lon??el.center?.lon;if(!t.name||lat==null||lng==null)return null;const a=[t['addr:housenumber'],t['addr:street'],t['addr:suburb'],t['addr:city']||'Imphal'].filter(Boolean).join(', ');return {placeId:'osm-'+el.type+'-'+el.id,source:'openstreetmap',name:t.name,type:String(t.amenity||t.shop||t.tourism||t.leisure||t.office||t.craft||'business').replaceAll('_',' '),address:a||'Imphal, Manipur',city:t['addr:city']||'Imphal',latitude:+lat,longitude:+lng,phone:t.phone||t['contact:phone']||'',website:t.website||t['contact:website']||'',mapsUrl:maps(t.name,a,+lat,+lng),openingHours:t.opening_hours||null}}
 async function overpass(q,category,lat,lng,radius){
  const la=Number.isFinite(lat)?lat:CENTER.lat,lo=Number.isFinite(lng)?lng:CENTER.lng,r=Math.min(10000,Math.max(500,Number.isFinite(radius)?radius:8000));
@@ -109,7 +109,7 @@ async function extractImphalSnapshot(){
   let localRows=[];
   if(admin){
     try{
-      const x=await admin.from('businesses').select('id,name,category,phone,whatsapp,address,city,latitude,longitude,logo_url,cover_url,opening_hours,website,instagram_url,gallery_urls,is_verified,is_published').eq('is_published',true).limit(5000);
+      const x=await admin.from('businesses').select('id,name,slug,category,phone,whatsapp,address,city,latitude,longitude,logo_url,cover_url,opening_hours,website,instagram_url,gallery_urls,is_verified,is_published').eq('is_published',true).limit(5000);
       if(!x.error)localRows=(x.data||[]).map(localSnapshotRow);
     }catch{}
   }
