@@ -344,7 +344,7 @@ header .icon{background:#ffffff18;border-color:#ffffff30;color:#fff;backdrop-fil
         <div class="section-head"><h2>Made for the way Imphal lives.</h2><button onclick="openAI()">Ask Imphal AI</button></div>
         <div class="ic-luxury-section">
           <article class="ic-luxury-card" style="background-image:url('https://imphalsmartcitylimited.com/Assets/img/gallery/Ima_Keithel.jpg')"><div class="copy"><span>LOCAL · CRAFT · IDENTITY</span><h3>Discover what makes this city different.</h3><p>From makers and food to everyday services — find the people behind the places.</p></div></article>
-          <article class="ic-luxury-card" style="background-image:url('https://imphalsmartcitylimited.com/Assets/img/gallery/Ima_Keithel.jpg')"><div class="copy"><span>BUSINESS · GROWTH · CONNECTION</span><h3>Local attention should become local growth.</h3><p>Business owners get a professional storefront, products, enquiries, analytics and promotion.</p></div></article>
+          <article class="ic-luxury-card" style="background-image:url('https://s7ap1.scene7.com/is/image/incredibleindia/kangla-fort-imphal-manipur-1-city-attr?qlt=82&ts=1742163661040')"><div class="copy"><span>BUSINESS · GROWTH · CONNECTION</span><h3>Local attention should become local growth.</h3><p>Business owners get a professional storefront, products, enquiries, analytics and promotion.</p></div></article>
         </div>`;
       anchor.after(sec);
     }
@@ -400,7 +400,7 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:-2;bac
 .editorial-section{padding-top:70px!important}.section-heading h2,.section-intro h2{font:800 clamp(32px,4vw,58px)/.95 Manrope!important;letter-spacing:-3px!important;color:#15121a!important}
 .collection-grid{grid-template-columns:1.15fr .85fr!important;grid-template-rows:280px 280px!important;gap:14px!important}
 .collection-card{border-radius:32px!important;box-shadow:0 18px 55px rgba(17,16,22,.14)!important;padding:28px!important}.collection-card:first-child{grid-row:span 2!important}.collection-card strong{font:800 42px/.95 Manrope!important;letter-spacing:-2px!important}.collection-card:after{background:linear-gradient(180deg,transparent 20%,rgba(8,7,12,.84))!important}
-.collection-food{background-image:url('https://imphalsmartcitylimited.com/Assets/img/gallery/Ima_Keithel.jpg')!important}.collection-makers{background-image:url('https://imphalsmartcitylimited.com/Assets/img/gallery/Ima_Keithel.jpg')!important}.collection-weekend{background-image:url('https://s7ap1.scene7.com/is/image/incredibleindia/kangla-fort-imphal-manipur-1-city-attr?qlt=82&ts=1742163661040')!important}
+.collection-food{background-image:url('https://imphalsmartcitylimited.com/Assets/img/gallery/Ima_Keithel.jpg')!important}.collection-makers{background-image:url('https://s7ap1.scene7.com/is/image/incredibleindia/kangla-fort-imphal-manipur-1-city-attr?qlt=82&ts=1742163661040')!important}.collection-weekend{background-image:url('https://s7ap1.scene7.com/is/image/incredibleindia/kangla-fort-imphal-manipur-1-city-attr?qlt=82&ts=1742163661040')!important}
 .editorial-cards{grid-template-columns:repeat(4,1fr)!important;gap:16px!important}.editorial-cards .card{border:0!important;border-radius:28px!important;box-shadow:0 18px 55px rgba(17,16,22,.1)!important}.editorial-cards .thumb{height:245px!important}.editorial-cards .body{padding:18px!important}.editorial-cards .body h3{font-size:18px!important}
 .card{border:0!important;border-radius:26px!important;box-shadow:0 16px 44px rgba(17,16,22,.1)!important}.card:hover{transform:translateY(-4px)!important;box-shadow:0 24px 60px rgba(17,16,22,.16)!important}
 .map-section .editorial-map{height:480px!important;border-radius:36px!important;box-shadow:0 28px 90px rgba(17,16,22,.18)!important;background-color:#d9e4df!important}
@@ -442,6 +442,66 @@ a,button,.link{font-weight:800}
 [aria-label],label{color:inherit}
 input,textarea,select{color:#17131e!important;background:#fff!important}
 input::placeholder,textarea::placeholder{color:#77717d!important}
+
+<style id="imphal-ui-final-polish">
+:root{
+  --ui-bg:#f2eee7;--ui-surface:#fffdf8;--ui-ink:#14111b;--ui-muted:#5e5965;
+  --ui-dark:#17131e;--ui-purple:#6337e8;--ui-purple2:#8f5cff;--ui-lime:#c7f27c;
+  --ui-line:#ddd7cd;--ui-shadow:0 18px 55px rgba(24,19,30,.10);
+}
+html{background:var(--ui-bg)!important}
+body{background:var(--ui-bg)!important;color:var(--ui-ink)!important}
+button,a,input,select,textarea{touch-action:manipulation}
+button,.btn,.solid-btn,.outline-btn,.text-link{min-height:44px}
+.site-header{box-shadow:0 16px 45px rgba(17,16,22,.12)!important}
+.brand-mark{flex:0 0 auto}
+.editorial-hero{isolation:isolate}
+.editorial-hero .hero-media,.business-hero .hero-media{filter:saturate(.92) contrast(1.04)!important}
+.hero-overlay{z-index:1!important}
+.hero-copy{z-index:4!important}
+.hero-copy h1{max-width:900px;text-wrap:balance}
+.hero-dek{max-width:620px!important}
+.hero-search{border:1px solid rgba(20,17,27,.08)!important}
+.hero-search input:focus-visible{outline:3px solid rgba(99,55,232,.25);outline-offset:-3px}
+.section-heading,.section-intro{max-width:100%}
+.section-heading h2,.section-intro h2{max-width:760px;text-wrap:balance}
+.collection-card{min-height:300px!important}
+.collection-card small{max-width:300px;line-height:1.5}
+.editorial-cards .card,.shop-strip .product{overflow:hidden}
+.editorial-cards .thumb,.shop-strip .product-img{background-color:#d9d3c8!important}
+.editorial-cards .body h3,.shop-strip .product-body h3{line-height:1.12!important}
+.editorial-cards .meta,.shop-strip .product-body p{line-height:1.5!important;color:#5e5965!important}
+.map-caption{border:1px solid rgba(20,17,27,.08);box-shadow:0 10px 30px rgba(20,17,27,.10)}
+.event-editorial-list .event{box-shadow:0 18px 50px rgba(20,17,27,.12)!important}
+.event-editorial-list .event p{max-width:520px}
+.travel-copy{box-shadow:0 20px 60px rgba(20,17,27,.12)}
+.business-cta{box-shadow:0 20px 60px rgba(20,17,27,.10)}
+.faq-list summary{line-height:1.4}
+.faq-list p{color:#5e5965!important}
+.bottom{backdrop-filter:blur(24px)!important}
+.nav{min-height:54px!important}
+.nav:focus-visible,.icon-btn:focus-visible,.profile-btn:focus-visible,.desktop-nav button:focus-visible{outline:3px solid rgba(99,55,232,.45);outline-offset:2px}
+.ai-fab{width:54px!important;height:54px!important;display:grid!important;place-items:center!important;padding:0!important}
+.ai-fab span{font-size:10px!important;letter-spacing:1px}
+.ai-modal{z-index:200!important}
+@media(max-width:700px){
+  .app{padding-left:12px!important;padding-right:12px!important}
+  .site-header{top:8px!important;margin-top:8px!important}
+  .editorial-hero,.business-hero{margin-top:12px!important;min-height:620px!important}
+  .hero-copy{left:5%!important;right:5%!important;bottom:6%!important}
+  .hero-copy h1{font-size:clamp(48px,13vw,72px)!important}
+  .hero-dek{font-size:14px!important}
+  .collection-card{min-height:230px!important}
+  .editorial-cards .thumb{height:170px!important}
+  .shop-strip .product-img{height:170px!important}
+  .travel-copy h2{font-size:44px!important}
+  .business-cta h2{font-size:38px!important}
+  .bottom{bottom:max(8px,env(safe-area-inset-bottom))!important}
+}
+@media(prefers-reduced-motion:reduce){
+  .logo-mark svg,.logo-mark:after,.ambient-orbs i,.hero:after,.ai-fab,.ai-orb{animation:none!important}
+}
+</style>
 </head>
 <body><div class="ambient-orbs"><i></i><i></i><i></i></div>
 <div class="app">
@@ -1405,7 +1465,68 @@ html{background:var(--px-black)}body{background:var(--px-black)!important;color:
  };
  window.addEventListener('load',()=>setTimeout(enforce,60));
 })();
-</script></body>
+</script>
+<script id="imphal-ui-final-runtime">
+(function(){
+  function polishBusinessPage(){
+    const root=document.querySelector('#business'); if(!root)return;
+    const plans=root.querySelector('.plans.editorial-plans');
+    if(plans){
+      plans.innerHTML=`
+        <article class="plan featured ic-single-membership">
+          <p class="plan-label">ONE MEMBERSHIP · IMPhAL</p>
+          <h3>Business Membership</h3>
+          <strong>₹120</strong><small> / year</small>
+          <p class="ic-plan-copy">Everything a local business needs to create a professional presence on Imphal Connect and publish useful customer-facing content.</p>
+          <ul>
+            <li>✓ Professional business profile</li>
+            <li>✓ Products, services, prices & photos</li>
+            <li>✓ Offers and 24-hour stories</li>
+            <li>✓ Customer enquiries and lead inbox</li>
+            <li>✓ Business analytics</li>
+            <li>✓ Verified business experience</li>
+          </ul>
+          <button onclick="IC.openOwner()">Start for ₹120/year</button>
+        </article>`;
+    }
+    const billing=root.querySelector('.billing-toggle'); if(billing)billing.remove();
+    const intro=root.querySelector('.plan-section .section-heading p:last-child');
+    if(intro)intro.textContent='One simple annual membership. No monthly tiers. No confusing packages.';
+    const planTitle=root.querySelector('.plan-section .section-heading h2');
+    if(planTitle)planTitle.textContent='One membership. Everything local.';
+    const cta=root.querySelector('.business-cta .solid-btn'); if(cta)cta.textContent='Get listed · ₹120/year';
+    const faq=root.querySelector('.faq-list');
+    if(faq){
+      faq.innerHTML=`
+        <details open><summary>Is there only one business membership?</summary><p>Yes. Imphal Connect keeps the business offer simple: one ₹120/year membership.</p></details>
+        <details><summary>What can I publish?</summary><p>Your business can publish its profile, products or services, prices, photos, offers and 24-hour stories.</p></details>
+        <details><summary>Can customers contact me?</summary><p>Yes. Customers can send enquiries and use the contact options you publish.</p></details>
+        <details><summary>Can I manage everything myself?</summary><p>Yes. Use the Business Control Room to manage your listing and customer-facing content.</p></details>`;
+    }
+    const faqTitle=root.querySelector('.faq-section h2'); if(faqTitle)faqTitle.textContent='Simple answers.';
+  }
+  function polishHomeCopy(){
+    const cta=document.querySelector('#home .business-cta .solid-btn');
+    if(cta)cta.textContent='List your business · ₹120/year';
+    const h=document.querySelector('#home .business-cta h2'); if(h)h.textContent='Put your business where Imphal is looking.';
+  }
+  function mount(){
+    polishBusinessPage();polishHomeCopy();
+    const style=document.createElement('style');style.textContent=`
+      .ic-single-membership{max-width:760px!important;margin:0 auto!important;padding:38px!important}
+      .ic-single-membership strong{display:inline-block;font-size:64px!important;letter-spacing:-4px!important;margin-top:4px}
+      .ic-single-membership small{font-size:13px!important;color:#8c8893!important}
+      .ic-plan-copy{max-width:620px!important;color:#5e5965!important;font-size:13px!important;line-height:1.65!important}
+      .ic-single-membership ul{display:grid;grid-template-columns:1fr 1fr;gap:2px 22px}
+      .ic-single-membership button{min-height:52px!important;border:0!important;border-radius:16px!important;background:#6337e8!important;color:#fff!important;font-weight:900!important;padding:0 20px!important;width:100%!important;box-shadow:0 14px 30px rgba(99,55,232,.24)}
+      .ic-single-membership button:hover{transform:translateY(-1px);box-shadow:0 18px 38px rgba(99,55,232,.30)}
+      @media(max-width:700px){.ic-single-membership{padding:25px!important}.ic-single-membership strong{font-size:54px!important}.ic-single-membership ul{grid-template-columns:1fr}}
+    `;document.head.appendChild(style);
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount);else mount();
+})();
+</script>
+</body>
 </html<div class="bottom">
 <nav class="mobile-nav" aria-label="Mobile navigation">
 <button class="nav active" data-go="home" onclick="go('home')"><span class="nav-icon">⌂</span><span>Home</span></button>
