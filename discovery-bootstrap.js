@@ -2,7 +2,8 @@ await import('dotenv/config');
 const expressModule=await import('express');
 const express=expressModule.default;
 const {smartDiscovery,catalog,todayEvents,warmCatalogIfMissing}=await import('./discovery.js');
-void warmCatalogIfMissing().catch(e=>console.warn('Catalog warmup:',e?.message||e));\nconst originalGet=express.application.get;
+void warmCatalogIfMissing().catch(e=>console.warn('Catalog warmup:',e?.message||e));
+const originalGet=express.application.get;
 let installed=false;
 express.application.get=function(path,...handlers){
   if(!installed&&typeof path==='string'&&path.startsWith('/api/')&&handlers.some(h=>typeof h==='function')){
