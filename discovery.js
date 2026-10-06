@@ -112,12 +112,7 @@ async function extractImphalSnapshot(){
   // These smaller, sequential category queries are much more reliable and stay within Overpass fair-use guidance.
   const la=CENTER.lat,lo=CENTER.lng,radius=10000;
   const queries=[
-    '[out:json][timeout:20];nwr(around:'+radius+','+la+','+lo+')[amenity~"restaurant|cafe|fast_food|food_court|bar|pub|ice_cream"];out center tags qt;',
-    '[out:json][timeout:20];nwr(around:'+radius+','+la+','+lo+')[shop];out center tags qt;',
-    '[out:json][timeout:20];nwr(around:'+radius+','+la+','+lo+')[amenity~"pharmacy|clinic|doctors|dentist|hospital|bank|atm|school|college|university"];out center tags qt;',
-    '[out:json][timeout:20];nwr(around:'+radius+','+la+','+lo+')[tourism~"hotel|guest_house|hostel|motel|resort"];out center tags qt;',
-    '[out:json][timeout:20];nwr(around:'+radius+','+la+','+lo+')[leisure="fitness_centre"];out center tags qt;',
-    '[out:json][timeout:20];nwr(around:'+radius+','+la+','+lo+')[office];out center tags qt;'
+    '[out:json][timeout:30];(nwr(around:'+radius+','+la+','+lo+')[amenity~"restaurant|cafe|fast_food|food_court|bar|pub|ice_cream|pharmacy|clinic|doctors|dentist|hospital|bank|atm|school|college|university"];nwr(around:'+radius+','+la+','+lo+')[shop~"supermarket|grocery|convenience|general|greengrocer|clothes|fashion|shoes|tailor|electronics|computer|mobile_phone|telecommunication|appliance|hardware|doityourself|builders_merchant|trade|electrical|plumbing|books|stationery|hairdresser|beauty|fabric|art|car|car_repair|motorcycle|tyres"];nwr(around:'+radius+','+la+','+lo+')[tourism~"hotel|guest_house|hostel|motel|resort"];nwr(around:'+radius+','+la+','+lo+')[leisure="fitness_centre"];nwr(around:'+radius+','+la+','+lo+')[office];);out center tags qt;'
   ];
   const elements=[];
   const errors=[];
@@ -135,6 +130,7 @@ async function extractImphalSnapshot(){
       if(!x.error)localRows=(x.data||[]).map(localSnapshotRow);
     }catch{}
   }
+  console.info('Catalog rebuild sources:',JSON.stringify({osmCount:osmRows.length,localCount:localRows.length,errors:errors.length}));
   if(osmRows.length===0&&localRows.length===0)console.warn('OpenStreetMap catalog extraction returned no rows:',errors.join(' | '));
   const seen=new Set(),places=[...localRows,...osmRows,...officialStayRows()].filter(p=>{
     const key=(p.name+'|'+(p.address||'')).toLowerCase().replace(/[^a-z0-9]+/g,'');
