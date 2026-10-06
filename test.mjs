@@ -24,17 +24,17 @@ for(const [name,src] of [['index',html],['admin',admin]]){
   assert.equal(new Set(ids).size,ids.length,`${name} has duplicate ids`);
 }
 const manifest=JSON.parse(fs.readFileSync('public/manifest.json','utf8'));assert.ok(manifest.icons?.length,'PWA icon missing');
-const pkg=JSON.parse(fs.readFileSync('package.json','utf8'));assert.equal(pkg.version,'2.2.0');assert.ok(pkg.dependencies['express']);
+const pkg=JSON.parse(fs.readFileSync('package.json','utf8'));assert.equal(pkg.version,'2.2.1');assert.ok(pkg.dependencies['express']);
 const sql=fs.readFileSync('sql/schema.sql','utf8');
 for(const t of ['profiles','businesses','business_items','business_stories','business_offers','business_analytics','funding_applications','business_leads','payment_events','payment_intents'])assert.match(sql,new RegExp(`create table if not exists public\\.${t}`));
 assert.match(sql,/businesses_owner_unique_idx/);assert.match(sql,/business-media/);
 const server=fs.readFileSync('server.js','utf8');
 for(const route of ['/api/health','/api/config','/api/me','/api/businesses','/api/items','/api/stories','/api/offers','/api/reviews','/api/analytics/event','/api/analytics/owner','/api/funding/applications','/api/ai/chat','/api/admin/overview','/api/admin/businesses','/api/admin/payments','/api/admin/users','/api/admin/funding','/api/payments/webhook','/api/payments/uropay','/api/payments/uropay/intents','/api/payments/uropay/confirm'])assert.ok(server.includes(route),`missing ${route}`);
 assert.match(server,/AbortSignal\.timeout\(25000\)/);assert.match(server,/Only JPG, PNG and WebP/);assert.match(server,/publicEventLimiter/);
-assert.match(server,/supabaseAdmin=createClient\([^;]*process\.env\.SUPABASE_SERVICE_ROLE_KEY/);
+assert.match(server,/supabaseAdmin=createClient\([^;]*process\.env\.SUPABASE_SERVICE_ROLE_KEY/);assert.match(server,/plan==='owner'\?120/);assert.match(server,/status='pending_review'/);
 assert.match(server,/supabasePublic=createClient\([^;]*process\.env\.SUPABASE_PUBLISHABLE_KEY/);
 assert.match(html,/supabase\.createClient\(cfg\.url,cfg\.key\)/);
-assert.match(fs.readFileSync('render.yaml','utf8'),/npm install --omit=dev/);assert.match(fs.readFileSync('Dockerfile','utf8'),/npm install --omit=dev/);
+assert.match(fs.readFileSync('render.yaml','utf8'),/npm install --omit=dev/);assert.match(fs.readFileSync('Dockerfile','utf8'),/npm install --omit=dev/);assert.match(fs.readFileSync('sql/schema.sql','utf8'),/plan in\('free','owner','pro','elite'\)/);assert.match(fs.readFileSync('sql/schema.sql','utf8'),/status text not null default 'draft'/);
 assert.doesNotMatch(html,/SUPABASE_SERVICE_ROLE_KEY/);assert.doesNotMatch(html,/RAZORPAY_KEY_SECRET/);assert.doesNotMatch(html,/RAZORPAY/);assert.doesNotMatch(admin,/SUPABASE_SERVICE_ROLE_KEY/);
 
 async function fetchTestConfig(publishableKey,serviceRoleKey){
