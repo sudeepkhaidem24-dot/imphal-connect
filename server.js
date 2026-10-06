@@ -154,13 +154,16 @@ app.get('/api/discovery/google',async(req,res)=>{
     const minRating=Number(req.query.minRating);
     const pageSize=Math.min(20,Math.max(1,Number(req.query.pageSize)||20));
     const pageToken=String(req.query.pageToken||'').trim();
+    const lat=Number(req.query.lat), lng=Number(req.query.lng), radius=Number(req.query.radius);
+    const center=Number.isFinite(lat)&&Number.isFinite(lng)&&lat>=-90&&lat<=90&&lng>=-180&&lng<=180?{latitude:lat,longitude:lng}:IMPHAL_CENTER;
+    const searchRadius=Number.isFinite(radius)?Math.min(10000,Math.max(500,radius)):IMPHAL_RADIUS_METERS;
     const textQuery=(q?q:category)+' in Imphal, Manipur, India';
     const body={
       textQuery,
       pageSize,
       languageCode:'en',
       regionCode:'IN',
-      locationBias:{circle:{center:IMPHAL_CENTER,radius:IMPHAL_RADIUS_METERS}}
+      locationBias:{circle:{center,radius:searchRadius}}
     };
     if(pageToken)body.pageToken=pageToken;
     if(openNow)body.openNow=true;
