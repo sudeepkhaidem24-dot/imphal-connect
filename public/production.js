@@ -8,7 +8,7 @@
   const esc=s=>String(s??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','\"':'&quot;'}[c]));
   const CENTER={lat:24.817,lng:93.9368};
   const CAT={All:'all',Food:'food',Shopping:'shopping',Services:'services',Stay:'hotels',Resorts:'resorts',Events:'events',Cafes:'cafes',Restaurants:'restaurants',Books:'books',Hardware:'hardware',Clinics:'clinics',Hospitals:'hospitals',Pharmacies:'pharmacies',Gyms:'gyms',Salons:'salons',Electronics:'electronics',Fashion:'fashion',Hotels:'hotels',Education:'education',Automotive:'automotive',Banks:'banks',Groceries:'groceries',Handloom:'handloom',Tourism:'tourism'};
-  const state={cache:new Map(),places:new Map(),searchTimer:null,category:'All',map:null,homeMap:null,markers:null,homeMarkers:null,user:null,watch:null};
+  const state={cache:new Map(),places:new Map(),catalog:null,catalogPromise:null,searchTimer:null,category:'All',map:null,homeMap:null,markers:null,homeMarkers:null,user:null,watch:null};
   const nativeFetch=window.fetch.bind(window);
   window.fetch=function(input,init){
     let url=''; try{url=typeof input==='string'?input:(input&&input.url)||''}catch{}
@@ -23,14 +23,20 @@
     return nativeFetch(input,init);
   };
   async function smart(o={}){
-    const p=new URLSearchParams(); const q=String(o.q||'').trim().slice(0,80);
-    p.set('category',CAT[o.category]||o.category||'all'); p.set('pageSize',String(Math.min(24,Math.max(1,Number(o.pageSize)||18))));
-    if(q)p.set('q',q); if(Number.isFinite(+o.lat)&&Number.isFinite(+o.lng)){p.set('lat',o.lat);p.set('lng',o.lng)}
-    if(Number.isFinite(+o.radius))p.set('radius',Math.min(10000,Math.max(500,+o.radius)));
-    const key=p.toString(),old=state.cache.get(key); if(old&&Date.now()-old.t<7000)return old.d;
-    const r=await nativeFetch('/api/discovery/smart?'+key,{cache:'no-store'}),d=await r.json().catch(()=>({}));
-    if(!r.ok)throw new Error(d.error||'Discovery service unavailable');
-    (d.places||[]).forEach(x=>x&&x.placeId&&state.places.set(x.placeId,x)); state.cache.set(key,{t:Date.now(),d}); return d;
+    if(!state.catalog){
+      if(!state.catalogPromise)state.catalogPromise=nativeFetch('/api/discovery/catalog',{cache:'force-cache'}).then(r=>r.json()).then(d=>{if(!d.ok)throw new Error(d.error||'Local catalog unavailable');state.catalog=d;return d}).finally(()=>{state.catalogPromise=null});
+      await state.catalogPromise;
+    }
+    const q=String(o.q||'').trim().toLowerCase(),cat=String(CAT[o.category]||o.category||'all').toLowerCase();
+    let places=(state.catalog.places||[]).filter(p=>{
+      const hay=[p.name,p.type,p.category,p.address,p.city,p.phone].join(' ').toLowerCase();
+      const terms={food:['food','restaurant','cafe','bakery','fast food'],shopping:['shop','store','market'],services:['service','office','repair'],hotels:['hotel','guest','hostel','resort','lodge'],resorts:['resort','hotel','farmhouse','retreat'],cafes:['cafe','coffee'],restaurants:['restaurant','food'],groceries:['grocery','supermarket','convenience','market'],fashion:['fashion','clothes','tailor','shoe'],electronics:['electronics','computer','mobile','phone'],hardware:['hardware','building','plumbing','electrical'],books:['book','stationery'],pharmacies:['pharmacy','chemist'],health:['health','clinic','doctor','dentist'],clinics:['clinic','doctor','dentist'],hospitals:['hospital'],gyms:['gym','fitness'],salons:['salon','hair','beauty'],education:['school','college','university','education'],automotive:['car','auto','motor','repair','tyre'],banks:['bank','atm'],handloom:['handloom','fabric','tailor','textile'],tourism:['tourism','travel','attraction']}[cat]||[];
+      const categoryOk=!cat||cat==='all'||String(p.category||'').toLowerCase()===cat||terms.some(t=>hay.includes(t));
+      return categoryOk&&(!q||hay.includes(q));
+    });
+    if(Number.isFinite(+o.lat)&&Number.isFinite(+o.lng)){places=places.map(p=>({...p,distanceKm:dist(+o.lat,+o.lng,p.latitude,p.longitude)})).filter(p=>!Number.isFinite(+o.radius)||p.distanceKm<=Math.max(0,+o.radius)).sort((a,b)=>a.distanceKm-b.distanceKm)}
+    const limit=Math.min(60,Math.max(1,Number(o.pageSize)||18));const d={...state.catalog,places:places.slice(0,limit),total:places.length};
+    places.forEach(x=>x&&x.placeId&&state.places.set(x.placeId,x));return d;
   }
   const maps=p=>p.mapsUrl||('https://www.google.com/maps/search/?api=1&query='+encodeURIComponent([p.name,p.address,'Imphal','Manipur'].filter(Boolean).join(', ')));
   const directions=p=>'https://www.google.com/maps/dir/?api=1&destination='+encodeURIComponent(p.latitude!=null&&p.longitude!=null?p.latitude+','+p.longitude:[p.name,p.address,'Imphal','Manipur'].filter(Boolean).join(', '));
