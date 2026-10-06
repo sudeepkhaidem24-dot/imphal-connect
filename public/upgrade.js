@@ -145,6 +145,7 @@
     .ic-google-live{display:inline-flex;align-items:center;gap:5px;font-size:9px;font-weight:900;color:#0879d1;letter-spacing:.08em;text-transform:uppercase}
     .ic-google-live:before{content:"";width:6px;height:6px;border-radius:50%;background:#14a66a;box-shadow:0 0 0 4px rgba(20,166,106,.12)}
     .ic-google-error{grid-column:1/-1;background:#fff6f6;border:1px solid #f2d4d4;color:#8b4b4b;border-radius:18px;padding:18px}
+    .ic-nearby-strip{display:flex;gap:10px;overflow:auto;scrollbar-width:none;padding:4px 1px 8px}.ic-nearby-strip::-webkit-scrollbar{display:none}.ic-nearby-card{min-width:190px;max-width:210px;background:#fff;border:1px solid #dceef5;border-radius:18px;padding:9px;box-shadow:0 10px 25px rgba(7,54,93,.07)}.ic-nearby-photo{height:92px;border-radius:13px;overflow:hidden;background:#edf5f8;margin-bottom:8px}.ic-nearby-photo img{width:100%;height:100%;object-fit:cover}.ic-nearby-card b{display:block;font:900 11px Manrope;color:#07365d;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ic-nearby-card small{display:block;font-size:8px;color:#71899a;margin-top:3px}.ic-nearby-card .live-open{color:#087b4f;font-weight:900}.ic-nearby-card .live-closed{color:#b54242;font-weight:900}.ic-nearby-card a{display:block;color:#0879d1;font-size:8px;font-weight:900;margin-top:7px}.ic-nearby-google{display:block;font:400 8px Roboto,Arial,sans-serif;color:#5e5e5e;margin-top:5px}
     @media(max-width:760px){.ic-google-grid{grid-template-columns:1fr}}
   `;
   document.head.appendChild(css);
@@ -272,7 +273,8 @@
     const attribution=author?.uri
       ? '<a href="'+esc(author.uri)+'" target="_blank" rel="noopener">'+esc(author.displayName||'Photo author')+'</a>'
       : esc(author?.displayName||'Google Maps photo');
-    return '<div class="ic-google-photo"><img src="'+esc(src)+'" alt="'+esc((p.name||'Business')+' photo')+'" loading="lazy" referrerpolicy="no-referrer" onerror="this.closest(\'.ic-google-photo\').remove()"><div class="ic-google-photo-meta"><span>REAL PLACE PHOTO</span><span>'+attribution+'</span></div></div>';
+    const source=photo.googleMapsUri?'<a href="'+esc(photo.googleMapsUri)+'" target="_blank" rel="noopener">View on Google Maps</a>':'';
+    return '<div class="ic-google-photo"><img src="'+esc(src)+'" alt="'+esc((p.name||'Business')+' photo')+'" loading="lazy" referrerpolicy="no-referrer" onerror="this.closest(\'.ic-google-photo\').remove()"><div class="ic-google-photo-meta"><span>REAL PLACE PHOTO</span><span>'+attribution+' '+source+'</span></div></div>';
   }
 
   const style=document.createElement('style');
@@ -480,153 +482,59 @@
   window.renderExplore=buildExplore;
 
 
-  // Make Imphi AI freely movable. Position is saved locally and clamped to the viewport.
-  (() => {
-    const fab=document.getElementById('aiFab');
-    if(!fab||fab.dataset.draggableReady)return;
-    fab.dataset.draggableReady='1';
-    fab.classList.add('ic-imphi-draggable');
-    const saved=(()=>{try{return JSON.parse(localStorage.getItem('ic_imphi_position')||'null')}catch{return null}})();
-    function apply(pos){
-      if(!pos)return;
-      fab.style.left=Math.max(6,Math.min(window.innerWidth-fab.offsetWidth-6,pos.x))+'px';
-      fab.style.top=Math.max(6,Math.min(window.innerHeight-fab.offsetHeight-6,pos.y))+'px';
-      fab.style.right='auto';fab.style.bottom='auto';
-    }
-    const initial=saved||{x:Math.max(6,window.innerWidth-fab.offsetWidth-24),y:Math.max(6,window.innerHeight-fab.offsetHeight-90)};
-    fab.style.position='fixed';fab.style.zIndex='9999';apply(initial);
-    let drag=null, moved=false;
-    fab.addEventListener('pointerdown',e=>{
-      if(e.button!==undefined&&e.button!==0)return;
-      const r=fab.getBoundingClientRect();
-      drag={sx:e.clientX,sy:e.clientY,x:r.left,y:r.top,pointerId:e.pointerId};moved=false;
-      try{fab.setPointerCapture(e.pointerId)}catch{}
-    });
-    fab.addEventListener('pointermove',e=>{
-      if(!drag)return;
-      const dx=e.clientX-drag.sx,dy=e.clientY-drag.sy;
-      if(Math.abs(dx)+Math.abs(dy)>6)moved=true;
-      if(!moved)return;
-      apply({x:drag.x+dx,y:drag.y+dy});
-    });
-    fab.addEventListener('pointerup',e=>{
-      if(!drag)return;
-      const r=fab.getBoundingClientRect();
-      if(moved)try{localStorage.setItem('ic_imphi_position',JSON.stringify({x:r.left,y:r.top}))}catch{}
-      drag=null;
-    });
-    fab.addEventListener('click',e=>{
-      if(moved){e.preventDefault();e.stopImmediatePropagation();moved=false;}
-    },true);
-    window.addEventListener('resize',()=>{const r=fab.getBoundingClientRect();apply({x:r.left,y:r.top})});
-  })();
-
   setTimeout(()=>{buildHome().catch(()=>{});},350);
 })();
 
 
-/* ===== LIVE GPS MAP + ULTRA-FAST IMPHI DRAG ===== */
+/* ===== LIVE GPS MAP + SAFE IMPHI DRAG + LOCAL VOICES ===== */
 (() => {
-  let liveMap=null, userMarker=null, accuracyCircle=null, placeLayer=null, watchId=null, lastPos=null, lastFetch=0;
+  'use strict';
+  let liveMap=null, homeMap=null, userMarker=null, homeUserMarker=null, accuracyCircle=null, watchId=null, lastPos=null, lastFetch=0, nearbyBusy=false;
   const byId=id=>document.getElementById(id);
   const escMap=s=>String(s??'').replace(/[&<>'"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[ch]));
-  const setMapStatus=s=>{const el=byId('icMapStatus');if(el)el.textContent=s};
-  const distance=(a,b,c,d)=>{const R=6371000,rad=x=>x*Math.PI/180,p1=rad(a),p2=rad(c),dp=rad(c-a),dl=rad(d-b),x=Math.sin(dp/2)**2+Math.cos(p1)*Math.cos(p2)*Math.sin(dl/2)**2;return 2*R*Math.asin(Math.min(1,Math.sqrt(x)))};
-  const gpsIcon=()=>L.divIcon({className:'',html:'<div class="ic-gps-dot"></div>',iconSize:[18,18],iconAnchor:[9,9]});
+  const setStatus=s=>{const a=byId('icMapStatus'),b=byId('icHomeMapStatus');if(a)a.textContent=s;if(b)b.textContent=s};
+  const dist=(a,b,c,d)=>{const R=6371000,r=x=>x*Math.PI/180,p1=r(a),p2=r(c),dp=r(c-a),dl=r(d-b),x=Math.sin(dp/2)**2+Math.cos(p1)*Math.cos(p2)*Math.sin(dl/2)**2;return 2*R*Math.asin(Math.min(1,Math.sqrt(x)))};
+  const gpsIcon=()=>L.divIcon({className:'',html:'<div class="ic-gps-pulse"></div>',iconSize:[18,18],iconAnchor:[9,9]});
+  function makeMap(el,zoom){if(!el||!window.L)return null;const m=L.map(el,{zoomControl:true,preferCanvas:true,scrollWheelZoom:true}).setView([24.8170,93.9368],zoom);L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap contributors'}).addTo(m);return m}
+  function ensureLive(){const el=byId('icLiveMap');if(!el||!window.L)return null;if(!liveMap)liveMap=makeMap(el,13);setTimeout(()=>liveMap?.invalidateSize(),80);return liveMap}
+  function ensureHome(){const el=byId('icHomeLiveMap');if(!el||!window.L)return null;if(!homeMap)homeMap=makeMap(el,12);setTimeout(()=>homeMap?.invalidateSize(),80);return homeMap}
+  function setMarker(m,pos,home){if(!m)return;const icon=gpsIcon();if(home){if(!homeUserMarker)homeUserMarker=L.marker([pos.lat,pos.lng],{icon,zIndexOffset:10000}).addTo(m);else homeUserMarker.setLatLng([pos.lat,pos.lng]);return}if(!userMarker)userMarker=L.marker([pos.lat,pos.lng],{icon,zIndexOffset:10000}).addTo(m);else userMarker.setLatLng([pos.lat,pos.lng]);if(!accuracyCircle)accuracyCircle=L.circle([pos.lat,pos.lng],{radius:pos.acc,color:'#1976ff',weight:1,fillOpacity:.08}).addTo(m);else accuracyCircle.setLatLng([pos.lat,pos.lng]).setRadius(pos.acc)}
+  async function nearby(lat,lng){if(nearbyBusy)return;nearbyBusy=true;try{const q=new URLSearchParams({category:'all',pageSize:'20',lat:String(lat),lng:String(lng),radius:'5000'});const r=await fetch('/api/discovery/google?'+q,{cache:'no-store'});const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d.error||'Live places unavailable');const places=d.places||[];lastFetch=Date.now();const strip=byId('icNearbyStrip');if(strip){strip.innerHTML=places.map(p=>{const photo=p.photos?.[0],src=photo?.name?'/api/discovery/google-photo?'+new URLSearchParams({name:photo.name,w:'520',h:'360'}):'';const img=src?'<div class="ic-nearby-photo"><img src="'+escMap(src)+'" alt="'+escMap(p.name)+'" loading="lazy" onerror="this.closest(\\'.ic-nearby-photo\\').remove()"></div>':'';const open=p.openNow===true?'OPEN NOW':p.openNow===false?'CLOSED':'HOURS —';return '<article class="ic-nearby-card">'+img+'<b>'+escMap(p.name)+'</b><small>'+escMap(p.type||'Local business')+'</small><small class="'+(p.openNow===true?'live-open':p.openNow===false?'live-closed':'')+'">'+open+(p.rating!=null?' · ★ '+Number(p.rating).toFixed(1):'')+'</small><a href="'+escMap(p.mapsUrl||'#')+'" target="_blank" rel="noopener">Open in Google Maps →</a><span class="ic-nearby-google">Google Maps</span></article>'}).join('')||'<div class="ic-voice-loading">No live places returned. Tap Refresh nearby.</div>'}const count=byId('icNearbyCount');if(count)count.textContent=places.length+' live places found nearby';setStatus(lastPos?'GPS LIVE · Nearby places refreshed':'Live Imphal places · tap Locate me for your position')}catch(e){setStatus(lastPos?'GPS LIVE · Nearby refresh failed':'Map ready · live places temporarily unavailable')}finally{nearbyBusy=false}}
+  function update(pos,center){const lat=pos.coords.latitude,lng=pos.coords.longitude,acc=Math.max(5,pos.coords.accuracy||50),moved=!lastPos||dist(lastPos.lat,lastPos.lng,lat,lng)>150;lastPos={lat,lng,acc};const lm=ensureLive(),hm=ensureHome();setMarker(lm,lastPos,false);setMarker(hm,lastPos,true);if(center&&lm)lm.setView([lat,lng],16,{animate:true});if(center&&hm)hm.setView([lat,lng],14,{animate:true});setStatus('GPS LIVE · Current position · ±'+Math.round(acc)+'m');if(moved||Date.now()-lastFetch>45000)nearby(lat,lng)}
+  function gpsError(err){const c=err?.code;setStatus(c===1?'Location blocked. Allow Location for Chrome, then reload.':c===2?'No GPS fix. Turn on phone Location and try again near a window.':'GPS timed out. Tap Locate me again.')}
+  function locate(){ensureLive();ensureHome();if(!navigator.geolocation){setStatus('This browser does not support device location.');return}setStatus('Finding your current position…');navigator.geolocation.getCurrentPosition(p=>update(p,true),gpsError,{enableHighAccuracy:true,timeout:20000,maximumAge:0});if(watchId===null)watchId=navigator.geolocation.watchPosition(p=>update(p,false),gpsError,{enableHighAccuracy:true,timeout:20000,maximumAge:3000})}
+  function refresh(){ensureLive();ensureHome();if(lastPos)nearby(lastPos.lat,lastPos.lng);else nearby(24.8170,93.9368)}
+  window.initImphalLiveMap=()=>{ensureLive();ensureHome();if(lastPos)update({coords:{latitude:lastPos.lat,longitude:lastPos.lng,accuracy:lastPos.acc}},false)};
+  window.locateImphal=locate;window.refreshImphalMap=refresh;
+  document.addEventListener('click',e=>{if(e.target.closest('#icLocateMe'))locate();if(e.target.closest('#icRefreshMap'))refresh();if(e.target.closest('#map')&&liveMap)setTimeout(()=>liveMap.invalidateSize(),120)});
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden){liveMap?.invalidateSize();homeMap?.invalidateSize()}});
+  setTimeout(()=>{ensureHome();ensureLive();nearby(24.8170,93.9368)},600);
 
-  async function nearby(lat,lng,fit){
-    try{
-      const q=new URLSearchParams({category:'all',pageSize:'20',lat:String(lat),lng:String(lng),radius:'5000'});
-      const r=await fetch('/api/discovery/google?'+q.toString(),{cache:'no-store'});
-      const d=await r.json().catch(()=>({})); if(!r.ok)throw new Error(d.error||'Live place data unavailable');
-      const places=d.places||[]; lastFetch=Date.now();
-      if(placeLayer)placeLayer.clearLayers();
-      const strip=byId('icNearbyStrip');if(strip)strip.innerHTML='';
-      places.forEach(p=>{
-        if(p.latitude==null||p.longitude==null)return;
-        const open=p.openNow===true?'OPEN NOW':p.openNow===false?'CLOSED':'HOURS —';
-        const popup='<b>'+escMap(p.name)+'</b><br>'+escMap(p.type||'Local business')+(p.rating!=null?'<br>★ '+Number(p.rating).toFixed(1)+' · '+Number(p.reviewCount||0).toLocaleString('en-IN')+' reviews':'')+'<br>'+escMap(p.address||'');
-        L.marker([p.latitude,p.longitude]).bindPopup(popup).addTo(placeLayer);
-        if(strip){
-          const card=document.createElement('article');card.className='ic-nearby-card';
-          card.innerHTML='<b>'+escMap(p.name)+'</b><small>'+escMap(p.type||'Local business')+'</small><small class="'+(p.openNow===true?'live-open':p.openNow===false?'live-closed':'')+'">'+open+(p.rating!=null?' · ★ '+Number(p.rating).toFixed(1):'')+'</small>';
-          card.onclick=()=>liveMap.setView([p.latitude,p.longitude],17,{animate:true});
-          strip.appendChild(card);
-        }
-      });
-      const count=byId('icNearbyCount');if(count)count.textContent=places.length+' live places found nearby';
-      if(fit){const pts=places.filter(p=>p.latitude!=null&&p.longitude!=null).map(p=>[p.latitude,p.longitude]);if(pts.length)liveMap.fitBounds(L.latLngBounds(pts),{padding:[30,30],maxZoom:15});}
-    }catch(e){setMapStatus('GPS LIVE · Nearby live data temporarily unavailable.')}
-  }
-
-  function initLiveMap(){
-    const el=byId('icLiveMap');if(!el||!window.L||liveMap)return;
-    liveMap=L.map(el,{zoomControl:true,preferCanvas:true}).setView([24.8170,93.9368],13);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap contributors'}).addTo(liveMap);
-    placeLayer=L.layerGroup().addTo(liveMap);
-    nearby(24.8170,93.9368,true);
-    setTimeout(()=>liveMap.invalidateSize(),150);
-  }
-
-  function updatePosition(pos,center){
-    const lat=pos.coords.latitude,lng=pos.coords.longitude,acc=Math.max(5,pos.coords.accuracy||50);
-    const moved=!lastPos||distance(lastPos.lat,lastPos.lng,lat,lng)>200;
-    lastPos={lat,lng,acc};
-    if(!userMarker)userMarker=L.marker([lat,lng],{icon:gpsIcon(),zIndexOffset:10000}).addTo(liveMap);
-    else userMarker.setLatLng([lat,lng]);
-    if(!accuracyCircle)accuracyCircle=L.circle([lat,lng],{radius:acc,color:'#1976ff',weight:1,fillOpacity:.08}).addTo(liveMap);
-    else accuracyCircle.setLatLng([lat,lng]).setRadius(acc);
-    if(center)liveMap.setView([lat,lng],16,{animate:true});
-    setMapStatus('GPS LIVE · Current position · ±'+Math.round(acc)+'m');
-    if(moved||Date.now()-lastFetch>60000)nearby(lat,lng,false);
-  }
-
-  function locate(){
-    if(!navigator.geolocation){setMapStatus('GPS is not supported by this browser.');return}
-    setMapStatus('Requesting GPS permission…');
-    navigator.geolocation.getCurrentPosition(p=>updatePosition(p,true),()=>setMapStatus('GPS permission denied/unavailable. Enable Location for Imphal Connect.'),{enableHighAccuracy:true,timeout:12000,maximumAge:5000});
-    if(watchId===null)watchId=navigator.geolocation.watchPosition(p=>updatePosition(p,false),()=>{}, {enableHighAccuracy:true,timeout:15000,maximumAge:5000});
-  }
-
-  function refreshMap(){if(lastPos)nearby(lastPos.lat,lastPos.lng,false);else nearby(24.8170,93.9368,false)}
-  document.addEventListener('click',e=>{
-    if(e.target.closest('#icLocateMe'))locate();
-    if(e.target.closest('#icRefreshMap'))refreshMap();
-    if(e.target.closest('#map')&&liveMap)setTimeout(()=>liveMap.invalidateSize(),180);
-  });
-  document.addEventListener('visibilitychange',()=>{if(!document.hidden&&liveMap){liveMap.invalidateSize();refreshMap()}});
-  window.initImphalLiveMap=initLiveMap;
-  setTimeout(initLiveMap,700);
-
+  // One and only one Imphi drag controller. The mascot is always clamped to the visible viewport.
   const fab=byId('aiFab');
-  if(fab&&!fab.dataset.ultraDrag){
-    fab.dataset.ultraDrag='1';
-    fab.style.position='fixed';fab.style.left='0px';fab.style.top='0px';fab.style.right='auto';fab.style.bottom='auto';
-    fab.style.touchAction='none';fab.style.userSelect='none';fab.style.webkitUserSelect='none';fab.style.cursor='grab';fab.style.willChange='transform';
-    let x=0,y=0,dx=0,dy=0,startX=0,startY=0,drag=null,raf=0;
-    try{const s=JSON.parse(localStorage.getItem('ic_imphi_position')||'null');if(s){x=Number(s.x)||0;y=Number(s.y)||0}}catch{}
-    const clamp=()=>{x=Math.max(4,Math.min(innerWidth-fab.offsetWidth-4,x));y=Math.max(4,Math.min(innerHeight-fab.offsetHeight-4,y))};
-    const paint=()=>{raf=0;fab.style.transform='translate3d('+x+'px,'+y+'px,0)'};
+  if(fab&&!fab.dataset.safeDrag){
+    fab.dataset.safeDrag='1';fab.style.position='fixed';fab.style.left='0px';fab.style.top='0px';fab.style.right='auto';fab.style.bottom='auto';fab.style.touchAction='none';fab.style.userSelect='none';fab.style.webkitUserSelect='none';fab.style.cursor='grab';fab.style.willChange='transform';fab.style.animation='none';
+    let x=innerWidth-fab.offsetWidth-18,y=innerHeight-fab.offsetHeight-92,dx=0,dy=0,drag=null,raf=0;
+    try{const s=JSON.parse(localStorage.getItem('ic_imphi_position')||'null');if(s&&Number.isFinite(+s.x)&&Number.isFinite(+s.y)){x=+s.x;y=+s.y}}catch{}
+    const clamp=()=>{const maxX=Math.max(4,innerWidth-fab.offsetWidth-4),maxY=Math.max(4,innerHeight-fab.offsetHeight-4);x=Math.max(4,Math.min(maxX,x));y=Math.max(4,Math.min(maxY,y))};
+    const paint=()=>{raf=0;clamp();fab.style.transform='translate3d('+x+'px,'+y+'px,0)'};
     clamp();paint();
-    fab.addEventListener('pointerdown',e=>{
-      if(e.pointerType==='mouse'&&e.button!==0)return;
-      const r=fab.getBoundingClientRect();dx=e.clientX-r.left;dy=e.clientY-r.top;startX=r.left;startY=r.top;drag={id:e.pointerId,moved:false};
-      try{fab.setPointerCapture(e.pointerId)}catch{};fab.style.cursor='grabbing';e.preventDefault();
-    },{passive:false});
-    fab.addEventListener('pointermove',e=>{
-      if(!drag)return;
-      x=e.clientX-dx;y=e.clientY-dy;
-      if(Math.abs(e.clientX-startX)>3||Math.abs(e.clientY-startY)>3)drag.moved=true;
-      clamp();cancelAnimationFrame(raf);raf=requestAnimationFrame(paint);e.preventDefault();
-    },{passive:false});
-    const end=e=>{
-      if(!drag)return;cancelAnimationFrame(raf);clamp();paint();fab.style.cursor='grab';
-      fab.dataset.wasDragged=drag.moved?'1':'0';
-      try{localStorage.setItem('ic_imphi_position',JSON.stringify({x,y}))}catch{}
-      drag=null;
-    };
-    fab.addEventListener('pointerup',end);fab.addEventListener('pointercancel',end);
-    fab.addEventListener('click',e=>{if(fab.dataset.wasDragged==='1'){e.preventDefault();e.stopImmediatePropagation();fab.dataset.wasDragged='0'}},true);
-    addEventListener('resize',()=>{clamp();paint()});
+    fab.addEventListener('pointerdown',e=>{if(e.pointerType==='mouse'&&e.button!==0)return;const r=fab.getBoundingClientRect();dx=e.clientX-r.left;dy=e.clientY-r.top;drag={id:e.pointerId,lastX:r.left,lastY:r.top,moved:false};try{fab.setPointerCapture(e.pointerId)}catch{}fab.style.cursor='grabbing';e.preventDefault()},{passive:false});
+    fab.addEventListener('pointermove',e=>{if(!drag)return;x=e.clientX-dx;y=e.clientY-dy;if(Math.abs(x-drag.lastX)>1||Math.abs(y-drag.lastY)>1)drag.moved=true;drag.lastX=x;drag.lastY=y;cancelAnimationFrame(raf);raf=requestAnimationFrame(paint);e.preventDefault()},{passive:false});
+    const end=e=>{if(!drag)return;cancelAnimationFrame(raf);paint();fab.style.cursor='grab';fab.dataset.wasDragged=drag.moved?'1':'0';try{localStorage.setItem('ic_imphi_position',JSON.stringify({x,y}))}catch{}try{fab.releasePointerCapture(e.pointerId)}catch{}drag=null};
+    fab.addEventListener('pointerup',end);fab.addEventListener('pointercancel',end);fab.addEventListener('lostpointercapture',()=>{if(drag)end({pointerId:drag.id})});fab.addEventListener('click',e=>{if(fab.dataset.wasDragged==='1'){e.preventDefault();e.stopImmediatePropagation();fab.dataset.wasDragged='0'}},true);addEventListener('resize',()=>{clamp();paint();try{localStorage.setItem('ic_imphi_position',JSON.stringify({x,y}))}catch{}});
   }
+
+  async function loadLocalVoices(){
+    const host=byId('icLocalVoices');if(!host)return;
+    try{
+      const r=await fetch('/api/discovery/google?category=all&pageSize=8',{cache:'no-store'}),d=await r.json();if(!r.ok)throw new Error(d.error||'Live reviews unavailable');
+      const places=(d.places||[]).filter(p=>p.placeId).slice(0,5);
+      const details=await Promise.all(places.map(async p=>{try{const rr=await fetch('/api/discovery/google/'+encodeURIComponent(p.placeId),{cache:'no-store'}),dd=await rr.json();return rr.ok?dd.place:null}catch{return null}}));
+      const reviews=[];details.filter(Boolean).forEach(p=>(p.reviews||[]).slice(0,1).forEach(rv=>reviews.push({...rv,placeName:p.name,placeMaps:p.mapsUrl||'#'})));
+      if(!reviews.length){host.innerHTML='<div class="ic-voice-loading">No public reviews were returned right now. Real local voices will appear as Google returns them.</div>';return}
+      host.innerHTML=reviews.slice(0,5).map(rv=>{const a=rv.authorAttribution||{},avatar=a.photoUri?'<img class="ic-voice-avatar" src="'+escMap(a.photoUri)+'" alt="" loading="lazy" referrerpolicy="no-referrer">':'<div class="ic-voice-avatar"></div>',stars='★'.repeat(Math.max(0,Math.min(5,Math.round(rv.rating||0))));return '<article class="ic-voice"><div class="ic-voice-top">'+avatar+'<div><div class="ic-voice-author">'+escMap(a.displayName||'Google user')+'</div><div class="ic-voice-place">'+escMap(rv.placeName||'Imphal business')+'</div></div><div class="ic-voice-stars">'+stars+'</div></div><div class="ic-voice-text">“'+escMap(rv.text||'')+'”</div><div class="ic-voice-foot"><span>'+escMap(rv.relativePublishTimeDescription||'Google review')+'</span><a href="'+escMap(rv.googleMapsUri||rv.placeMaps||'#')+'" target="_blank" rel="noopener">Read on Google Maps ↗</a></div></article>'}).join('');
+    }catch(e){host.innerHTML='<div class="ic-voice-loading">Live local voices are temporarily unavailable.</div>'}
+  }
+  setTimeout(loadLocalVoices,1400);
 })();
