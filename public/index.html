@@ -1512,6 +1512,7 @@ html{background:var(--px-black)}body{background:var(--px-black)!important;color:
   }
   function mount(){
     polishBusinessPage();polishHomeCopy();
+    if(location.hash==='#business' && typeof window.go==='function') setTimeout(()=>go('business'),0);
     const style=document.createElement('style');style.textContent=`
       .ic-single-membership{max-width:760px!important;margin:0 auto!important;padding:38px!important}
       .ic-single-membership strong{display:inline-block;font-size:64px!important;letter-spacing:-4px!important;margin-top:4px}
