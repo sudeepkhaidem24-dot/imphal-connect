@@ -36,12 +36,15 @@ async function requireAdmin(req,res,next){try{const u=await userFromToken(bearer
 async function ownedBusiness(userId){const {data,error}=await supabaseAdmin.from('businesses').select('*').eq('owner_id',userId).maybeSingle();if(error)throw error;return data}
 function cashfreeBase(){return String(process.env.CASHFREE_ENV||'production').toLowerCase()==='sandbox'?'https://sandbox.cashfree.com/pg':'https://api.cashfree.com/pg'}
 function cashfreeHeaders(extra={}){return {'x-client-id':process.env.CASHFREE_CLIENT_ID||'','x-client-secret':process.env.CASHFREE_CLIENT_SECRET||'','x-api-version':'2025-01-01','accept':'application/json','content-type':'application/json',...extra}}
-function planAmount(plan){return plan==='pro'?499:plan==='elite'?1499:null}
+function planAmount(plan){return plan==='owner'?120:plan==='pro'?499:plan==='elite'?1499:null}
+function planLabel(plan){return plan==='owner'?'Business Owner · Annual':plan==='pro'?'Pro':'Elite'}
+function planInterval(plan){return plan==='owner'?'YEAR':'MONTH'}
+function planDurationMonths(plan){return plan==='owner'?12:1}
 function addOneMonth(date=new Date()){const d=new Date(date);d.setMonth(d.getMonth()+1);return d.toISOString()}
 async function cashfreeRequest(path,options={}){const r=await fetch(cashfreeBase()+path,{...options,headers:cashfreeHeaders(options.headers||{})});const text=await r.text();let data={};try{data=text?JSON.parse(text):{}}catch{data={raw:text}}if(!r.ok){const msg=data?.message||data?.error?.message||data?.error||`Cashfree request failed (${r.status})`;const e=new Error(msg);e.status=r.status;e.data=data;throw e}return data}
 function cashfreeWebhookValid(signature,timestamp,rawBody){if(!signature||!timestamp||!rawBody||!process.env.CASHFREE_CLIENT_SECRET)return false;const expected=crypto.createHmac('sha256',process.env.CASHFREE_CLIENT_SECRET).update(String(timestamp)+rawBody).digest('base64');return timingSafe(signature,expected)}
 function cashfreeSubscriptionStatus(d){const a=String(d?.authorization_details?.authorization_status||d?.authorisation_details?.authorization_status||'').toUpperCase();const s=String(d?.subscription_status||d?.status||'').toUpperCase();if(a==='ACTIVE'||['ACTIVE','AUTHENTICATED'].includes(s))return 'active';if(['CANCELLED','COMPLETED','EXPIRED','FAILED','PAUSED'].includes(s))return s.toLowerCase();return s?s.toLowerCase():'created'}
-function activePaid(b){return !!b&&['pro','elite'].includes(b.plan)&&b.subscription_status==='active'&&(!b.subscription_current_end||new Date(b.subscription_current_end)>new Date())}
+function activePaid(b){return !!b&&['owner','pro','elite'].includes(b.plan)&&b.subscription_status==='active'&&(!b.subscription_current_end||new Date(b.subscription_current_end)>new Date())}
 function slugify(name){return (name.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')+'-'+crypto.randomBytes(3).toString('hex')).slice(0,70)}
 function publicSupabaseKey(){
 	const key=process.env.SUPABASE_PUBLISHABLE_KEY||'';
