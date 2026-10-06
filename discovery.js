@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import { gzipSync, gunzipSync } from 'node:zlib';
 
 const supabaseUrl=process.env.SUPABASE_URL||'';
 const supabaseSecret=process.env.SUPABASE_SERVICE_ROLE_KEY||'';
@@ -43,17 +44,155 @@ async function overpass(q,category,lat,lng,radius){
  const resp=await fetch(OVERPASS_URL,{method:'POST',headers:{'content-type':'application/x-www-form-urlencoded;charset=UTF-8','user-agent':'ImphalConnect/1.0 (+https://imphal-connect.onrender.com)'},body:'data='+encodeURIComponent(query)});
  if(!resp.ok)throw new Error('OpenStreetMap HTTP '+resp.status);const json=await resp.json();const data=(json.elements||[]).map(osm).filter(Boolean);cache.set(key,{at:Date.now(),data});return data;
 }
+const CATALOG_ID='imphal-city-v1';
+const catalogCache=new Map();
+let catalogBuildPromise=null;
+
+const CATEGORY_FROM_TAGS={
+  cafe:'Cafes',restaurant:'Restaurants',fast_food:'Restaurants',food_court:'Restaurants',bar:'Food',pub:'Food',ice_cream:'Food',
+  supermarket:'Groceries',grocery:'Groceries',convenience:'Groceries',greengrocer:'Groceries',
+  clothes:'Fashion',fashion:'Fashion',shoes:'Fashion',tailor:'Handloom',
+  electronics:'Electronics',computer:'Electronics',mobile_phone:'Electronics',telecommunication:'Electronics',appliance:'Electronics',
+  hardware:'Hardware',doityourself:'Hardware',builders_merchant:'Hardware',trade:'Services',electrical:'Hardware',plumbing:'Hardware',
+  books:'Books',stationery:'Books',pharmacy:'Pharmacies',clinic:'Clinics',doctors:'Clinics',dentist:'Health',hospital:'Hospitals',
+  fitness_centre:'Gyms',hairdresser:'Salons',beauty:'Salons',hotel:'Hotels',guest_house:'Hotels',hostel:'Hotels',motel:'Hotels',resort:'Hotels',
+  school:'Education',college:'Education',university:'Education',kindergarten:'Education',
+  car:'Automotive',car_repair:'Automotive',motorcycle:'Automotive',tyres:'Automotive',
+  bank:'Banks',atm:'Banks',fabric:'Handloom',art:'Handloom',travel_agency:'Tourism',attraction:'Tourism',
+  office:'Services',museum:'Tourism',gallery:'Tourism',park:'Tourism',place_of_worship:'Tourism'
+};
+function tagCategory(t){
+  for(const key of ['amenity','shop','tourism','leisure','office','craft']){
+    const v=String(t[key]||'').toLowerCase();
+    if(CATEGORY_FROM_TAGS[v])return CATEGORY_FROM_TAGS[v];
+  }
+  return t.name?'Local':'Other';
+}
+function osmSnapshotRow(el){
+  const t=el.tags||{},lat=el.lat??el.center?.lat,lng=el.lon??el.center?.lon;
+  if(!t.name||lat==null||lng==null)return null;
+  const address=[t['addr:housenumber'],t['addr:street'],t['addr:suburb'],t['addr:city']||'Imphal'].filter(Boolean).join(', ');
+  const type=String(t.amenity||t.shop||t.tourism||t.leisure||t.office||t.craft||'business').replaceAll('_',' ');
+  return {
+    placeId:'osm-'+el.type+'-'+el.id,source:'openstreetmap',name:safe(t.name,120),type,category:tagCategory(t),
+    address:address||'Imphal, Manipur',city:t['addr:city']||'Imphal',latitude:+lat,longitude:+lng,
+    phone:t.phone||t['contact:phone']||'',website:t.website||t['contact:website']||'',
+    mapsUrl:maps(t.name,address,+lat,+lng),openingHours:t.opening_hours||null
+  };
+}
+function localSnapshotRow(b){
+  return {placeId:'ic-'+b.id,source:'imphal-connect',name:b.name,type:b.category||'Local business',category:b.category||'Local',
+    address:b.address||[b.city,'Manipur'].filter(Boolean).join(', '),city:b.city||'Imphal',
+    latitude:Number.isFinite(+b.latitude)?+b.latitude:null,longitude:Number.isFinite(+b.longitude)?+b.longitude:null,
+    phone:b.phone||b.whatsapp||'',website:b.website||'',logoUrl:b.logo_url||'',coverUrl:b.cover_url||'',
+    isVerified:!!b.is_verified,mapsUrl:maps(b.name,b.address,b.latitude,b.longitude),openingHours:b.opening_hours||null};
+}
+async function extractImphalSnapshot(){
+  const query='[out:json][timeout:60];nwr(around:18000,'+CENTER.lat+','+CENTER.lng+')[name];out center tags qt;';
+  const resp=await fetch(OVERPASS_URL,{method:'POST',headers:{'content-type':'application/x-www-form-urlencoded;charset=UTF-8','user-agent':'ImphalConnect/1.0 (+https://imphal-connect.onrender.com)'},body:'data='+encodeURIComponent(query),signal:AbortSignal.timeout(75000)});
+  if(!resp.ok)throw new Error('OpenStreetMap HTTP '+resp.status);
+  const json=await resp.json();
+  const osmRows=(json.elements||[]).map(osmSnapshotRow).filter(Boolean);
+  let localRows=[];
+  if(admin){
+    try{
+      const x=await admin.from('businesses').select('id,name,category,phone,whatsapp,address,city,latitude,longitude,logo_url,cover_url,is_verified,is_published').eq('is_published',true).limit(5000);
+      if(!x.error)localRows=(x.data||[]).map(localSnapshotRow);
+    }catch{}
+  }
+  const seen=new Set(),places=[...localRows,...osmRows].filter(p=>{
+    const key=(p.name+'|'+(p.address||'')).toLowerCase().replace(/[^a-z0-9]+/g,'');
+    if(seen.has(key))return false;seen.add(key);return true;
+  });
+  const extractedAt=new Date().toISOString();
+  const payload={version:1,extractedAt,area:'Imphal 18km radius',sources:['OpenStreetMap','Imphal Connect'],places};
+  const compressed=gzipSync(Buffer.from(JSON.stringify(payload))).toString('base64');
+  if(admin){
+    const {error}=await admin.from('discovery_snapshots').upsert({
+      id:CATALOG_ID,source:'OpenStreetMap + Imphal Connect',version:1,extracted_at:extractedAt,
+      area:'Imphal 18km radius',record_count:places.length,payload_gzip:compressed,
+      metadata:{osmCount:osmRows.length,localCount:localRows.length,compression:'gzip+base64',refresh:'manual only'}
+    },{onConflict:'id'});
+    if(error)console.warn('Snapshot save:',error.message);
+  }
+  return payload;
+}
+async function getCatalog(){
+  const cached=catalogCache.get(CATALOG_ID);
+  if(cached)return cached;
+  if(admin){
+    try{
+      const {data,error}=await admin.from('discovery_snapshots').select('version,extracted_at,area,record_count,payload_gzip,metadata').eq('id',CATALOG_ID).maybeSingle();
+      if(!error&&data?.payload_gzip){
+        const payload=JSON.parse(gunzipSync(Buffer.from(data.payload_gzip,'base64')).toString('utf8'));
+        catalogCache.set(CATALOG_ID,payload);return payload;
+      }
+    }catch(e){console.warn('Snapshot read:',e.message)}
+  }
+  if(!catalogBuildPromise)catalogBuildPromise=extractImphalSnapshot().finally(()=>{catalogBuildPromise=null});
+  const payload=await catalogBuildPromise;catalogCache.set(CATALOG_ID,payload);return payload;
+}
+function dayMatches(selector,day){
+  if(!selector)return true;
+  const order=['Mo','Tu','We','Th','Fr','Sa','Su'];
+  return selector.replace(/\s+/g,'').split(',').some(part=>{
+    const m=part.match(/^(Mo|Tu|We|Th|Fr|Sa|Su)-(Mo|Tu|We|Th|Fr|Sa|Su)$/);
+    if(m){let a=order.indexOf(m[1]),b=order.indexOf(m[2]),d=order.indexOf(day);if(b<a)b+=7;if(d<a)d+=7;return d>=a&&d<=b}
+    return part===day;
+  });
+}
+function openingStatus(hours,now=new Date()){
+  if(!hours)return {status:'unknown',label:'Hours not listed'};
+  const h=String(hours).trim();
+  if(!h)return {status:'unknown',label:'Hours not listed'};
+  if(/^24\/7$/i.test(h))return {status:'open',label:'Open 24/7'};
+  const weekday=new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Kolkata',weekday:'short'}).format(now).slice(0,2);
+  let applicable=null;
+  for(const part of h.split(/;|\|\|/).map(x=>x.trim()).filter(Boolean)){
+    const off=/\b(off|closed)\b/i.test(part);
+    const dayMatch=part.match(/^(Mo|Tu|We|Th|Fr|Sa|Su)(?:\s*[-,]\s*(?:Mo|Tu|We|Th|Fr|Sa|Su))*\b/);
+    if(dayMatch&&!dayMatches(dayMatch[0],weekday))continue;
+    const times=[...part.matchAll(/(\d{1,2}):(\d{2})\s*-\s*(\d{1,2}):(\d{2})/g)].map(m=>[+m[1]*60++m[2],+m[3]*60++m[4]]);
+    if(off)applicable={off:true};
+    else if(times.length)applicable={times};
+  }
+  if(!applicable)return {status:'unknown',label:h};
+  if(applicable.off)return {status:'closed',label:'Closed today'};
+  const fmt=new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Kolkata',hour:'2-digit',minute:'2-digit',hour12:false}).format(now);
+  const [hh,mm]=fmt.split(':').map(Number),mins=hh*60+mm;
+  const open=applicable.times.some(([a,b])=>b>=a?mins>=a&&mins<b:mins>=a||mins<b);
+  return {status:open?'open':'closed',label:open?'Open now':'Closed now'};
+}
+function enrichSnapshotRow(p){
+  const st=openingStatus(p.openingHours);
+  return {...p,openNow:st.status==='open'?true:st.status==='closed'?false:null,openStatus:st.status,hoursLabel:st.label};
+}
+function filterSnapshot(places,q,category){
+  const term=safe(q,80).toLowerCase(),cat=safe(category||'all',40).toLowerCase();
+  const catTerms=LOCAL_TERMS[cat]||[];
+  return places.filter(p=>{
+    const hay=[p.name,p.type,p.category,p.address,p.city,p.phone].join(' ').toLowerCase();
+    const qOk=!term||hay.includes(term);
+    const cOk=!cat||cat==='all'||String(p.category||'').toLowerCase()===cat||catTerms.some(k=>hay.includes(k));
+    return qOk&&cOk;
+  }).map(enrichSnapshotRow);
+}
+export async function catalog(req,res){
+  try{
+    const payload=await getCatalog(),places=filterSnapshot(payload.places||[],req.query.q||'',req.query.category||'all');
+    res.set('Cache-Control','public, max-age=86400, stale-while-revalidate=604800');
+    return res.json({ok:true,version:payload.version,extractedAt:payload.extractedAt,area:payload.area,count:places.length,total:payload.places?.length||0,source:payload.sources,places,attribution:'Map data © OpenStreetMap contributors · ODbL'});
+  }catch(e){console.error('Catalog:',e);return res.status(503).json({ok:false,error:'Local catalog extraction is unavailable right now'});}
+}
 export async function smartDiscovery(req,res){
- const q=safe(req.query.q,80),category=safe(req.query.category||'all',40).toLowerCase()||'all',lat=Number(req.query.lat),lng=Number(req.query.lng),radius=Number(req.query.radius),limit=Math.min(30,Math.max(1,Number(req.query.pageSize)||18));
- const la=Number.isFinite(lat)?lat:CENTER.lat,lo=Number.isFinite(lng)?lng:CENTER.lng,key='smart:'+la.toFixed(4)+':'+lo.toFixed(4)+':'+category+':'+q.toLowerCase();
- const old=cache.get(key);if(old&&Date.now()-old.at<15000){res.set('Cache-Control','private, max-age=15');return res.json(old.data)}
- let localRows=[];if(admin){try{const x=await admin.from('businesses').select('id,name,category,phone,whatsapp,address,city,latitude,longitude,logo_url,cover_url,is_verified,is_published').eq('is_published',true).limit(120);if(!x.error)localRows=x.data||[]}catch{}}
- const term=q.toLowerCase(),catTerms=LOCAL_TERMS[category]||[category];localRows=localRows.map(local).filter(p=>{const text=[p.name,p.type,p.address,p.city].join(' ').toLowerCase();const cOk=!category||category==='all'||catTerms.some(k=>text.includes(k));return (!term||text.includes(term))&&cOk});
- if(Number.isFinite(lat)&&Number.isFinite(lng))localRows.forEach(p=>{if(p.latitude!=null&&p.longitude!=null)p.distanceKm=dist(lat,lng,p.latitude,p.longitude)});localRows.sort((a,b)=>(a.distanceKm??999)-(b.distanceKm??999));
- let osmRows=[];try{osmRows=await overpass(q,category,la,lo,radius)}catch(e){console.warn('OSM discovery:',e.message)}
- if(Number.isFinite(lat)&&Number.isFinite(lng))osmRows.forEach(p=>{p.distanceKm=dist(lat,lng,p.latitude,p.longitude)});osmRows.sort((a,b)=>(a.distanceKm??999)-(b.distanceKm??999));
- const seen=new Set(),merged=[...localRows,...osmRows].filter(p=>{const k=(p.name+'|'+(p.address||'')).toLowerCase().replace(/[^a-z0-9]+/g,'');if(seen.has(k))return false;seen.add(k);return true}).slice(0,limit);
- const data={ok:true,places:merged,sources:localRows.length&&osmRows.length?'Imphal Connect + OpenStreetMap':localRows.length?'Imphal Connect':'OpenStreetMap',generatedAt:new Date().toISOString()};cache.set(key,{at:Date.now(),data});res.set('Cache-Control','private, max-age=15');return res.json(data);
+  try{
+    const payload=await getCatalog(),lat=Number(req.query.lat),lng=Number(req.query.lng);
+    let places=filterSnapshot(payload.places||[],req.query.q||'',req.query.category||'all');
+    if(Number.isFinite(lat)&&Number.isFinite(lng))places=places.map(p=>({...p,distanceKm:dist(lat,lng,p.latitude,p.longitude)})).sort((a,b)=>(a.distanceKm??999)-(b.distanceKm??999));
+    const limit=Math.min(60,Math.max(1,Number(req.query.pageSize)||24));
+    res.set('Cache-Control','public, max-age=86400, stale-while-revalidate=604800');
+    return res.json({ok:true,places:places.slice(0,limit),total:places.length,extractedAt:payload.extractedAt,source:payload.sources});
+  }catch(e){console.error('Smart discovery:',e);return res.status(503).json({ok:false,error:'Local catalog unavailable'});}
 }
 export async function todayEvents(req,res){
   const sourceUrl='https://www.kumhei.com/';
