@@ -52,34 +52,59 @@
 
   async function renderHost(id,title,cat,q){
     const h=$(id);if(!h)return;
-    h.innerHTML='<div class="ic-final-shell"><div><h2 style="margin:0;font:900 21px Manrope;color:#07365d">'+esc(title)+'</h2><small style="color:#78909f">Real local catalog · no fabricated listings</small></div><div class="ic-final-toolbar" id="'+id+'FinalTabs">'+['All','Food','Shopping','Services','Stay','Resorts','Cafes','Restaurants','Hotels','Groceries','Electronics','Fashion','Handloom','Books','Hardware','Clinics','Hospitals','Pharmacies','Gyms','Salons','Education','Automotive','Banks','Tourism'].map(x=>'<button type="button" data-cat="'+x+'" class="'+(String(cat||'all').toLowerCase()===x.toLowerCase()?'active':'')+'">'+x+'</button>').join('')+'</div><div id="'+id+'FinalStatus" class="ic-final-status">Loading…</div><div id="'+id+'FinalGrid" class="ic-final-grid"></div></div>';
+    h.innerHTML='<div class="ic-final-shell"><div><h2 style="margin:0;font:900 21px Manrope;color:#07365d">'+esc(title)+'</h2><small style="color:#78909f">Real local catalog · no fabricated listings</small></div><div class="ic-final-toolbar ic-primary-cats" id="'+id+'FinalTabs" role="tablist" aria-label="Explore categories">'+['All','Food','Shopping','Services','Stay'].map(x=>'<button type="button" data-cat="'+x+'" role="tab" class="'+(String(cat||'all').toLowerCase()===x.toLowerCase()?'active':'')+'">'+x+'</button>').join('')+'</div><div id="'+id+'FinalStatus" class="ic-final-status">Loading…</div><div id="'+id+'FinalGrid" class="ic-final-grid"></div></div>';
     const tabs=$(id+'FinalTabs'),grid=$(id+'FinalGrid'),st=$(id+'FinalStatus');
-    const paint=async(c,qv)=>{status(st,'Loading local places…');try{const d=await catalog(),target=String(c||'all').toLowerCase(),terms={food:['food','restaurant','cafe','bakery'],shopping:['shop','store','market'],services:['service','office','repair'],stay:['hotel','guest','hostel','resort'],resorts:['resort','retreat'],cafes:['cafe','coffee'],restaurants:['restaurant','food'],hotels:['hotel','guest','hostel'],groceries:['grocery','supermarket','market'],electronics:['electronics','computer','mobile','phone'],fashion:['fashion','clothes','tailor'],handloom:['handloom','fabric','textile','tailor'],books:['book','stationery'],hardware:['hardware','building','plumbing','electrical'],clinics:['clinic','doctor','dentist'],hospitals:['hospital'],pharmacies:['pharmacy','chemist'],gyms:['gym','fitness'],salons:['salon','hair','beauty'],education:['school','college','university','coaching','tutor'],automotive:['car','auto','repair','tyre'],banks:['bank','atm'],tourism:['tourism','travel','attraction']}[target]||[];let arr=(d.places||[]).filter(p=>{const hay=[p.name,p.type,p.category,p.address,p.city,p.phone,p.description].join(' ').toLowerCase();return target==='all'||String(p.category||'').toLowerCase()===target||terms.some(t=>hay.includes(t))});arr=localFilterPlaces(arr,qv).slice(0,120);status(st,arr.length+' local places found','ok');grid.innerHTML=arr.length?arr.map(card).join(''):'<div class="ic-final-card" style="grid-column:1/-1;text-align:center"><b>No results found</b><br><small>Try another search or category.</small></div>';bind(grid)}catch(e){status(st,e.message,'err');grid.innerHTML='<div class="ic-final-card" style="grid-column:1/-1">Discovery is temporarily unavailable. Please try again.</div>'}};
+    const paint=async(c,qv)=>{status(st,'Loading local places…');try{const d=await catalog(),target=String(c||'all').toLowerCase(),groups={food:['food','cafes','restaurants'],shopping:['shopping','groceries','fashion','electronics','hardware','books','handloom'],services:['services','clinics','hospitals','pharmacies','salons','gyms','education','automotive','banks'],stay:['hotels','resorts']},terms=groups[target]||[];let arr=(d.places||[]).filter(p=>{const hay=[p.name,p.type,p.category,p.address,p.city,p.phone,p.description].join(' ').toLowerCase();const exact=String(p.category||'').toLowerCase();return target==='all'||terms.includes(exact)||(target==='food'&&/(restaurant|cafe|food|bakery|fast food|fast_food)/i.test(hay))||(target==='stay'&&/(hotel|guest|hostel|motel|resort|stay)/i.test(hay))||(target==='shopping'&&/(shop|store|market|shopping)/i.test(hay))||(target==='services'&&/(service|office|repair|clinic|hospital|pharmacy|salon|gym|fitness)/i.test(hay))});arr=localFilterPlaces(arr,qv).slice(0,120);status(st,arr.length+' local places found','ok');grid.innerHTML=arr.length?arr.map(card).join(''):'<div class="ic-final-card" style="grid-column:1/-1;text-align:center"><b>No results found</b><br><small>Try another search or category.</small></div>';bind(grid)}catch(e){status(st,e.message,'err');grid.innerHTML='<div class="ic-final-card" style="grid-column:1/-1">Discovery is temporarily unavailable. Please try again.</div>'}};
     tabs.querySelectorAll('button').forEach(b=>b.onclick=()=>{tabs.querySelectorAll('button').forEach(x=>x.classList.toggle('active',x===b));paint(b.dataset.cat,qvFor(b.dataset.cat))});
     const qvFor=c=>String(c).toLowerCase()==='all'?q:(q||'');
     await paint(cat,q);
   }
 
   function localFilterPlaces(places,q){
-  const raw=String(q||'').trim().toLowerCase();
+  const raw=String(q||'').trim().toLowerCase().replace(/\\s+/g,' ');
   if(!raw)return places;
-  const aliases={resturent:'restaurant',restuarant:'restaurant',restraunt:'restaurant',cofee:'cafe',coffie:'cafe',pharmcy:'pharmacy',restuarant:'restaurant',saloon:'salon'};
+  const aliases={resturent:'restaurant',restuarant:'restaurant',restraunt:'restaurant',cofee:'cafe',coffie:'cafe',pharmcy:'pharmacy',saloon:'salon',grosery:'grocery',groccery:'grocery',eletronic:'electronics'};
   const qx=aliases[raw]||raw;
-  const toks=qx.split(/\\s+/).filter(Boolean);
+  const intents={
+    food:['food','restaurant','restaurants','cafe','cafes','coffee','bakery','fast food','fast_food','food court','food_court','ice cream','bar','pub'],
+    restaurant:['restaurant','restaurants','food','fast food','fast_food','food court','food_court'],
+    cafe:['cafe','cafes','coffee','bakery'],
+    coffee:['cafe','cafes','coffee','bakery'],
+    shopping:['shopping','shop','store','market','fashion','clothes','electronics','hardware','books','groceries'],
+    pharmacy:['pharmacy','pharmacies','chemist','medicine'],
+    hotel:['hotel','hotels','guest house','guest_house','hostel','motel','resort','stay'],
+    hotels:['hotel','hotels','guest house','guest_house','hostel','motel','resort','stay'],
+    stay:['hotel','hotels','guest house','guest_house','hostel','motel','resort','stay'],
+    resort:['resort','hotel','hotels','retreat'],
+    gym:['gym','gyms','fitness','fitness centre','fitness_centre'],
+    fitness:['gym','gyms','fitness','fitness centre','fitness_centre'],
+    salon:['salon','salons','hair','hairdresser','beauty'],
+    beauty:['salon','salons','hair','hairdresser','beauty'],
+    clinic:['clinic','clinics','doctor','doctors','dentist'],
+    hospital:['hospital','hospitals'],
+    health:['health','clinic','clinics','doctor','doctors','dentist','pharmacy'],
+    electronics:['electronics','computer','mobile','phone','appliance','telecommunication'],
+    fashion:['fashion','clothes','clothing','tailor','shoes'],
+    clothing:['fashion','clothes','clothing','tailor','shoes']
+  };
+  const terms=intents[qx]||[qx];
+  const tokens=qx.split(/\\s+/).filter(Boolean);
   return places.map(p=>{
-    const hay=[p.name,p.type,p.category,p.address,p.city,p.description].join(' ').toLowerCase();
+    const hay=[p.name,p.type,p.category,p.address,p.city,p.phone,p.description].join(' ').toLowerCase();
+    const category=String(p.category||'').toLowerCase();
     let score=0;
-    if(hay.includes(qx))score+=20;
-    if(String(p.name||'').toLowerCase().startsWith(qx))score+=15;
-    toks.forEach(t=>{if(hay.includes(t))score+=5});
+    if(hay.includes(qx)||category.includes(qx))score+=30;
+    if(String(p.name||'').toLowerCase().startsWith(qx))score+=20;
+    terms.forEach(t=>{if(hay.includes(t))score+=8;if(category.includes(t))score+=14});
+    tokens.forEach(t=>{if(hay.includes(t)||category.includes(t))score+=4});
     return {p,score};
-  }).filter(x=>x.score>0).sort((x,y)=>y.score-x.score).map(x=>x.p);
+  }).filter(x=>x.score>0).sort((a,b)=>b.score-a.score).map(x=>x.p);
 }
-window.renderHome=()=>renderHost('homeCards','Life around you','all','');
+window.__IC_SEARCH_SELFTEST__=()=>{const d=window.__IC_LOCAL_CATALOG__?.places||[];return {catalog:d.length,queries:Object.fromEntries(['food','restaurant','cafe','coffee','shopping','pharmacy','hotel','resort','gym','salon','electronics','fashion','clinic','hospital'].map(q=>[q,localFilterPlaces(d,q).length]))};};\nwindow.renderHome=()=>renderHost('homeCards','Life around you','all','');
 window.renderExplore=()=>renderHost('exploreCards','Discover Imphal','all',$('exploreSearch')?.value||'');
 window.searchAll=()=>{const q=String($('search')?.value||'').trim();if(!q){$('search')?.focus();return}if(window.go)window.go('explore');if($('exploreSearch'))$('exploreSearch').value=q;window.renderExplore()};
 window.filterCat=cat=>{if(window.go)window.go('explore');window.renderExplore().then(()=>{const b=$('exploreCards')?.querySelector('[data-cat="'+String(cat).replace(/"/g,'')+'"]');b?.click()})};
-window.setExploreCat=()=>window.renderExplore();
+window.setExploreCat=(cat)=>{window.exploreCat=String(cat||'All').toLowerCase();const input=$('exploreSearch');if(input&&window.exploreCat!=='all')input.value='';window.renderExplore()};\nconst icExploreStyle=document.createElement('style');icExploreStyle.id='ic-explore-mobile-fix';icExploreStyle.textContent='@media(max-width:600px){#explore{padding-top:env(safe-area-inset-top,0px)}.ic-primary-cats{display:flex;gap:10px;overflow-x:auto;scrollbar-width:none;padding:4px 2px 8px}.ic-primary-cats::-webkit-scrollbar{display:none}.ic-primary-cats button{flex:0 0 auto;min-width:76px;min-height:46px;border-radius:999px;padding:0 18px}.ic-final-grid{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}.ic-final-card{min-width:0}.ic-final-actions{flex-wrap:wrap}.ic-final-actions a,.ic-final-actions button{min-height:40px}}@media(min-width:601px){.ic-primary-cats{display:flex;gap:10px;overflow-x:auto;scrollbar-width:none}.ic-primary-cats::-webkit-scrollbar{display:none}}';document.head.appendChild(icExploreStyle);
 
 window.renderEvents=async()=>{const h=$('eventList');if(!h)return;h.innerHTML='<div class="ic-final-status">Loading today’s public event listings…</div>';try{const d=await fetch('/api/events/today',{cache:'no-store'}).then(r=>r.json());const a=d.events||[];h.innerHTML=a.length?a.map(e=>'<article class="ic-final-card"><span class="pill">TODAY IN IMPHAL</span><h3>'+esc(e.title)+'</h3><p>'+esc(e.venue||'Imphal')+'</p><small>'+esc(e.date||'Today')+'</small></article>').join(''):'<div class="ic-final-status">No public events found for today.</div>'}catch{h.innerHTML='<div class="ic-final-status err">Today’s event feed is temporarily unavailable.</div>'}};
   window.renderDeals=async()=>{const h=$('dealList');if(!h)return;h.innerHTML='<div class="ic-final-status">Checking active offers…</div>';try{const d=await fetch('/api/offers',{cache:'no-store'}).then(r=>r.json());const a=d.offers||[];h.innerHTML=a.length?a.map(o=>'<article class="ic-final-card"><span class="pill">ACTIVE OFFER</span><h3>'+esc(o.title)+'</h3><p>'+esc(o.business?.name||'Local business')+' · '+esc(o.description||o.discount_text||'Local offer')+'</p>'+(o.expires_at?'<small>Valid until '+new Date(o.expires_at).toLocaleDateString('en-IN')+'</small>':'')+'</article>').join(''):'<div class="ic-final-status">No active offers are published yet.</div>'}catch{h.innerHTML='<div class="ic-final-status err">Offers are temporarily unavailable.</div>'}};window.renderCommunity=async()=>{const h=$('communityGrid');if(!h)return;try{const d=await catalog(),a=(d.places||[]).slice(0,12);h.innerHTML=a.length?a.map(card).join(''):'<div class="ic-final-status">No local community listings yet.</div>';bind(h)}catch{h.innerHTML='<div class="ic-final-status err">Local community discovery is temporarily unavailable.</div>'}};
