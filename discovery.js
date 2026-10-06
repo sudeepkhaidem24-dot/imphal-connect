@@ -7,15 +7,15 @@ const OVERPASS_URL=process.env.OVERPASS_URL||'https://overpass.private.coffee/ap
 const cache=new Map();
 const CENTER={lat:24.817,lng:93.9368};
 const CATEGORY={
- all:'nwr["name"]',food:'nwr["amenity"~"restaurant|cafe|fast_food|food_court|bar|pub|ice_cream"]',
- cafes:'nwr["amenity"="cafe"]',restaurants:'nwr["amenity"~"restaurant|fast_food|food_court"]',shopping:'nwr["shop"]',
- groceries:'nwr["shop"~"supermarket|grocery|convenience|general|greengrocer|food"]',fashion:'nwr["shop"~"clothes|fashion|shoes|tailor"]',
- electronics:'nwr["shop"~"electronics|computer|mobile_phone|telecommunication|appliance"]',hardware:'nwr["shop"~"hardware|doityourself|builders_merchant|trade|electrical|plumbing"]',
- books:'nwr["shop"~"books|stationery"]',pharmacies:'nwr["amenity"="pharmacy"]',health:'nwr["amenity"~"clinic|doctors|dentist|pharmacy"]',
- clinics:'nwr["amenity"~"clinic|doctors|dentist"]',hospitals:'nwr["amenity"="hospital"]',gyms:'nwr["leisure"="fitness_centre"]',
- salons:'nwr["shop"~"hairdresser|beauty"]',hotels:'nwr["tourism"~"hotel|guest_house|hostel|motel|resort"]',
- education:'nwr["amenity"~"school|college|university|kindergarten"]',automotive:'nwr["shop"~"car|car_repair|motorcycle|tyres"]',
- services:'nwr["office"]',banks:'nwr["amenity"~"bank|atm"]',handloom:'nwr["shop"~"fabric|clothes|tailor|art"]',tourism:'nwr["tourism"]'
+ all:'["name"]',food:'["amenity"~"restaurant|cafe|fast_food|food_court|bar|pub|ice_cream"]',
+ cafes:'["amenity"="cafe"]',restaurants:'["amenity"~"restaurant|fast_food|food_court"]',shopping:'["shop"]',
+ groceries:'["shop"~"supermarket|grocery|convenience|general|greengrocer|food"]',fashion:'["shop"~"clothes|fashion|shoes|tailor"]',
+ electronics:'["shop"~"electronics|computer|mobile_phone|telecommunication|appliance"]',hardware:'["shop"~"hardware|doityourself|builders_merchant|trade|electrical|plumbing"]',
+ books:'["shop"~"books|stationery"]',pharmacies:'["amenity"="pharmacy"]',health:'["amenity"~"clinic|doctors|dentist|pharmacy"]',
+ clinics:'["amenity"~"clinic|doctors|dentist"]',hospitals:'["amenity"="hospital"]',gyms:'["leisure"="fitness_centre"]',
+ salons:'["shop"~"hairdresser|beauty"]',hotels:'["tourism"~"hotel|guest_house|hostel|motel|resort"]',
+ education:'["amenity"~"school|college|university|kindergarten"]',automotive:'["shop"~"car|car_repair|motorcycle|tyres"]',
+ services:'["office"]',banks:'["amenity"~"bank|atm"]',handloom:'["shop"~"fabric|clothes|tailor|art"]',tourism:'["tourism"]'
 };
 const ALIAS={
  cafe:'amenity="cafe"',cafes:'amenity="cafe"',coffee:'amenity="cafe"',restaurant:'amenity~"restaurant|fast_food"',restaurants:'amenity~"restaurant|fast_food"',food:'amenity~"restaurant|cafe|fast_food"',
@@ -36,7 +36,7 @@ async function overpass(q,category,lat,lng,radius){
  const la=Number.isFinite(lat)?lat:CENTER.lat,lo=Number.isFinite(lng)?lng:CENTER.lng,r=Math.min(10000,Math.max(500,Number.isFinite(radius)?radius:8000));
  const term=safe(q,50),base=CATEGORY[String(category||'all').toLowerCase()]||CATEGORY.all,alias=ALIAS[term.toLowerCase()];
  const name=term?'nwr(around:'+r+','+la+','+lo+')[name~"'+rx(term)+'",i];':'';
- const typed=alias?'nwr(around:'+r+','+la+','+lo+')['+alias+'];':base+'(around:'+r+','+la+','+lo+');';
+ const typed=alias?'nwr(around:'+r+','+la+','+lo+')['+alias+'];':'nwr(around:'+r+','+la+','+lo+')'+base+';';
  const query='[out:json][timeout:12];('+name+typed+');out center tags qt;',key='osm:'+la.toFixed(4)+':'+lo.toFixed(4)+':'+r+':'+category+':'+term.toLowerCase();
  const old=cache.get(key);if(old&&Date.now()-old.at<30000)return old.data;
  const resp=await fetch(OVERPASS_URL,{method:'POST',headers:{'content-type':'application/x-www-form-urlencoded;charset=UTF-8','user-agent':'ImphalConnect/1.0 (+https://imphal-connect.onrender.com)'},body:'data='+encodeURIComponent(query)});
