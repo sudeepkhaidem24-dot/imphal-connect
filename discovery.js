@@ -4,7 +4,7 @@ import { gzipSync, gunzipSync } from 'node:zlib';
 const supabaseUrl=process.env.SUPABASE_URL||'';
 const supabaseSecret=process.env.SUPABASE_SERVICE_ROLE_KEY||'';
 const admin=supabaseUrl&&supabaseSecret?createClient(supabaseUrl,supabaseSecret,{auth:{autoRefreshToken:false,persistSession:false}}):null;
-const OVERPASS_URLS=[process.env.OVERPASS_URL,'https://overpass-api.de/api/interpreter','https://overpass.kumi.systems/api/interpreter','https://overpass.private.coffee/api/interpreter'].filter(Boolean);
+const OVERPASS_URLS=[process.env.OVERPASS_URL,'https://overpass.private.coffee/api/interpreter','https://maps.mail.ru/osm/tools/overpass/api/interpreter','https://overpass-api.de/api/interpreter','https://overpass.kumi.systems/api/interpreter'].filter(Boolean);
 const cache=new Map();
 const CENTER={lat:24.817,lng:93.9368};
 const CATEGORY={
@@ -96,17 +96,38 @@ const OFFICIAL_STAYS=[
   ['The Giving Tree','Homestay','Imphal West']
 ];
 function officialStayRows(){return OFFICIAL_STAYS.map(([name,type,city],i)=>({placeId:'gov-stay-'+i,source:'manipur-tourism',name,type,category:type==='Resort'?'Resorts':'Hotels',address:city+', Manipur',city,latitude:null,longitude:null,phone:'',website:'https://manipurtourism.gov.in/find-accommodation/',mapsUrl:maps(name,city+', Manipur'),openingHours:null,officialSource:'Manipur Tourism'}))}
-async function extractImphalSnapshot(){
-  const query='[out:json][timeout:60];nwr(around:18000,'+CENTER.lat+','+CENTER.lng+')[name];out center tags qt;';
-  let json=null,lastErr=null;
+async function fetchSnapshotOverpass(query){
+  let lastErr=null;
   for(const endpoint of OVERPASS_URLS){
     try{
-      const resp=await fetch(endpoint,{method:'POST',headers:{'content-type':'application/x-www-form-urlencoded;charset=UTF-8','user-agent':'ImphalConnect/1.0 (+https://imphal-connect.onrender.com)'},body:'data='+encodeURIComponent(query),signal:AbortSignal.timeout(45000)});
+      const resp=await fetch(endpoint,{method:'POST',headers:{'content-type':'application/x-www-form-urlencoded;charset=UTF-8','user-agent':'ImphalConnect/1.0 (+https://imphal-connect.onrender.com)'},body:'data='+encodeURIComponent(query),signal:AbortSignal.timeout(20000)});
       if(!resp.ok){lastErr=new Error('OpenStreetMap HTTP '+resp.status);continue}
-      json=await resp.json();break;
+      return await resp.json();
     }catch(e){lastErr=e}
   }
-  const osmRows=json?(json.elements||[]).map(osmSnapshotRow).filter(Boolean):[];
+  throw lastErr||new Error('OpenStreetMap unavailable');
+}
+async function extractImphalSnapshot(){
+  // Avoid the previous 18 km [name] dump: it could time out and silently produce a catalog containing only official hotels.
+  // These smaller, sequential category queries are much more reliable and stay within Overpass fair-use guidance.
+  const la=CENTER.lat,lo=CENTER.lng,radius=10000;
+  const queries=[
+    '[out:json][timeout:20];nwr(around:'+radius+','+la+','+lo+')[amenity~"restaurant|cafe|fast_food|food_court|bar|pub|ice_cream"];out center tags qt;',
+    '[out:json][timeout:20];nwr(around:'+radius+','+la+','+lo+')[shop];out center tags qt;',
+    '[out:json][timeout:20];nwr(around:'+radius+','+la+','+lo+')[amenity~"pharmacy|clinic|doctors|dentist|hospital|bank|atm|school|college|university"];out center tags qt;',
+    '[out:json][timeout:20];nwr(around:'+radius+','+la+','+lo+')[tourism~"hotel|guest_house|hostel|motel|resort"];out center tags qt;',
+    '[out:json][timeout:20];nwr(around:'+radius+','+la+','+lo+')[leisure="fitness_centre"];out center tags qt;',
+    '[out:json][timeout:20];nwr(around:'+radius+','+la+','+lo+')[office];out center tags qt;'
+  ];
+  const elements=[];
+  const errors=[];
+  for(const query of queries){
+    try{
+      const json=await fetchSnapshotOverpass(query);
+      elements.push(...(json.elements||[]));
+    }catch(e){errors.push(e?.message||'unknown error')}
+  }
+  const osmRows=elements.map(osmSnapshotRow).filter(Boolean);
   let localRows=[];
   if(admin){
     try{
@@ -114,29 +135,29 @@ async function extractImphalSnapshot(){
       if(!x.error)localRows=(x.data||[]).map(localSnapshotRow);
     }catch{}
   }
-  if(!json&&localRows.length===0){
-    // Official accommodation rows remain usable even when every public map endpoint is unavailable.
-    console.warn('OpenStreetMap unavailable during catalog rebuild:',lastErr?.message||'unknown');
-  }
+  if(osmRows.length===0&&localRows.length===0)console.warn('OpenStreetMap catalog extraction returned no rows:',errors.join(' | '));
   const seen=new Set(),places=[...localRows,...osmRows,...officialStayRows()].filter(p=>{
     const key=(p.name+'|'+(p.address||'')).toLowerCase().replace(/[^a-z0-9]+/g,'');
     if(seen.has(key))return false;seen.add(key);return true;
   });
   const extractedAt=new Date().toISOString();
-  const payload={version:1,extractedAt,area:'Imphal 18km radius',sources:['OpenStreetMap','Imphal Connect'],places};
-  const compressed=gzipSync(Buffer.from(JSON.stringify(payload))).toString('base64');
-  if(admin){
-    const {error}=await admin.from('discovery_snapshots').upsert({
-      id:CATALOG_ID,source:'OpenStreetMap + Imphal Connect',version:1,extracted_at:extractedAt,
-      area:'Imphal 18km radius',record_count:places.length,payload_gzip:compressed,
-      metadata:{osmCount:osmRows.length,localCount:localRows.length,compression:'gzip+base64',refresh:'manual only'}
-    },{onConflict:'id'});
-    if(error)console.warn('Snapshot save:',error.message);
+  const payload={version:2,extractedAt,area:'Imphal 10km radius',sources:['OpenStreetMap','Imphal Connect'],places};
+  // Never overwrite a good persisted snapshot with an empty/official-only rebuild caused by a temporary OSM outage.
+  if(osmRows.length>0||localRows.length>0){
+    const compressed=gzipSync(Buffer.from(JSON.stringify(payload))).toString('base64');
+    if(admin){
+      const {error}=await admin.from('discovery_snapshots').upsert({
+        id:CATALOG_ID,source:'OpenStreetMap + Imphal Connect',version:2,extracted_at:extractedAt,
+        area:'Imphal 10km radius',record_count:places.length,payload_gzip:compressed,
+        metadata:{osmCount:osmRows.length,localCount:localRows.length,compression:'gzip+base64',refresh:'manual only',queryStrategy:'category-batched'}
+      },{onConflict:'id'});
+      if(error)console.warn('Snapshot save:',error.message);
+    }
   }
   return payload;
 }
-async function getCatalog(){
-  const cached=catalogCache.get(CATALOG_ID);
+async function getCatalog(force=false){
+  const cached=force?null:catalogCache.get(CATALOG_ID);
   async function withCurrentLocal(payload){
     if(!admin)return payload;
     if(Date.now()-localRowsCache.at>30000){
@@ -152,7 +173,7 @@ async function getCatalog(){
   if(cached)return withCurrentLocal(cached);
   if(admin){
     try{
-      const {data,error}=await admin.from('discovery_snapshots').select('version,extracted_at,area,record_count,payload_gzip,metadata').eq('id',CATALOG_ID).maybeSingle();
+      const {data,error}=force?{data:null,error:null}:await admin.from('discovery_snapshots').select('version,extracted_at,area,record_count,payload_gzip,metadata').eq('id',CATALOG_ID).maybeSingle();
       if(!error&&data?.payload_gzip){
         const payload=JSON.parse(gunzipSync(Buffer.from(data.payload_gzip,'base64')).toString('utf8'));
         catalogCache.set(CATALOG_ID,payload);return withCurrentLocal(payload);
@@ -209,14 +230,14 @@ function filterSnapshot(places,q,category){
 }
 export async function catalog(req,res){
   try{
-    const payload=await getCatalog(),places=filterSnapshot(payload.places||[],req.query.q||'',req.query.category||'all');
+    const payload=await getCatalog(req.query.refresh==='1'),places=filterSnapshot(payload.places||[],req.query.q||'',req.query.category||'all');
     res.set('Cache-Control','public, max-age=86400, stale-while-revalidate=604800');
     return res.json({ok:true,version:payload.version,extractedAt:payload.extractedAt,area:payload.area,count:places.length,total:payload.places?.length||0,source:payload.sources,places,attribution:'Map data © OpenStreetMap contributors · ODbL'});
   }catch(e){console.error('Catalog:',e);return res.status(503).json({ok:false,error:'Local catalog extraction is unavailable right now'});}
 }
 export async function smartDiscovery(req,res){
   try{
-    const payload=await getCatalog(),lat=Number(req.query.lat),lng=Number(req.query.lng);
+    const payload=await getCatalog(req.query.refresh==='1'),lat=Number(req.query.lat),lng=Number(req.query.lng);
     let places=filterSnapshot(payload.places||[],req.query.q||'',req.query.category||'all');
     if(Number.isFinite(lat)&&Number.isFinite(lng))places=places.map(p=>({...p,distanceKm:dist(lat,lng,p.latitude,p.longitude)})).sort((a,b)=>(a.distanceKm??999)-(b.distanceKm??999));
     const limit=Math.min(60,Math.max(1,Number(req.query.pageSize)||24));
