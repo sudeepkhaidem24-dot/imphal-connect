@@ -8,8 +8,8 @@ A mobile-first local discovery and business platform for Imphal/Manipur.
 - Secure server-side AI proxy (OpenAI-compatible endpoint)
 - Supabase Auth/Postgres/Storage
 - Business owner dashboard
-- Free/Pro/Elite plans
-- Cashfree subscription checkout, verification, cancellation and webhook lifecycle
+- One Business Membership: ₹120/year
+- Payment checkout, verification, cancellation and webhook lifecycle
 - Products/services, offers and 24-hour stories
 - Business analytics
 - Funding request workflow with separate admin review (not automatic lending/disbursement)
@@ -21,7 +21,7 @@ A mobile-first local discovery and business platform for Imphal/Manipur.
 The package is deployable without a committed lockfile; Render/Docker use `npm install --omit=dev`.
 
 1. Create a Supabase project and run `sql/schema.sql`.
-2. Create/activate Cashfree Subscriptions for Pro ₹499/month and Elite ₹1,499/month, then add the Cashfree client credentials to the server environment.
+2. Configure the payment provider for the single Imphal Connect Business Membership at ₹120/year, then add the provider credentials to the server environment.
 3. Configure Cashfree Subscriptions webhooks to `https://YOUR-DOMAIN/api/payments/webhook` and use the Cashfree webhook signing credentials.
 4. Set `ADMIN_EMAILS` to the email(s) that should access `/admin.html`.
 5. Set `AI_API_URL`, `AI_API_KEY`, and `AI_MODEL` to a compatible AI provider for unrestricted general AI responses. Never put the key in frontend code.
