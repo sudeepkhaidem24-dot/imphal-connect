@@ -55,7 +55,7 @@ const CATEGORY_FROM_TAGS={
   electronics:'Electronics',computer:'Electronics',mobile_phone:'Electronics',telecommunication:'Electronics',appliance:'Electronics',
   hardware:'Hardware',doityourself:'Hardware',builders_merchant:'Hardware',trade:'Services',electrical:'Hardware',plumbing:'Hardware',
   books:'Books',stationery:'Books',pharmacy:'Pharmacies',clinic:'Clinics',doctors:'Clinics',dentist:'Health',hospital:'Hospitals',
-  fitness_centre:'Gyms',hairdresser:'Salons',beauty:'Salons',hotel:'Hotels',guest_house:'Hotels',hostel:'Hotels',motel:'Hotels',resort:'Hotels',
+  fitness_centre:'Gyms',hairdresser:'Salons',beauty:'Salons',hotel:'Hotels',guest_house:'Hotels',hostel:'Hotels',motel:'Hotels',resort:'Resorts',
   school:'Education',college:'Education',university:'Education',kindergarten:'Education',
   car:'Automotive',car_repair:'Automotive',motorcycle:'Automotive',tyres:'Automotive',
   bank:'Banks',atm:'Banks',fabric:'Handloom',art:'Handloom',travel_agency:'Tourism',attraction:'Tourism',
