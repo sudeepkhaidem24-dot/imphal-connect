@@ -234,7 +234,7 @@ window.renderEvents=async()=>{const h=$('eventList');if(!h)return;h.innerHTML='<
   }
 
   function init(){
-    installNav();upgradeExploreToolbar();normalizeBusinessCopy();
+    installNav();upgradeExploreToolbar();normalizeBusinessCopy();document.querySelectorAll('a[href="javascript:IC.openOwner()"],a[href="javascript:IC.openOwner()"] .ic-enterprise-secondary').forEach(a=>{a.href='/dashboard.html'});
     if(location.search.includes('owner=1') && window.IC?.createBusiness){setTimeout(()=>window.IC.createBusiness(),500)}
     const obs=new MutationObserver(()=>{installNav();upgradeExploreToolbar();normalizeBusinessCopy()});
     obs.observe(document.body,{childList:true,subtree:true});
