@@ -418,7 +418,14 @@ header .icon{background:#ffffff18;border-color:#ffffff30;color:#fff;backdrop-fil
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',build);else build();
   setTimeout(build,700);
 })();
-</script></head>
+</script><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"><style>
+.ic-live-map{height:520px;border-radius:26px;overflow:hidden;border:1px solid rgba(7,54,93,.12);box-shadow:0 18px 50px rgba(7,54,93,.14);background:#dff4fa}
+.ic-map-status{margin:10px 0 12px;padding:10px 13px;border-radius:14px;background:#fff;border:1px solid #dceef5;color:#526f80;font-size:11px;font-weight:800}
+.ic-map-tools{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:10px 0;flex-wrap:wrap}.ic-map-tools button{border:0;border-radius:12px;padding:10px 13px;background:#07365d;color:#fff;font:800 10px Manrope}.ic-map-tools span{font-size:10px;color:#718996;font-weight:800}
+.ic-nearby-strip{display:flex;gap:10px;overflow-x:auto;scrollbar-width:none;padding:3px 1px 9px}.ic-nearby-strip::-webkit-scrollbar{display:none}.ic-nearby-card{flex:0 0 min(78vw,280px);padding:13px;border:1px solid #dceef5;border-radius:18px;background:#fff;box-shadow:0 9px 24px rgba(7,54,93,.07)}.ic-nearby-card b{display:block;color:#07365d;font-size:12px}.ic-nearby-card small{display:block;color:#6b8390;margin-top:4px;line-height:1.35}.ic-nearby-card .live-open{color:#087b4f}.ic-nearby-card .live-closed{color:#b54242}.ic-gps-dot{width:18px;height:18px;border-radius:50%;background:#1976ff;border:4px solid #fff;box-shadow:0 0 0 7px rgba(25,118,255,.22),0 2px 8px rgba(0,0,0,.25)}
+@media(max-width:600px){.ic-live-map{height:58svh;min-height:430px;max-height:620px}}
+</style>
+</head>
 <body><div class="ambient-orbs"><i></i><i></i><i></i></div>
 <div class="app">
 <header>
@@ -525,8 +532,12 @@ header .icon{background:#ffffff18;border-color:#ffffff30;color:#fff;backdrop-fil
 
 <!-- MAP -->
 <main id="map" class="view">
-<section class="section"><div class="section-head"><h2>Map of Imphal</h2><button onclick="showToast('Location access can be connected in production')">Near me</button></div>
-<div class="map" style="height:520px"><div class="pin p1"><i>⌖</i></div><div class="pin p2"><i>⌖</i></div><div class="pin p3"><i>⌖</i></div><div class="maplabel">Kangla · Thangmeiband · Keishampat · Imphal</div></div></section>
+<section class="section"><div class="section-head"><h2>Live Imphal Map</h2><button id="icLocateMe" type="button">◎ Locate me</button></div>
+<div id="icMapStatus" class="ic-map-status" aria-live="polite">GPS is off · Tap “Locate me” to show your live position.</div>
+<div id="icLiveMap" class="ic-live-map" aria-label="Live map of Imphal with nearby places"></div>
+<div class="ic-map-tools"><button type="button" id="icRefreshMap">↻ Refresh nearby</button><span id="icNearbyCount">Nearby places will appear here.</span></div>
+<div id="icNearbyStrip" class="ic-nearby-strip"></div>
+</section>
 <section class="section"><div class="feature"><div class="feature-img" style="background-image:url('https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=500&q=80')"></div><div><span class="pill">DISCOVER MANIPUR</span><h3>Go beyond the city.</h3><p>Build a route to Loktak, Keibul Lamjao, Ukhrul and more.</p><button class="darkbtn" onclick="go('travel')">Open travel guide</button></div></div></section>
 </main>
 
@@ -1181,5 +1192,6 @@ window.trackBusinessEvent=async function(businessId,eventType,meta={}){try{await
   };
 })();
 </script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </body>
 </html>
