@@ -190,7 +190,7 @@
     const q=(source?.value||document.getElementById('search')?.value||document.getElementById('searchAlt')?.value||'').trim();
     const ex=document.getElementById('searchPageInput');if(ex)ex.value=q;
     window.exploreCat='all';
-    go('search');
+    go('searchPage');
     renderSearchPage(q);
   };
   async function renderSearchPage(q=''){
