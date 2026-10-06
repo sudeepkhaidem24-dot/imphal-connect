@@ -518,12 +518,12 @@ html{background:var(--paper);scroll-behavior:smooth}body{background:var(--paper)
 
   <section class="editorial-section">
     <div class="section-heading"><div><p class="eyebrow-text">THIS WEEK</p><h2>What's happening.</h2></div><button class="text-link" onclick="go('events')">All events</button></div>
-    <div id="eventList" class="event-editorial-list"></div>
+    <div id="homeEventList" class="event-editorial-list"></div>
   </section>
 
   <section class="editorial-section">
     <div class="section-heading"><div><p class="eyebrow-text">MADE HERE</p><h2>Made in Manipur.</h2><p>Buy directly from local makers and independent businesses.</p></div><button class="text-link" onclick="go('shop')">Visit marketplace</button></div>
-    <div class="shop-strip" id="products"></div>
+    <div class="shop-strip" id="homeProducts"></div>
   </section>
 
   <section class="editorial-section travel-feature">
@@ -1248,6 +1248,31 @@ window.trackBusinessEvent=async function(businessId,eventType,meta={}){try{await
   };
   window.saveToTrip=function(id){
     var a=JSON.parse(localStorage.getItem('ic_trip')||'[]');if(a.indexOf(id)<0)a.push(id);localStorage.setItem('ic_trip',JSON.stringify(a));toast('Saved to trip');
+  };
+})();
+</script><script>
+(function(){
+  var baseEvents=window.renderEvents,baseProducts=window.renderProducts;
+  window.renderEvents=function(){
+    var result=baseEvents?baseEvents():null;
+    var src=document.getElementById('eventList'),dst=document.getElementById('homeEventList');
+    if(src&&dst)dst.innerHTML=src.innerHTML;
+    var now=new Date(), label=now.toLocaleDateString('en-IN',{weekday:'short',day:'2-digit',month:'short'});
+    document.querySelectorAll('#eventList .event > div:first-child,#homeEventList .event > div:first-child').forEach(function(el){el.textContent=label+' · '+now.toLocaleTimeString('en-IN',{hour:'numeric',minute:'2-digit'});});
+    return result;
+  };
+  window.renderProducts=function(){
+    var result=baseProducts?baseProducts():null;
+    var src=document.getElementById('products'),dst=document.getElementById('homeProducts');
+    if(src&&dst)dst.innerHTML=src.innerHTML;
+    return result;
+  };
+  window.askAI=function(){
+    var q=(document.getElementById('aiInput')||{}).value||'';
+    if(!q.trim())return openAI();
+    document.getElementById('aiChatInput').value=q;
+    openAI();
+    sendAI(new Event('submit',{cancelable:true}));
   };
 })();
 </script></body>
