@@ -603,20 +603,20 @@
     fab.dataset.ultraDrag='1';
     fab.style.position='fixed';fab.style.left='0px';fab.style.top='0px';fab.style.right='auto';fab.style.bottom='auto';
     fab.style.touchAction='none';fab.style.userSelect='none';fab.style.webkitUserSelect='none';fab.style.cursor='grab';fab.style.willChange='transform';
-    let x=0,y=0,dx=0,dy=0,drag=null,raf=0;
+    let x=0,y=0,dx=0,dy=0,startX=0,startY=0,drag=null,raf=0;
     try{const s=JSON.parse(localStorage.getItem('ic_imphi_position')||'null');if(s){x=Number(s.x)||0;y=Number(s.y)||0}}catch{}
     const clamp=()=>{x=Math.max(4,Math.min(innerWidth-fab.offsetWidth-4,x));y=Math.max(4,Math.min(innerHeight-fab.offsetHeight-4,y))};
     const paint=()=>{raf=0;fab.style.transform='translate3d('+x+'px,'+y+'px,0)'};
     clamp();paint();
     fab.addEventListener('pointerdown',e=>{
       if(e.pointerType==='mouse'&&e.button!==0)return;
-      const r=fab.getBoundingClientRect();dx=e.clientX-r.left;dy=e.clientY-r.top;drag={id:e.pointerId,moved:false};
+      const r=fab.getBoundingClientRect();dx=e.clientX-r.left;dy=e.clientY-r.top;startX=r.left;startY=r.top;drag={id:e.pointerId,moved:false};
       try{fab.setPointerCapture(e.pointerId)}catch{};fab.style.cursor='grabbing';e.preventDefault();
     },{passive:false});
     fab.addEventListener('pointermove',e=>{
       if(!drag)return;
       x=e.clientX-dx;y=e.clientY-dy;
-      if(Math.abs(e.clientX-(x+dx))+Math.abs(e.clientY-(y+dy))>0)drag.moved=true;
+      if(Math.abs(e.clientX-startX)>3||Math.abs(e.clientY-startY)>3)drag.moved=true;
       clamp();cancelAnimationFrame(raf);raf=requestAnimationFrame(paint);e.preventDefault();
     },{passive:false});
     const end=e=>{
