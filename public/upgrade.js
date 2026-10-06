@@ -111,134 +111,6 @@
   }, {once:true});
 })();
 
-/* ===== GOOGLE PLACES LIVE DISCOVERY ===== */
-(() => {
-  'use strict';
-  const esc = s => String(s ?? '').replace(/[&<>'"]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[ch]));
-  const categoryMap = {
-    'All':'all','Food & Dining':'food','Shopping':'shopping','Services':'services',
-    'Stay & Tourism':'hotels','Health & Wellness':'health','Events':'all',
-    'Automotive':'automotive','Handloom & Crafts':'handloom','Education':'education',
-    'Other':'all','Restaurants':'restaurants','Cafes':'cafes','Groceries':'groceries',
-    'Fashion':'fashion','Electronics':'electronics','Pharmacies':'pharmacies',
-    'Gyms':'gyms','Salons':'salons','Books':'books','Hotels':'hotels','Banks':'banks'
-  };
-  const titleCase = s => String(s||'local business').replace(/_/g,' ').replace(/\\b\\w/g,m=>m.toUpperCase());
-  const localTime = iso => { try{return new Date(iso).toLocaleTimeString('en-IN',{hour:'numeric',minute:'2-digit'});}catch{return '';} };
-
-  const css = document.createElement('style');
-  css.textContent = `
-    .ic-google-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
-    .ic-google-photo{position:relative;height:150px;border-radius:16px;overflow:hidden;background:#eaf3f7;margin:-2px 0 2px}.ic-google-photo img{width:100%;height:100%;display:block;object-fit:cover}.ic-google-photo-meta{position:absolute;left:8px;bottom:7px;right:8px;display:flex;justify-content:space-between;gap:8px;align-items:center;font:800 8px Manrope;color:#fff;text-shadow:0 1px 3px #000;background:linear-gradient(transparent,rgba(0,0,0,.55));padding-top:20px}.ic-google-photo-meta a{color:#fff;text-decoration:underline}.ic-google-photo-empty{display:none}
-    .ic-google-card{background:rgba(255,255,255,.96);border:1px solid #dceef5;border-radius:22px;padding:16px;box-shadow:0 14px 34px rgba(7,54,93,.08);display:flex;flex-direction:column;gap:9px}
-    .ic-google-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
-    .ic-google-name{font:900 15px/1.2 Manrope;color:#07365d;margin:0}
-    .ic-google-type{font-size:10px;color:#6d8492;text-transform:uppercase;letter-spacing:.08em;font-weight:800;margin-top:4px}
-    .ic-google-status{font-size:9px;font-weight:900;border-radius:999px;padding:6px 8px;white-space:nowrap}
-    .ic-google-open{background:#e8f8ef;color:#087b4f}.ic-google-closed{background:#fff0f0;color:#b54242}.ic-google-unknown{background:#eef5f8;color:#6d8492}
-    .ic-google-address{font-size:11px;line-height:1.45;color:#526f80}
-    .ic-google-rating{display:flex;gap:7px;align-items:center;font-size:11px;color:#274d62}.ic-google-star{font-size:14px}
-    .ic-google-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:auto}
-    .ic-google-actions a,.ic-google-actions button{border:0;border-radius:12px;padding:9px 11px;font:800 10px Manrope;text-decoration:none;cursor:pointer;background:#eef7fb;color:#0879d1}
-    .ic-google-actions .primary{background:#0879d1;color:white}
-    .ic-google-attribution{font:400 10px Roboto,Arial,sans-serif;color:#5e5e5e;white-space:nowrap;margin-top:2px}
-    .ic-google-live{display:inline-flex;align-items:center;gap:5px;font-size:9px;font-weight:900;color:#0879d1;letter-spacing:.08em;text-transform:uppercase}
-    .ic-google-live:before{content:"";width:6px;height:6px;border-radius:50%;background:#14a66a;box-shadow:0 0 0 4px rgba(20,166,106,.12)}
-    .ic-google-error{grid-column:1/-1;background:#fff6f6;border:1px solid #f2d4d4;color:#8b4b4b;border-radius:18px;padding:18px}
-    .ic-nearby-strip{display:flex;gap:10px;overflow:auto;scrollbar-width:none;padding:4px 1px 8px}.ic-nearby-strip::-webkit-scrollbar{display:none}.ic-nearby-card{min-width:190px;max-width:210px;background:#fff;border:1px solid #dceef5;border-radius:18px;padding:9px;box-shadow:0 10px 25px rgba(7,54,93,.07)}.ic-nearby-photo{height:92px;border-radius:13px;overflow:hidden;background:#edf5f8;margin-bottom:8px}.ic-nearby-photo img{width:100%;height:100%;object-fit:cover}.ic-nearby-card b{display:block;font:900 11px Manrope;color:#07365d;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ic-nearby-card small{display:block;font-size:8px;color:#71899a;margin-top:3px}.ic-nearby-card .live-open{color:#087b4f;font-weight:900}.ic-nearby-card .live-closed{color:#b54242;font-weight:900}.ic-nearby-card a{display:block;color:#0879d1;font-size:8px;font-weight:900;margin-top:7px}.ic-nearby-google{display:block;font:400 8px Roboto,Arial,sans-serif;color:#5e5e5e;margin-top:5px}
-    @media(max-width:760px){.ic-google-grid{grid-template-columns:1fr}}
-  `;
-  document.head.appendChild(css);
-
-  async function getPlaces({q='',category='all',pages=1,openNow=false}={}){
-    const all=[]; let pageToken='';
-    for(let page=0;page<pages;page++){
-      const p=new URLSearchParams({category,pageSize:'20'});
-      if(q)p.set('q',q);
-      if(openNow)p.set('openNow','true');
-      if(pageToken)p.set('pageToken',pageToken);
-      const r=await fetch('/api/discovery/google?'+p.toString(),{cache:'no-store'});
-      const d=await r.json().catch(()=>({}));
-      if(!r.ok)throw new Error(d.error||'Live Google discovery is unavailable');
-      all.push(...(d.places||[])); pageToken=d.nextPageToken||'';
-      if(!pageToken)break;
-    }
-    const seen=new Set();
-    return all.filter(p=>p.placeId&&!seen.has(p.placeId)&&seen.add(p.placeId));
-  }
-
-  function card(p){
-    const status=p.openNow===true?'<span class="ic-google-status ic-google-open">OPEN NOW</span>':p.openNow===false?'<span class="ic-google-status ic-google-closed">CLOSED</span>':'<span class="ic-google-status ic-google-unknown">HOURS UNKNOWN</span>';
-    const close=p.openNow&&p.nextCloseTime?'<span>· closes '+esc(localTime(p.nextCloseTime))+'</span>':'';
-    const rating=p.rating!=null?'<div class="ic-google-rating"><span class="ic-google-star">★</span><b>'+esc(Number(p.rating).toFixed(1))+'</b><span>('+esc(Number(p.reviewCount||0).toLocaleString('en-IN'))+' Google reviews)</span></div>':'<div class="ic-google-rating">No Google rating yet</div>';
-    const maps=p.mapsUrl||('https://www.google.com/maps/search/?api=1&query='+encodeURIComponent([p.name,p.address].filter(Boolean).join(', ')));
-    const phone=p.phone?'<a href="tel:'+esc(p.phone)+'">Call</a>':'';
-    return '<article class="ic-google-card">'+
-      photoMarkup(p)+
-      '<div class="ic-google-live">LIVE GOOGLE DATA</div>'+
-      '<div class="ic-google-top"><div><h3 class="ic-google-name">'+esc(p.name)+'</h3><div class="ic-google-type">'+esc(titleCase(p.type))+'</div></div>'+status+'</div>'+
-      '<div class="ic-google-address">'+esc(p.address||'Imphal, Manipur')+'</div>'+
-      rating+
-      '<div class="ic-google-address">'+(p.openNow===true?'Open now ':p.openNow===false?'Closed now ':'')+close+'</div>'+
-      '<div class="ic-google-actions"><a class="primary" href="'+esc(maps)+'" target="_blank" rel="noopener">Directions</a>'+phone+(p.website?'<a href="'+esc(p.website)+'" target="_blank" rel="noopener">Website</a>':'')+'</div>'+
-      '<div class="ic-google-attribution" translate="no">Google Maps</div>'+
-    '</article>';
-  }
-
-  window.loadLiveBusinesses = async function(q='',category='All'){
-    try{
-      return await getPlaces({q,category:categoryMap[category]||'all',pages:1});
-    }catch(e){
-      console.warn('Google live discovery:',e.message);
-      return [];
-    }
-  };
-
-  async function renderGoogle(targetId,{q='',category='All',pages=2}={}){
-    const el=document.getElementById(targetId); if(!el)return;
-    el.innerHTML='<div class="ic-live-empty"><b>Finding live businesses in Imphal…</b>Checking Google Places for current listings, ratings and opening status.</div>';
-    try{
-      const places=await getPlaces({q,category:categoryMap[category]||'all',pages});
-      el.innerHTML=places.length?'<div class="ic-google-grid">'+places.map(card).join('')+'</div>':'<div class="ic-live-empty"><b>No matching live places found.</b>Try a different search or category.</div>';
-    }catch(e){
-      el.innerHTML='<div class="ic-google-error"><b>Live discovery is temporarily unavailable.</b><br>'+esc(e.message)+'</div>';
-    }
-  }
-
-  window.renderHome = async function(){
-    await renderGoogle('homeCards',{category:'All',pages:1});
-  };
-  window.renderExplore = async function(){
-    const q=(document.getElementById('exploreSearch')?.value||'').trim();
-    const cat=window.exploreCat||'All';
-    await renderGoogle('exploreCards',{q,category:cat,pages:2});
-    const empty=document.getElementById('exploreEmpty'); if(empty)empty.classList.add('hidden');
-  };
-
-  window.openGooglePlaceProfile = async function(placeId){
-    openCustom('<div class="grab"></div><span class="pill">LIVE GOOGLE PLACE</span><h2>Loading…</h2><p>Fetching current place details.</p>');
-    try{
-      const r=await fetch('/api/discovery/google/'+encodeURIComponent(placeId),{cache:'no-store'});
-      const d=await r.json(); if(!r.ok)throw new Error(d.error||'Place details unavailable');
-      const p=d.place||{};
-      const maps=p.mapsUrl||'#';
-      const hours=p.hours?.length?'<h3 style="margin-top:16px">Hours</h3><div class="ic-google-address">'+p.hours.map(esc).join('<br>')+'</div>':'';
-      $('sheet').innerHTML='<div class="grab"></div><span class="pill">LIVE GOOGLE PLACE</span><div class="ic-google-live">LIVE DATA · FETCHED NOW</div>'+photoMarkup(p,true)+'<h2>'+esc(p.name)+'</h2><p>'+esc(p.type)+'</p><p>'+esc(p.address)+'</p>'+
-        (p.rating!=null?'<div class="ic-google-rating"><span class="ic-google-star">★</span><b>'+Number(p.rating).toFixed(1)+'</b><span>('+Number(p.reviewCount||0).toLocaleString('en-IN')+' Google reviews)</span></div>':'')+
-        '<p>'+(p.openNow===true?'🟢 Open now':p.openNow===false?'🔴 Closed now':'⚪ Opening status unavailable')+'</p>'+hours+
-        '<div class="ic-prod-actions"><button class="ic-prod-primary" onclick="window.open('+JSON.stringify(maps)+',\'_blank\')">Open in Google Maps</button>'+(p.phone?'<button class="ic-prod-secondary" onclick="location.href='+JSON.stringify('tel:'+p.phone)+'">Call</button>':'')+'</div>'+
-        '<div class="ic-google-attribution" translate="no">Google Maps</div>';
-    }catch(e){$('sheet').innerHTML='<div class="grab"></div><span class="pill">UNAVAILABLE</span><h2>Place details unavailable</h2><p>'+esc(e.message)+'</p>'}
-  };
-
-  // Make live cards clickable without storing Google place content.
-  document.addEventListener('click',e=>{
-    const a=e.target.closest('.ic-google-card'); if(!a)return;
-  },{passive:true});
-
-  setTimeout(()=>{ if(typeof window.renderHome==='function')window.renderHome(); },150);
-})();
-
 /* ===== INSTAGRAM-STYLE DISCOVERY SHELL ===== */
 (() => {
   'use strict';
@@ -340,19 +212,19 @@
       '<div class="ic-google-attribution">Google Maps</div></article>';
   }
 
+  let googleQuotaBlockedUntil=0;
   async function query(cat,q='',pages=1){
-    const all=[];let token='';
-    const inferred=inferCategory(q);
-    const effectiveCat=(cat==='All'&&inferred!=='all')?Object.keys(categoryMap).find(k=>categoryMap[k]===inferred)||cat:cat;
-    for(let i=0;i<pages;i++){
-      const p=new URLSearchParams({category:categoryMap[effectiveCat]||'all',pageSize:'20'});
-      if(q)p.set('q',q);if(token)p.set('pageToken',token);
-      const r=await fetch('/api/discovery/google?'+p,{cache:'no-store'});
-      const d=await r.json().catch(()=>({}));
-      if(!r.ok)throw new Error(d.error||'Live discovery unavailable');
-      all.push(...(d.places||[]));token=d.nextPageToken||'';if(!token)break;
+    const inferred=inferCategory(q),effectiveCat=(cat==='All'&&inferred!=='all')?(Object.keys(categoryMap).find(k=>categoryMap[k]===inferred)||cat):cat;
+    const p=new URLSearchParams({category:categoryMap[effectiveCat]||'all',pageSize:'12'});if(q)p.set('q',q);
+    try{
+      if(Date.now()<googleQuotaBlockedUntil)throw new Error('GOOGLE_QUOTA_BLOCKED');
+      const r=await fetch('/api/discovery/google?'+p,{cache:'no-store'}),d=await r.json().catch(()=>({}));
+      if(!r.ok){const msg=String(d.error||'Live discovery unavailable');if(r.status===403||r.status===429||/quota|SearchTextRequest/i.test(msg))googleQuotaBlockedUntil=Date.now()+10*60*1000;throw new Error(msg)}
+      return (d.places||[]).filter(x=>x.placeId);
+    }catch(err){
+      const fb=await fetch('/api/discovery/fallback?'+new URLSearchParams({category:categoryMap[effectiveCat]||'all',q}),{cache:'no-store'}).then(r=>r.ok?r.json():null).catch(()=>null);
+      const places=(fb?.places||[]).filter(Boolean);if(places.length)return places;throw err;
     }
-    const seen=new Set();return all.filter(x=>x.placeId&&!seen.has(x.placeId)&&seen.add(x.placeId));
   }
 
   function loading(el){
@@ -381,7 +253,7 @@
     const el=document.getElementById(targetId);if(!el)return;
     loading(el);
     try{
-      const places=await query(cat,q,2);
+      const places=await query(cat,q,1);
       if(!places.length){
         el.innerHTML='<div class="ic-live-empty"><b>No '+esc(cat.toLowerCase())+' found.</b>Try another segment or search term.</div>';
         return;
@@ -397,17 +269,7 @@
     const el=document.getElementById(targetId);if(!el)return;
     loading(el);
     try{
-      const cats=['Cafes','Restaurants','Shopping','Services','Clinics','Gyms','Books'];
-      const results=await Promise.all(cats.map(c=>query(c,'',1).catch(()=>[])));
-      const mixed=[];const seen=new Set();let round=0;
-      while(mixed.length<24&&round<20){
-        let added=false;
-        for(const arr of results){
-          if(arr[round]&&!seen.has(arr[round].placeId)){mixed.push(arr[round]);seen.add(arr[round].placeId);added=true;}
-          if(mixed.length>=24)break;
-        }
-        if(!added)break;round++;
-      }
+      const results=await query('All','',1);\n      const mixed=results.slice(0,12);
       el.innerHTML=mixed.length?mixed.map(googleCard).join(''):'<div class="ic-live-empty"><b>Live places are loading.</b>Try Explore in a moment.</div>';
       installAutoScroll(el);
     }catch(e){
