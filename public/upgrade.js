@@ -129,6 +129,7 @@
   const css = document.createElement('style');
   css.textContent = `
     .ic-google-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+    .ic-google-photo{position:relative;height:150px;border-radius:16px;overflow:hidden;background:#eaf3f7;margin:-2px 0 2px}.ic-google-photo img{width:100%;height:100%;display:block;object-fit:cover}.ic-google-photo-meta{position:absolute;left:8px;bottom:7px;right:8px;display:flex;justify-content:space-between;gap:8px;align-items:center;font:800 8px Manrope;color:#fff;text-shadow:0 1px 3px #000;background:linear-gradient(transparent,rgba(0,0,0,.55));padding-top:20px}.ic-google-photo-meta a{color:#fff;text-decoration:underline}.ic-google-photo-empty{display:none}
     .ic-google-card{background:rgba(255,255,255,.96);border:1px solid #dceef5;border-radius:22px;padding:16px;box-shadow:0 14px 34px rgba(7,54,93,.08);display:flex;flex-direction:column;gap:9px}
     .ic-google-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
     .ic-google-name{font:900 15px/1.2 Manrope;color:#07365d;margin:0}
@@ -172,6 +173,7 @@
     const maps=p.mapsUrl||('https://www.google.com/maps/search/?api=1&query='+encodeURIComponent([p.name,p.address].filter(Boolean).join(', ')));
     const phone=p.phone?'<a href="tel:'+esc(p.phone)+'">Call</a>':'';
     return '<article class="ic-google-card">'+
+      photoMarkup(p)+
       '<div class="ic-google-live">LIVE GOOGLE DATA</div>'+
       '<div class="ic-google-top"><div><h3 class="ic-google-name">'+esc(p.name)+'</h3><div class="ic-google-type">'+esc(titleCase(p.type))+'</div></div>'+status+'</div>'+
       '<div class="ic-google-address">'+esc(p.address||'Imphal, Manipur')+'</div>'+
@@ -220,7 +222,7 @@
       const p=d.place||{};
       const maps=p.mapsUrl||'#';
       const hours=p.hours?.length?'<h3 style="margin-top:16px">Hours</h3><div class="ic-google-address">'+p.hours.map(esc).join('<br>')+'</div>':'';
-      $('sheet').innerHTML='<div class="grab"></div><span class="pill">LIVE GOOGLE PLACE</span><div class="ic-google-live">LIVE DATA · FETCHED NOW</div><h2>'+esc(p.name)+'</h2><p>'+esc(p.type)+'</p><p>'+esc(p.address)+'</p>'+
+      $('sheet').innerHTML='<div class="grab"></div><span class="pill">LIVE GOOGLE PLACE</span><div class="ic-google-live">LIVE DATA · FETCHED NOW</div>'+photoMarkup(p,true)+'<h2>'+esc(p.name)+'</h2><p>'+esc(p.type)+'</p><p>'+esc(p.address)+'</p>'+
         (p.rating!=null?'<div class="ic-google-rating"><span class="ic-google-star">★</span><b>'+Number(p.rating).toFixed(1)+'</b><span>('+Number(p.reviewCount||0).toLocaleString('en-IN')+' Google reviews)</span></div>':'')+
         '<p>'+(p.openNow===true?'🟢 Open now':p.openNow===false?'🔴 Closed now':'⚪ Opening status unavailable')+'</p>'+hours+
         '<div class="ic-prod-actions"><button class="ic-prod-primary" onclick="window.open('+JSON.stringify(maps)+',\'_blank\')">Open in Google Maps</button>'+(p.phone?'<button class="ic-prod-secondary" onclick="location.href='+JSON.stringify('tel:'+p.phone)+'">Call</button>':'')+'</div>'+
@@ -243,11 +245,35 @@
   const esc = s => String(s ?? '').replace(/[&<>'"]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[ch]));
   const categoryMap = {
     All:'all', Cafes:'cafes', Restaurants:'restaurants', Books:'books', Shopping:'shopping',
-    Hardware:'hardware', Clinics:'health', Hospitals:'hospitals', Pharmacies:'pharmacies',
+    Hardware:'hardware', Clinics:'clinics', Hospitals:'hospitals', Pharmacies:'pharmacies',
     Gyms:'gyms', Salons:'salons', Electronics:'electronics', Fashion:'fashion',
     Hotels:'hotels', Education:'education', Automotive:'automotive', Services:'services',
     Banks:'banks', Groceries:'groceries', Handloom:'handloom', Tourism:'tourism'
   };
+  const searchAliases = {
+    'cafe':'cafes','cafes':'cafes','café':'cafes','coffee':'cafes','coffee shop':'cafes',
+    'library':'books','libraries':'books','bookstore':'books','book store':'books','books':'books',
+    'hardware':'hardware','hardware store':'hardware','hospital':'hospitals','hospitals':'hospitals',
+    'clinic':'clinics','clinics':'clinics','pharmacy':'pharmacies','pharmacies':'pharmacies',
+    'gym':'gyms','gyms':'gyms','salon':'salons','salons':'salons','restaurant':'restaurants','restaurants':'restaurants',
+    'hotel':'hotels','hotels':'hotels','bank':'banks','banks':'banks','grocery':'groceries','groceries':'groceries',
+    'electronics':'electronics','fashion':'fashion','school':'education','college':'education',
+    'tutor':'education','coaching':'education','car repair':'automotive','automotive':'automotive'
+  };
+  function inferCategory(q){
+    const s=String(q||'').trim().toLowerCase();
+    return searchAliases[s]||'all';
+  }
+  function photoMarkup(p,large=false){
+    const photo=p?.photos?.[0];
+    if(!photo?.name)return '';
+    const src='/api/discovery/google-photo?'+new URLSearchParams({name:photo.name,w:large?'1000':'720',h:large?'620':'480'}).toString();
+    const author=photo.authorAttributions?.[0];
+    const attribution=author?.uri
+      ? '<a href="'+esc(author.uri)+'" target="_blank" rel="noopener">'+esc(author.displayName||'Photo author')+'</a>'
+      : esc(author?.displayName||'Google Maps photo');
+    return '<div class="ic-google-photo"><img src="'+esc(src)+'" alt="'+esc((p.name||'Business')+' photo')+'" loading="lazy" referrerpolicy="no-referrer" onerror="this.closest(\'.ic-google-photo\').remove()"><div class="ic-google-photo-meta"><span>REAL PLACE PHOTO</span><span>'+attribution+'</span></div></div>';
+  }
 
   const style=document.createElement('style');
   style.textContent=`
@@ -304,6 +330,7 @@
     const maps=p.mapsUrl||('https://www.google.com/maps/search/?api=1&query='+encodeURIComponent([p.name,p.address].filter(Boolean).join(', ')));
     const phone=p.phone?'<a href="tel:'+esc(p.phone)+'">Call</a>':'';
     return '<article class="ic-google-card" data-place-id="'+esc(p.placeId)+'">'+
+      photoMarkup(p)+
       '<div class="ic-google-live">LIVE GOOGLE DATA</div>'+
       '<div class="ic-google-top"><div><h3 class="ic-google-name">'+esc(p.name)+'</h3><div class="ic-google-type">'+esc(p.type||'Local business')+'</div></div>'+status+'</div>'+
       '<div class="ic-google-address">'+esc(p.address||'Imphal, Manipur')+'</div>'+rating+
@@ -313,8 +340,10 @@
 
   async function query(cat,q='',pages=1){
     const all=[];let token='';
+    const inferred=inferCategory(q);
+    const effectiveCat=(cat==='All'&&inferred!=='all')?Object.keys(categoryMap).find(k=>categoryMap[k]===inferred)||cat:cat;
     for(let i=0;i<pages;i++){
-      const p=new URLSearchParams({category:categoryMap[cat]||'all',pageSize:'20'});
+      const p=new URLSearchParams({category:categoryMap[effectiveCat]||'all',pageSize:'20'});
       if(q)p.set('q',q);if(token)p.set('pageToken',token);
       const r=await fetch('/api/discovery/google?'+p,{cache:'no-store'});
       const d=await r.json().catch(()=>({}));
@@ -416,8 +445,81 @@
     }
   });
 
+
+  let liveSearchTimer=null;
+  function runLiveSearch(value){
+    const q=String(value||'').trim();
+    clearTimeout(liveSearchTimer);
+    liveSearchTimer=setTimeout(()=>{
+      const input=document.getElementById('exploreSearch');
+      if(input&&input.value!==q)input.value=q;
+      if(document.getElementById('exploreCards'))renderSegment('exploreCards',inferCategory(q)!=='all' ? (Object.keys(categoryMap).find(k=>categoryMap[k]===inferCategory(q))||'All') : 'All',q);
+    },320);
+  }
+  window.searchAll=function(){
+    const q=(document.getElementById('search')?.value||'').trim();
+    if(q){
+      if(typeof window.go==='function')window.go('explore');
+      const ex=document.getElementById('exploreSearch');if(ex)ex.value=q;
+      runLiveSearch(q);
+    }
+  };
+  document.addEventListener('input',e=>{
+    if(e.target?.id==='exploreSearch')runLiveSearch(e.target.value);
+  },true);
+  document.addEventListener('keydown',e=>{
+    if((e.key==='Enter'||e.key==='NumpadEnter')&&(e.target?.id==='search'||e.target?.id==='exploreSearch')){
+      e.preventDefault();
+      const q=e.target.value.trim();
+      if(e.target.id==='search')window.searchAll();
+      else runLiveSearch(q);
+    }
+  });
+
   window.renderHome=buildHome;
   window.renderExplore=buildExplore;
+
+
+  // Make Imphi AI freely movable. Position is saved locally and clamped to the viewport.
+  (() => {
+    const fab=document.getElementById('aiFab');
+    if(!fab||fab.dataset.draggableReady)return;
+    fab.dataset.draggableReady='1';
+    fab.classList.add('ic-imphi-draggable');
+    const saved=(()=>{try{return JSON.parse(localStorage.getItem('ic_imphi_position')||'null')}catch{return null}})();
+    function apply(pos){
+      if(!pos)return;
+      fab.style.left=Math.max(6,Math.min(window.innerWidth-fab.offsetWidth-6,pos.x))+'px';
+      fab.style.top=Math.max(6,Math.min(window.innerHeight-fab.offsetHeight-6,pos.y))+'px';
+      fab.style.right='auto';fab.style.bottom='auto';
+    }
+    const initial=saved||{x:Math.max(6,window.innerWidth-fab.offsetWidth-24),y:Math.max(6,window.innerHeight-fab.offsetHeight-90)};
+    fab.style.position='fixed';fab.style.zIndex='9999';apply(initial);
+    let drag=null, moved=false;
+    fab.addEventListener('pointerdown',e=>{
+      if(e.button!==undefined&&e.button!==0)return;
+      const r=fab.getBoundingClientRect();
+      drag={sx:e.clientX,sy:e.clientY,x:r.left,y:r.top,pointerId:e.pointerId};moved=false;
+      try{fab.setPointerCapture(e.pointerId)}catch{}
+    });
+    fab.addEventListener('pointermove',e=>{
+      if(!drag)return;
+      const dx=e.clientX-drag.sx,dy=e.clientY-drag.sy;
+      if(Math.abs(dx)+Math.abs(dy)>6)moved=true;
+      if(!moved)return;
+      apply({x:drag.x+dx,y:drag.y+dy});
+    });
+    fab.addEventListener('pointerup',e=>{
+      if(!drag)return;
+      const r=fab.getBoundingClientRect();
+      if(moved)try{localStorage.setItem('ic_imphi_position',JSON.stringify({x:r.left,y:r.top}))}catch{}
+      drag=null;
+    });
+    fab.addEventListener('click',e=>{
+      if(moved){e.preventDefault();e.stopImmediatePropagation();moved=false;}
+    },true);
+    window.addEventListener('resize',()=>{const r=fab.getBoundingClientRect();apply({x:r.left,y:r.top})});
+  })();
 
   setTimeout(()=>{buildHome().catch(()=>{});},350);
 })();
