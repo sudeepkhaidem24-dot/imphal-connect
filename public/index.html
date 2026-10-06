@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="description" content="Imphal Connect — the digital city platform for Imphal. Discover local businesses, places and experiences, or grow your business with profiles, products, enquiries, analytics and promotion.">
+<meta name="description" content="Imphal Connect — discover restaurants, cafés, hotels, services, shops and local businesses across Imphal and Manipur. Everything Imphal. One beautiful place.">
 <link rel="manifest" href="manifest.json">
-<title>Imphal Connect — The city, curated.</title><meta name="theme-color" content="#17131e"><meta property="og:title" content="Imphal Connect — The city, curated."><meta property="og:description" content="Discover places, people, events and local makers in Imphal, Manipur."><meta property="og:type" content="website"><meta property="og:url" content="https://imphal-connect.onrender.com/"><meta property="og:image" content="/media/imphal-hero.webp"><meta name="twitter:card" content="summary_large_image">
+<title>Imphal Connect — Everything Imphal. One beautiful place.</title><meta name="theme-color" content="#17131e"><meta property="og:title" content="Imphal Connect — Everything Imphal. One beautiful place."><meta property="og:description" content="Discover places, people, events and local makers in Imphal, Manipur."><meta property="og:type" content="website"><meta property="og:url" content="https://imphal-connect.onrender.com/"><meta property="og:image" content="/media/imphal-hero.webp"><meta name="twitter:card" content="summary_large_image">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap');
 :root{--bg:#f2fbff;--card:#fff;--blue:#0879d1;--cyan:#5bd7f7;--navy:#07365d;--ink:#09263b;--muted:#71899a;--line:#dceef5;--green:#0ca978;--gold:#e9a72d;--danger:#d64a5c;--shadow:0 18px 50px rgba(24,101,133,.11);--r:24px}
@@ -87,6 +87,28 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:999;ba
 @media(max-width:480px){.ai-panel{height:min(90vh,760px);height:min(90dvh,760px);border-radius:25px 25px 0 0}.ai-head{padding:13px 15px 10px}.ai-messages{padding:13px 11px}.ai-msg.bot .ai-bubble{max-width:95%;padding:14px}.ai-bubble{max-width:91%;font-size:13px}.ai-suggestions{padding-left:11px;padding-right:11px}.ai-compose{padding-left:10px;padding-right:10px}}
 @media(prefers-reduced-motion:reduce){.ai-msg{animation:none}.ai-messages{scroll-behavior:auto}.ai-actions button{transition:none}}
 @media(prefers-reduced-motion:reduce){.hero:after,.ai-orb,.ai-fab,.motion-line{animation:none!important}}
+
+/* ===== IMPHAL CONNECT PREMIUM OVERRIDE ===== */
+:root{--bg:#f7f4ea;--card:#fffdf8;--blue:#0b5b45;--cyan:#55c9a2;--navy:#082f25;--ink:#14231e;--muted:#6d7973;--line:#dfe6df;--green:#20a77c;--gold:#d4aa5d;--shadow:0 24px 70px rgba(10,49,38,.12);--r:28px}
+body{background:var(--bg);color:var(--ink);font-family:"DM Sans",system-ui,sans-serif}
+.app{max-width:1240px;padding-bottom:110px}
+header{background:linear-gradient(var(--bg) 78%,transparent)}
+.brand b{font-family:"Manrope";color:var(--navy)}
+.logo{background:linear-gradient(145deg,#d4aa5d,#fff0c2);color:var(--navy);box-shadow:0 10px 28px #0b5b4520}
+.hero{min-height:520px;border-radius:34px;background:linear-gradient(135deg,#092f25,#0b5b45 58%,#167d60);box-shadow:0 30px 80px #0b5b4520;overflow:hidden}
+.hero:before{background:radial-gradient(circle at 78% 12%,#ffffff20,transparent 30%),radial-gradient(circle at 20% 90%,#55c9a244,transparent 38%)}
+.hero:after{background:conic-gradient(from 0deg,transparent,#ffffff20,transparent 30%,#55c9a220,transparent 60%);animation:heroSpin 22s linear infinite}
+.hero h1{color:#fff;letter-spacing:-3px}.hero p{color:#d5e5de}
+.search{border-radius:18px}.search button{background:var(--navy)}
+.section-head h2,.body h3,.feature h3,.offer h3,.plan h3,.business h3,.product-body h3{font-family:"Manrope"}
+.chip.active{background:var(--navy);border-color:var(--navy)}
+.card:hover,.feature:hover,.offer:hover,.money-card:hover,.plan:hover,.product:hover{box-shadow:0 25px 60px #0b5b4520}
+.event{background:linear-gradient(135deg,#082f25,#0b5b45)}
+.business{background:linear-gradient(135deg,#082f25,#0b5b45);color:#fff;border-color:#ffffff14}
+.business p{color:#bdd0c7}.business button{background:#f4e7c4;color:#082f25}
+.bottom{border-color:#bfd8ce;background:#fffdf7ee}
+.nav.active{color:#0b5b45;background:#e5f4ed}
+
 </style>
 
 <style>
@@ -1017,7 +1039,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
   </section>
 
   <section class="editorial-footer">
-    <div><div class="footer-brand">Imphal Connect</div><p>The city, curated.</p></div>
+    <div><div class="footer-brand">Imphal Connect</div><p>Everything Imphal. One beautiful place.</p></div>
     <div><button onclick="go('explore')">Discover</button><button onclick="go('events')">Events</button><button onclick="go('shop')">Marketplace</button><button onclick="go('business')">For businesses</button></div>
     <small>© <span id="footerYear"></span> Imphal Connect · Imphal, Manipur</small>
   </section>
@@ -1080,7 +1102,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 <button class="nav" data-go="profile" onclick="go('profile')">◎<span>Profile</span></button>
 </nav>
 
-<footer class="global-footer"><div><strong>Imphal Connect</strong><span>The city, curated.</span></div><div><button onclick="go('explore')">Discover</button><button onclick="go('community')">Community</button><button onclick="go('business')">For businesses</button></div><small>Imphal, Manipur · <span id="globalFooterYear"></span></small></footer>
+<footer class="global-footer"><div><strong>Imphal Connect</strong><span>Everything Imphal. One beautiful place.</span></div><div><button onclick="go('explore')">Discover</button><button onclick="go('community')">Community</button><button onclick="go('business')">For businesses</button></div><small>Imphal, Manipur · <span id="globalFooterYear"></span></small></footer>
 <div class="toast" id="toast"></div>
 <div class="modal" id="modal" onclick="if(event.target===this)closeSheet()"><div class="sheet" id="sheet"></div></div>
 
