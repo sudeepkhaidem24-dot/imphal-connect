@@ -273,3 +273,49 @@
   }
 
 })();
+/* ===== NAVIGATION + BUSINESS WORKSPACE POLISH ===== */
+(() => {
+  const $=id=>document.getElementById(id);
+  const esc=s=>String(s??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+  const baseGo=window.go;
+  const stack=['home'];
+  const back=document.createElement('button');
+  back.id='icBackButton';
+  back.type='button';
+  back.innerHTML='← <span>Back</span>';
+  Object.assign(back.style,{position:'fixed',top:'max(12px,env(safe-area-inset-top))',left:'12px',zIndex:'2147482000',display:'none',alignItems:'center',gap:'5px',border:'1px solid #d5eaf2',background:'#ffffffee',backdropFilter:'blur(14px)',color:'#07365d',borderRadius:'999px',padding:'9px 13px',font:'900 10px Manrope',boxShadow:'0 8px 24px rgba(7,54,93,.12)',cursor:'pointer'});
+  document.body.appendChild(back);
+  function activeId(){return [...document.querySelectorAll('.view')].find(v=>v.classList.contains('active'))?.id||'home'}
+  function updateBack(){const id=activeId();back.style.display=stack.length>1&&id!=='home'?'inline-flex':'none'}
+  window.go=function(id){
+    if(!$(id))return;
+    const cur=activeId();
+    if(cur!==id)stack.push(id);
+    baseGo(id);
+    requestAnimationFrame(updateBack);
+  };
+  back.onclick=()=>{
+    if(stack.length<=1)return;
+    stack.pop();
+    const id=stack[stack.length-1]||'home';
+    baseGo(id);
+    updateBack();
+  };
+  window.addEventListener('popstate',()=>updateBack());
+  document.addEventListener('click',e=>{
+    const btn=e.target.closest('[data-btab]');if(btn)openBusinessTab(btn.dataset.btab,btn);
+  });
+  window.openBusinessTab=function(tab,btn){
+    document.querySelectorAll('[data-btab]').forEach(x=>x.classList.toggle('active',x===btn));
+    const host=$('businessWorkspace');if(!host)return;
+    const common='<span class="pill">BUSINESS WORKSPACE</span>';
+    const views={
+      profile:common+'<div><h3>Business profile</h3><p>Set your business name, description, phone, WhatsApp, address, hours and public links.</p><button class="primary" onclick="openSheet(\'business\')">Edit / claim profile</button></div>',
+      catalog:common+'<div><h3>Product & service catalog</h3><p>Add products, services, prices, photos and availability. Your catalog will appear on your public listing.</p><button class="primary" onclick="openOwnerStudio()">Open catalog editor</button></div>',
+      leads:common+'<div><h3>Leads</h3><p>Customer enquiries, calls and WhatsApp actions will appear here once your business receives them.</p><div class="statbar"><div class="stat"><b id="icLeadCount">0</b><span>New enquiries</span></div><div class="stat"><b id="icCallCount">0</b><span>Contact actions</span></div></div><button class="primary" onclick="toast(\'Lead centre ready\')">Open lead centre</button></div>',
+      insights:common+'<div><h3>Insights</h3><p>Track profile views, searches, saves, enquiries and demand by category.</p><div class="statbar"><div class="stat"><b id="icInsightViews">—</b><span>Profile views</span></div><div class="stat"><b id="icInsightSaves">—</b><span>Saves</span></div><div class="stat"><b id="icInsightSearches">—</b><span>Searches</span></div></div><button class="primary" onclick="openSheet(\'dashboard\')">Open insights</button></div>'
+    };
+    host.innerHTML='<div style="display:grid;gap:9px">'+(views[tab]||views.profile)+'</div>';
+  };
+  window.addEventListener('load',()=>{updateBack();if($('businessWorkspace'))window.openBusinessTab('profile',document.querySelector('[data-btab="profile"]'))},{once:true});
+})();
