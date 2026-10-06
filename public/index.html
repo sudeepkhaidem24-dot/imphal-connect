@@ -34,73 +34,7 @@
 .formgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.empty{text-align:center;padding:30px;color:var(--muted);font-size:11px}.hidden{display:none!important}.toastlink{color:var(--blue);font-weight:900}
 @media(min-width:760px){.app{padding-left:24px;padding-right:24px}.grid{grid-template-columns:repeat(4,1fr)}.shop-grid{grid-template-columns:repeat(4,1fr)}.money-grid{grid-template-columns:repeat(4,1fr)}.plans{grid-template-columns:repeat(3,1fr)}.hero{padding:50px}.section{padding-top:36px}.feature{max-width:700px}.bottom{bottom:20px}}
 
-/* ===== COMPACT ADORABLE IMPHI OVERRIDE ===== */
-.hero-wrap{
-  right:12px !important;
-  bottom:76px !important;
-  width:62px !important;
-  height:62px !important;
-  z-index:90 !important;
-}
-.hero-wrap .{
-  width:62px !important;
-  height:62px !important;
-  transform:scale(1) !important;
-  transform-origin:center !important;
-  filter:drop-shadow(0 8px 12px rgba(0,100,190,.20)) !important;
-}
-.{inset:9px 5px 4px !important;border-width:1px !important}
-.ear{width:23px !important;height:27px !important;top:4px !important}
-.ear.left{left:2px !important}.ear.right{right:2px !important}
-.ear:after{inset:5px 5px 6px !important}
-.eye{top:22px !important;width:13px !important;height:16px !important;border-width:1px !important}
-.eye.left{left:15px !important}.eye.right{right:15px !important}
-.eye:after{width:4px !important;height:4px !important;left:3px !important;top:2px !important}
-.cheek{top:39px !important;width:11px !important;height:6px !important}
-.cheek.left{left:8px !important}.cheek.right{right:8px !important}
-.muzzle{top:37px !important;width:20px !important;height:16px !important}
-.mouth{top:42px !important;width:7px !important;height:6px !important}
-.nose{top:39px !important;width:5px !important;height:4px !important}
-.paw{width:14px !important;height:18px !important;top:40px !important}
-.paw.left{left:0 !important}.paw.right{right:0 !important}
-.paw:after{font-size:5px !important;letter-spacing:1px !important;left:3px !important;top:7px !important}
-.tail{right:-2px !important;bottom:7px !important;width:17px !important;height:22px !important}
-.badge{right:1px !important;bottom:0 !important;width:15px !important;height:15px !important;border-width:1px !important;font-size:8px !important}
-.label{
-  bottom:-17px !important;
-  font-size:8px !important;
-  padding:2px 6px !important;
-  box-shadow:0 3px 10px rgba(0,80,150,.10);
-}
-.sparkle{width:4px !important;height:4px !important}
-.sparkle.s1{left:0 !important;top:13px !important}
-.sparkle.s2{right:0 !important;top:26px !important}
-.sparkle.s3{left:14px !important;top:0 !important}
 
-/* A tiny friendly pulse around Imphi, rather than a large floating orb */
-#aiFab{
-  width:70px !important;
-  height:70px !important;
-  min-width:70px !important;
-  min-height:70px !important;
-  background:transparent !important;
-  border:0 !important;
-  box-shadow:none !important;
-  padding:0 !important;
-}
-#aiFab:hover .{animation-duration:2.2s}
-#aiFab:active .{transform:scale(.93) !important}
-
-@media(max-width:700px){
-  .hero-wrap{right:8px !important;bottom:68px !important}
-  #aiFab{width:66px !important;height:66px !important}
-}
-
-/* Extra adorable micro-expression on hover */
-.:hover .eye{transform:scaleY(.82)}
-.:hover .cheek{opacity:.9}
-
-</style>
 
 <style>
 /* ===== IMPhAL CONNECT: CINEMATIC AI LAYER ===== */
@@ -284,7 +218,7 @@ header .icon{background:#ffffff18;border-color:#ffffff30;color:#fff;backdrop-fil
             <span class="eyebrow">FOR THE PEOPLE BUILDING IMPHAL</span>
             <h2>Don't just have a business.<br>Own your digital presence.</h2>
             <p>Build a beautiful business profile, publish your catalogue, receive customer enquiries, promote offers and understand what people are actually looking for.</p>
-            <div class="ic-business-buttons"><button class="primary" onclick="IC.openOwner()">Create your business</button><button class="secondary" onclick="go('plans')">Explore Pro & Elite</button></div>
+            <div class="ic-business-buttons"><button class="primary" onclick="IC.openOwner()">Create your business</button><button class="secondary" onclick="go('plans')">View Business Membership</button></div>
           </div>
           <div class="ic-dashboard-mock">
             <div class="mock-top"><i></i><i></i><i></i><span style="font-size:8px;color:#b8d6e3;margin-left:5px">BUSINESS CONTROL ROOM</span></div>
@@ -292,7 +226,7 @@ header .icon{background:#ffffff18;border-color:#ffffff30;color:#fff;backdrop-fil
             <div class="mock-chart"><svg viewBox="0 0 500 140" preserveAspectRatio="none"><path d="M0 118 C55 110 65 80 110 91 S165 106 205 70 S270 84 315 48 S375 63 420 28 S465 44 500 17" fill="none" stroke="#74e8ff" stroke-width="4"/><path d="M0 118 C55 110 65 80 110 91 S165 106 205 70 S270 84 315 48 S375 63 420 28 S465 44 500 17 L500 140 L0 140Z" fill="#74e8ff12"/></svg></div>
           </div>
         </div>
-        <div class="ic-trust-row"><span>Free listing</span><span>Pro · ₹499/month</span><span>Elite · ₹1,499/month</span><span>Real customer enquiries</span><span>AI concierge</span></div>`;
+        <div class="ic-trust-row"><span>Free listing</span><span>Business Membership · ₹120/year</span><span>Included</span><span>Real customer enquiries</span><span>AI concierge</span></div>`;
       home.appendChild(sec);
     }
   }
@@ -728,7 +662,7 @@ function addCart(i){let c=JSON.parse(localStorage.getItem('ic_cart')||'[]');c.pu
 function renderDeals(){$('dealList').innerHTML=DATA.filter(d=>d.cat==='Food'||d.cat==='Shopping').slice(0,5).map(d=>`<div class="offer" style="margin-bottom:10px"><div class="offer-img" style="background-image:url('${d.img}')"></div><div><span class="pill">LOCAL OFFER</span><h3>${d.name}</h3><p>Tap to discover today's local offer and contact the business.</p><span class="price" onclick="openPlace(${d.id})">VIEW OFFER →</span></div></div>`).join('')}
 function renderEvents(){$('eventList').innerHTML=DATA.filter(d=>d.cat==='Events').map(d=>`<div class="event" style="margin-bottom:12px"><div style="font-size:9px;font-weight:900;opacity:.7">SAT · 18 OCT · 5:00 PM</div><h3>${d.name}</h3><p>Music · Food · Art · Community</p><button onclick="openPlace(${d.id})">View event</button></div>`).join('')}
 function renderCommunity(){$('communityGrid').innerHTML=DATA.slice(0,6).map((d,i)=>`<article class="card"><div class="thumb" style="background-image:url('${d.img}')"><span class="badge">COMMUNITY PICK</span></div><div class="body"><h3>${['Best weekend idea','Hidden food stop','Maker to know','Local service','Stay recommendation','Tonight in Imphal'][i]}</h3><div class="meta">Shared by the Imphal Connect community</div></div></article>`).join('')}
-function selectPlan(p){if(p==='Free'){toast('Free business listing selected');return}openCustom(`<div class="grab"></div><span class="pill">${p.toUpperCase()} PLAN</span><h2>Start ${p}.</h2><p>Choose your plan. Pay securely with UPI through UroRelay.</p><div class="plan featured"><h3>${p}</h3><strong>${p==='Pro'?'₹499':'₹1,499'}</strong><small> / month</small><ul><li>✓ Business profile</li><li>✓ Discovery placement</li><li>✓ Offers & analytics</li><li>✓ Customer enquiries</li></ul></div><button class="primary" onclick="closeSheet();subscribe('${p.toLowerCase()}')">Continue to UPI payment</button>`)}
+function selectPlan(p){openCustom(`<div class="grab"></div><span class="pill">BUSINESS MEMBERSHIP</span><h2>Start your business presence.</h2><p>Activate the single Imphal Connect Business Membership for ₹120/year. Pay securely with UPI.</p><div class="plan featured"><h3>Business Membership</h3><strong>₹120</strong><small> / year</small><ul><li>✓ Professional business profile</li><li>✓ Products, services, prices & photos</li><li>✓ Offers & 24-hour stories</li><li>✓ Customer enquiries & analytics</li></ul></div><button class="primary" onclick="closeSheet();subscribe('pro')">Continue to UPI payment</button>`)}
 window.addEventListener('load',()=>{renderHome();renderExplore();renderProducts();renderDeals();renderEvents();renderCommunity();renderOwnerStudio();const n=localStorage.getItem('ic_name');if(n)$('profileName').textContent='Hi, '+n;$('savedCount').textContent=JSON.parse(localStorage.getItem('ic_saved')||'[]').length+' saved';if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{})});
 
 /* ===== IMPhAL AI CONCIERGE ENGINE =====
@@ -821,7 +755,7 @@ async function requestAI(q){
 
 /* ===== BUSINESS INSTANT STUDIO ===== */
 const OWNER_KEY='ic_owner_items', STORY_KEY='ic_owner_stories', PLAN_KEY='ic_owner_plan';
-function ownerPlan(){return localStorage.getItem(PLAN_KEY)||''}
+function ownerPlan(){return localStorage.getItem(PLAN_KEY)==='pro'}
 function ownerItems(){try{return JSON.parse(localStorage.getItem(OWNER_KEY)||'[]')}catch{return[]}}
 function ownerStories(){try{return JSON.parse(localStorage.getItem(STORY_KEY)||'[]')}catch{return[]}}
 function renderOwnerStudio(){
@@ -831,7 +765,7 @@ function renderOwnerStudio(){
  storyBox.innerHTML=stories.map(x=>`<div class="story-bubble"><div class="story-ring"><img src="${x.img}" alt=""></div><label>${escapeAI(x.title||'Story')}</label></div>`).join('') || '<div style="font-size:9px;opacity:.7;padding:14px 0">No stories yet — publish your first 24-hour story.</div>';
 }
 function openOwnerStudio(){
- if(!ownerPlan()){openCustom(`<div class="grab"></div><span class="pill">PRO / ELITE</span><h2>Unlock Instant Studio</h2><p>Activate a paid business plan to publish products, prices, photos and instant stories.</p><button class="primary" onclick="selectPlan('Pro');closeSheet()">Activate Pro — ₹499/month</button>`);return}
+ if(!ownerPlan()){openCustom(`<div class="grab"></div><span class="pill">BUSINESS MEMBERSHIP</span><h2>Unlock Instant Studio</h2><p>Activate a paid business plan to publish products, prices, photos and instant stories.</p><button class="primary" onclick="selectPlan('Pro');closeSheet()">Activate Business Membership — ₹120/year</button>`);return}
  openCustom(`<div class="grab"></div><span class="pill">INSTANT STUDIO</span><h2>Add a product or service</h2><p>Publish an item with its rate and photo. It appears immediately in your storefront.</p>
  <input id="ownerName" placeholder="Item / service name">
  <input id="ownerPrice" type="number" min="0" placeholder="Price / rate (₹)">
@@ -849,7 +783,7 @@ function publishOwnerItem(){
  localStorage.setItem(OWNER_KEY,JSON.stringify(a.slice(0,24)));renderOwnerStudio();toast('Published instantly ✦');closeSheet()
 }
 function openStoryStudio(){
- if(!ownerPlan()){openCustom(`<div class="grab"></div><span class="pill">PRO / ELITE</span><h2>Stories are a paid business feature</h2><p>Activate Pro or Elite to post visual stories that stay live for 24 hours.</p><button class="primary" onclick="selectPlan('Pro');closeSheet()">Activate Pro — ₹499/month</button>`);return}
+ if(!ownerPlan()){openCustom(`<div class="grab"></div><span class="pill">BUSINESS MEMBERSHIP</span><h2>Stories are a paid business feature</h2><p>Activate the Business Membership to post visual stories that stay live for 24 hours.</p><button class="primary" onclick="selectPlan('Pro');closeSheet()">Activate Business Membership — ₹120/year</button>`);return}
  openCustom(`<div class="grab"></div><span class="pill">24-HOUR STORY</span><h2>Post an instant story</h2><p>Upload a photo, add a short title and publish it to your business story strip.</p>
  <input id="storyTitle" placeholder="Story title — e.g. Fresh today">
  <input id="storyPhoto" type="file" accept="image/*" onchange="previewStoryPhoto(this)">
@@ -982,7 +916,7 @@ const IC = (()=>{
   function renderOwner(){
     const b=state.me?.business; if(!b){$('icOwnerContent').innerHTML=`<p>You don't have a business profile yet.</p><button class="ic-prod-primary" onclick="IC.createBusiness()">Create my business</button>`;return}
     const active=b.subscription_status==='active'&&b.plan==='pro'; const end=b.subscription_current_end?new Date(b.subscription_current_end).toLocaleDateString('en-IN'):'—';
-    $('icOwnerContent').innerHTML=`<div class="ic-owner-grid"><div class="ic-owner-stat"><span>Plan</span><br><b>${b.plan.toUpperCase()}</b><br><span class="${active?'ic-badge':'ic-badge off'}">${b.subscription_status}</span></div><div class="ic-owner-stat"><span>Subscription end</span><br><b>${end}</b><br><span class="ic-mini">UPI payments via UroRelay</span></div></div><div class="ic-owner-box"><h3>Business profile</h3><div class="ic-owner-row"><span>${escapeHtml(b.name)}</span><span>${b.is_published?'Published':'Draft'}</span></div><div class="ic-owner-row"><span>${escapeHtml(b.category)}</span><button class="ic-plan-btn" onclick="IC.togglePublish()">${b.is_published?'Unpublish':'Publish'}</button></div></div><div class="ic-owner-box"><h3>Subscription</h3><div class="ic-owner-row"><span>Pro · ₹499/month</span><button class="ic-plan-btn" onclick="IC.subscribe('pro')">Choose</button></div><div class="ic-owner-row"><span>Elite · ₹1,499/month</span><button class="ic-plan-btn" onclick="IC.subscribe('elite')">Choose</button></div>${active?'<div style="margin-top:10px"><button class="ic-plan-btn ic-danger" onclick="IC.cancel()">Cancel at cycle end</button></div>':''}</div><div class="ic-owner-box"><h3>Instant Studio</h3>${active?'<p class="ic-mini">Your paid business tools are enabled. The website can now publish items and 24-hour stories through the secured API.</p><button class="ic-plan-btn" onclick="IC.addItem()">Add item / rate</button> <button class="ic-plan-btn" onclick="IC.addStory()">Post 24h story</button>':'<p class="ic-mini">Activate Pro or Elite to publish rates, photos and stories.</p>'}</div>`;
+    $('icOwnerContent').innerHTML=`<div class="ic-owner-grid"><div class="ic-owner-stat"><span>Plan</span><br><b>${b.plan.toUpperCase()}</b><br><span class="${active?'ic-badge':'ic-badge off'}">${b.subscription_status}</span></div><div class="ic-owner-stat"><span>Subscription end</span><br><b>${end}</b><br><span class="ic-mini">UPI payments via UroRelay</span></div></div><div class="ic-owner-box"><h3>Business profile</h3><div class="ic-owner-row"><span>${escapeHtml(b.name)}</span><span>${b.is_published?'Published':'Draft'}</span></div><div class="ic-owner-row"><span>${escapeHtml(b.category)}</span><button class="ic-plan-btn" onclick="IC.togglePublish()">${b.is_published?'Unpublish':'Publish'}</button></div></div><div class="ic-owner-box"><h3>Subscription</h3><div class="ic-owner-row"><span>Business Membership · ₹120/year</span><button class="ic-plan-btn" onclick="IC.subscribe('pro')">Choose</button></div><div class="ic-owner-row"><span>Included</span><button class="ic-plan-btn" onclick="IC.subscribe('elite')">Choose</button></div>${active?'<div style="margin-top:10px"><button class="ic-plan-btn ic-danger" onclick="IC.cancel()">Cancel at cycle end</button></div>':''}</div><div class="ic-owner-box"><h3>Instant Studio</h3>${active?'<p class="ic-mini">Your paid business tools are enabled. The website can now publish items and 24-hour stories through the secured API.</p><button class="ic-plan-btn" onclick="IC.addItem()">Add item / rate</button> <button class="ic-plan-btn" onclick="IC.addStory()">Post 24h story</button>':'<p class="ic-mini">Activate the Business Membership to publish rates, photos and stories.</p>'}</div>`;
   }
   async function createBusiness(){const b=await ensureBusiness();if(b)renderOwner()}
   async function togglePublish(){try{const b=state.me.business;const d=await api('/api/business',{method:'PATCH',body:JSON.stringify({is_published:!b.is_published})});state.me.business=d.business;renderOwner()}catch(e){alert(e.message)}}
@@ -1046,7 +980,7 @@ window.openOwnerStudio=async function(){
   await ICPRO.refreshMe(); const b=ICPRO.P.me?.business;
   if(!b){IC.openOwner();return;}
   const active=b.subscription_status==='active'&&['pro','elite'].includes(b.plan);
-  if(!active){openCustom(`<div class="grab"></div><span class="pill">PRO / ELITE</span><h2>Unlock Instant Studio</h2><p>Publish products, prices, photos, offers and 24-hour stories through your secured business account.</p><button class="primary" onclick="IC.subscribe('pro');closeSheet()">Activate Pro — ₹499/month</button>`);return;}
+  if(!active){openCustom(`<div class="grab"></div><span class="pill">BUSINESS MEMBERSHIP</span><h2>Unlock Instant Studio</h2><p>Publish products, prices, photos, offers and 24-hour stories through your secured business account.</p><button class="primary" onclick="IC.subscribe('pro');closeSheet()">Activate Business Membership — ₹120/year</button>`);return;}
   openCustom(`<div class="grab"></div><span class="pill">INSTANT STUDIO</span><h2>Publish something new.</h2><p>Your changes go to the cloud and become visible on your public business profile.</p><button class="primary" onclick="ICPRO_ADD_ITEM();closeSheet()">＋ Add item / rate</button><button class="primary" style="margin-top:8px" onclick="ICPRO_ADD_STORY();closeSheet()">◉ Post 24h story</button><button class="primary" style="margin-top:8px;background:#e9f7ff;color:#07588e" onclick="ICPRO_OPEN_ANALYTICS();closeSheet()">View analytics</button>`);
 };
 window.openStoryStudio=window.openOwnerStudio;
@@ -1069,7 +1003,7 @@ window.ICPRO_RENDER_OWNER=async function(){
   const active=b.subscription_status==='active'&&['pro','elite'].includes(b.plan); const end=b.subscription_current_end?new Date(b.subscription_current_end).toLocaleDateString('en-IN'):'—';
   $('icOwnerContent').innerHTML=`<div class="ic-owner-grid"><div class="ic-owner-stat"><span>Plan</span><br><b>${ICPRO.esc(b.plan.toUpperCase())}</b><br><span class="${active?'ic-badge':'ic-badge off'}">${ICPRO.esc(b.subscription_status)}</span></div><div class="ic-owner-stat"><span>Subscription end</span><br><b>${end}</b><br><span class="ic-mini">UPI payments via UroRelay</span></div></div>
   <div class="ic-owner-box"><h3>Business profile</h3><div class="ic-owner-row"><span>${ICPRO.esc(b.name)}</span><span>${b.is_published?'Published':'Draft'}</span></div><div class="ic-owner-row"><span>${ICPRO.esc(b.category)}</span><button class="ic-plan-btn" onclick="IC.togglePublish()">${b.is_published?'Unpublish':'Publish'}</button></div></div>
-  <div class="ic-owner-box"><h3>Subscription</h3><div class="ic-owner-row"><span>Pro · ₹499/month</span><button class="ic-plan-btn" onclick="IC.subscribe('pro')">Choose</button></div><div class="ic-owner-row"><span>Elite · ₹1,499/month</span><button class="ic-plan-btn" onclick="IC.subscribe('elite')">Choose</button></div>${active?'<div style="margin-top:10px"><button class="ic-plan-btn ic-danger" onclick="IC.cancel()">Cancel at cycle end</button></div>':''}</div>
+  <div class="ic-owner-box"><h3>Subscription</h3><div class="ic-owner-row"><span>Business Membership · ₹120/year</span><button class="ic-plan-btn" onclick="IC.subscribe('pro')">Choose</button></div><div class="ic-owner-row"><span>Included</span><button class="ic-plan-btn" onclick="IC.subscribe('elite')">Choose</button></div>${active?'<div style="margin-top:10px"><button class="ic-plan-btn ic-danger" onclick="IC.cancel()">Cancel at cycle end</button></div>':''}</div>
   <div class="ic-owner-box"><h3>Business tools</h3><p class="ic-mini">${active?'Your paid tools are active.':'Activate the ₹120/year Business Membership to publish products, offers and stories.'}</p><button class="ic-plan-btn" onclick="openOwnerStudio()">Instant Studio</button> <button class="ic-plan-btn" onclick="ICPRO_OPEN_ANALYTICS()">Analytics</button> <button class="ic-plan-btn" onclick="openFunding()">Funding</button></div>`;
 };
 window.openAdmin=()=>location.href='/admin.html';
@@ -1847,7 +1781,7 @@ function renderOwnerStudio(){
  storyBox.innerHTML=stories.map(x=>`<div class="story-bubble"><div class="story-ring"><img src="${x.img}" alt=""></div><label>${escapeAI(x.title||'Story')}</label></div>`).join('') || '<div style="font-size:9px;opacity:.7;padding:14px 0">No stories yet — publish your first 24-hour story.</div>';
 }
 function openOwnerStudio(){
- if(!ownerPlan()){openCustom(`<div class="grab"></div><span class="pill">PRO / ELITE</span><h2>Unlock Instant Studio</h2><p>Activate a paid business plan to publish products, prices, photos and instant stories.</p><button class="primary" onclick="selectPlan('Pro');closeSheet()">Activate Pro — ₹499/month</button>`);return}
+ if(!ownerPlan()){openCustom(`<div class="grab"></div><span class="pill">BUSINESS MEMBERSHIP</span><h2>Unlock Instant Studio</h2><p>Activate a paid business plan to publish products, prices, photos and instant stories.</p><button class="primary" onclick="selectPlan('Pro');closeSheet()">Activate Business Membership — ₹120/year</button>`);return}
  openCustom(`<div class="grab"></div><span class="pill">INSTANT STUDIO</span><h2>Add a product or service</h2><p>Publish an item with its rate and photo. It appears immediately in your storefront.</p>
  <input id="ownerName" placeholder="Item / service name">
  <input id="ownerPrice" type="number" min="0" placeholder="Price / rate (₹)">
@@ -1865,7 +1799,7 @@ function publishOwnerItem(){
  localStorage.setItem(OWNER_KEY,JSON.stringify(a.slice(0,24)));renderOwnerStudio();toast('Published instantly ✦');closeSheet()
 }
 function openStoryStudio(){
- if(!ownerPlan()){openCustom(`<div class="grab"></div><span class="pill">PRO / ELITE</span><h2>Stories are a paid business feature</h2><p>Activate Pro or Elite to post visual stories that stay live for 24 hours.</p><button class="primary" onclick="selectPlan('Pro');closeSheet()">Activate Pro — ₹499/month</button>`);return}
+ if(!ownerPlan()){openCustom(`<div class="grab"></div><span class="pill">BUSINESS MEMBERSHIP</span><h2>Stories are a paid business feature</h2><p>Activate the Business Membership to post visual stories that stay live for 24 hours.</p><button class="primary" onclick="selectPlan('Pro');closeSheet()">Activate Business Membership — ₹120/year</button>`);return}
  openCustom(`<div class="grab"></div><span class="pill">24-HOUR STORY</span><h2>Post an instant story</h2><p>Upload a photo, add a short title and publish it to your business story strip.</p>
  <input id="storyTitle" placeholder="Story title — e.g. Fresh today">
  <input id="storyPhoto" type="file" accept="image/*" onchange="previewStoryPhoto(this)">
@@ -1996,7 +1930,7 @@ const IC = (()=>{
   function renderOwner(){
     const b=state.me?.business; if(!b){$('icOwnerContent').innerHTML=`<p>You don't have a business profile yet.</p><button class="ic-prod-primary" onclick="IC.createBusiness()">Create my business</button>`;return}
     const active=b.subscription_status==='active'&&['pro','elite'].includes(b.plan); const end=b.subscription_current_end?new Date(b.subscription_current_end).toLocaleDateString('en-IN'):'—';
-    $('icOwnerContent').innerHTML=`<div class="ic-owner-grid"><div class="ic-owner-stat"><span>Plan</span><br><b>${b.plan.toUpperCase()}</b><br><span class="${active?'ic-badge':'ic-badge off'}">${b.subscription_status}</span></div><div class="ic-owner-stat"><span>Subscription end</span><br><b>${end}</b><br><span class="ic-mini">UPI payments via UroRelay</span></div></div><div class="ic-owner-box"><h3>Business profile</h3><div class="ic-owner-row"><span>${escapeHtml(b.name)}</span><span>${b.is_published?'Published':'Draft'}</span></div><div class="ic-owner-row"><span>${escapeHtml(b.category)}</span><button class="ic-plan-btn" onclick="IC.togglePublish()">${b.is_published?'Unpublish':'Publish'}</button></div></div><div class="ic-owner-box"><h3>Subscription</h3><div class="ic-owner-row"><span>Pro · ₹499/month</span><button class="ic-plan-btn" onclick="IC.subscribe('pro')">Choose</button></div><div class="ic-owner-row"><span>Elite · ₹1,499/month</span><button class="ic-plan-btn" onclick="IC.subscribe('elite')">Choose</button></div>${active?'<div style="margin-top:10px"><button class="ic-plan-btn ic-danger" onclick="IC.cancel()">Cancel at cycle end</button></div>':''}</div><div class="ic-owner-box"><h3>Instant Studio</h3>${active?'<p class="ic-mini">Your paid business tools are enabled. The website can now publish items and 24-hour stories through the secured API.</p><button class="ic-plan-btn" onclick="IC.addItem()">Add item / rate</button> <button class="ic-plan-btn" onclick="IC.addStory()">Post 24h story</button>':'<p class="ic-mini">Activate Pro or Elite to publish rates, photos and stories.</p>'}</div>`;
+    $('icOwnerContent').innerHTML=`<div class="ic-owner-grid"><div class="ic-owner-stat"><span>Plan</span><br><b>${b.plan.toUpperCase()}</b><br><span class="${active?'ic-badge':'ic-badge off'}">${b.subscription_status}</span></div><div class="ic-owner-stat"><span>Subscription end</span><br><b>${end}</b><br><span class="ic-mini">UPI payments via UroRelay</span></div></div><div class="ic-owner-box"><h3>Business profile</h3><div class="ic-owner-row"><span>${escapeHtml(b.name)}</span><span>${b.is_published?'Published':'Draft'}</span></div><div class="ic-owner-row"><span>${escapeHtml(b.category)}</span><button class="ic-plan-btn" onclick="IC.togglePublish()">${b.is_published?'Unpublish':'Publish'}</button></div></div><div class="ic-owner-box"><h3>Subscription</h3><div class="ic-owner-row"><span>Business Membership · ₹120/year</span><button class="ic-plan-btn" onclick="IC.subscribe('pro')">Choose</button></div><div class="ic-owner-row"><span>Included</span><button class="ic-plan-btn" onclick="IC.subscribe('elite')">Choose</button></div>${active?'<div style="margin-top:10px"><button class="ic-plan-btn ic-danger" onclick="IC.cancel()">Cancel at cycle end</button></div>':''}</div><div class="ic-owner-box"><h3>Instant Studio</h3>${active?'<p class="ic-mini">Your paid business tools are enabled. The website can now publish items and 24-hour stories through the secured API.</p><button class="ic-plan-btn" onclick="IC.addItem()">Add item / rate</button> <button class="ic-plan-btn" onclick="IC.addStory()">Post 24h story</button>':'<p class="ic-mini">Activate the Business Membership to publish rates, photos and stories.</p>'}</div>`;
   }
   async function createBusiness(){const b=await ensureBusiness();if(b)renderOwner()}
   async function togglePublish(){try{const b=state.me.business;const d=await api('/api/business',{method:'PATCH',body:JSON.stringify({is_published:!b.is_published})});state.me.business=d.business;renderOwner()}catch(e){alert(e.message)}}
@@ -2054,7 +1988,7 @@ window.openOwnerStudio=async function(){
   await ICPRO.refreshMe(); const b=ICPRO.P.me?.business;
   if(!b){IC.openOwner();return;}
   const active=b.subscription_status==='active'&&['pro','elite'].includes(b.plan);
-  if(!active){openCustom(`<div class="grab"></div><span class="pill">PRO / ELITE</span><h2>Unlock Instant Studio</h2><p>Publish products, prices, photos, offers and 24-hour stories through your secured business account.</p><button class="primary" onclick="IC.subscribe('pro');closeSheet()">Activate Pro — ₹499/month</button>`);return;}
+  if(!active){openCustom(`<div class="grab"></div><span class="pill">BUSINESS MEMBERSHIP</span><h2>Unlock Instant Studio</h2><p>Publish products, prices, photos, offers and 24-hour stories through your secured business account.</p><button class="primary" onclick="IC.subscribe('pro');closeSheet()">Activate Business Membership — ₹120/year</button>`);return;}
   openCustom(`<div class="grab"></div><span class="pill">INSTANT STUDIO</span><h2>Publish something new.</h2><p>Your changes go to the cloud and become visible on your public business profile.</p><button class="primary" onclick="ICPRO_ADD_ITEM();closeSheet()">＋ Add item / rate</button><button class="primary" style="margin-top:8px" onclick="ICPRO_ADD_STORY();closeSheet()">◉ Post 24h story</button><button class="primary" style="margin-top:8px;background:#e9f7ff;color:#07588e" onclick="ICPRO_OPEN_ANALYTICS();closeSheet()">View analytics</button>`);
 };
 window.openStoryStudio=window.openOwnerStudio;
@@ -2077,7 +2011,7 @@ window.ICPRO_RENDER_OWNER=async function(){
   const active=b.subscription_status==='active'&&['pro','elite'].includes(b.plan); const end=b.subscription_current_end?new Date(b.subscription_current_end).toLocaleDateString('en-IN'):'—';
   $('icOwnerContent').innerHTML=`<div class="ic-owner-grid"><div class="ic-owner-stat"><span>Plan</span><br><b>${ICPRO.esc(b.plan.toUpperCase())}</b><br><span class="${active?'ic-badge':'ic-badge off'}">${ICPRO.esc(b.subscription_status)}</span></div><div class="ic-owner-stat"><span>Subscription end</span><br><b>${end}</b><br><span class="ic-mini">UPI payments via UroRelay</span></div></div>
   <div class="ic-owner-box"><h3>Business profile</h3><div class="ic-owner-row"><span>${ICPRO.esc(b.name)}</span><span>${b.is_published?'Published':'Draft'}</span></div><div class="ic-owner-row"><span>${ICPRO.esc(b.category)}</span><button class="ic-plan-btn" onclick="IC.togglePublish()">${b.is_published?'Unpublish':'Publish'}</button></div></div>
-  <div class="ic-owner-box"><h3>Subscription</h3><div class="ic-owner-row"><span>Pro · ₹499/month</span><button class="ic-plan-btn" onclick="IC.subscribe('pro')">Choose</button></div><div class="ic-owner-row"><span>Elite · ₹1,499/month</span><button class="ic-plan-btn" onclick="IC.subscribe('elite')">Choose</button></div>${active?'<div style="margin-top:10px"><button class="ic-plan-btn ic-danger" onclick="IC.cancel()">Cancel at cycle end</button></div>':''}</div>
+  <div class="ic-owner-box"><h3>Subscription</h3><div class="ic-owner-row"><span>Business Membership · ₹120/year</span><button class="ic-plan-btn" onclick="IC.subscribe('pro')">Choose</button></div><div class="ic-owner-row"><span>Included</span><button class="ic-plan-btn" onclick="IC.subscribe('elite')">Choose</button></div>${active?'<div style="margin-top:10px"><button class="ic-plan-btn ic-danger" onclick="IC.cancel()">Cancel at cycle end</button></div>':''}</div>
   <div class="ic-owner-box"><h3>Business tools</h3><p class="ic-mini">${active?'Your paid tools are active.':'Activate the ₹120/year Business Membership to publish products, offers and stories.'}</p><button class="ic-plan-btn" onclick="openOwnerStudio()">Instant Studio</button> <button class="ic-plan-btn" onclick="ICPRO_OPEN_ANALYTICS()">Analytics</button> <button class="ic-plan-btn" onclick="openFunding()">Funding</button></div>`;
 };
 window.openAdmin=()=>location.href='/admin.html';
