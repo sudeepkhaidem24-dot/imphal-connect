@@ -107,6 +107,21 @@ async function fetchSnapshotOverpass(query){
   }
   throw lastErr||new Error('OpenStreetMap unavailable');
 }
+async function fetchOsmMapFallback(){
+  const half=0.04,steps=[[-half,-half,0,0],[-half,0,0,half],[0,-half,half,0],[0,0,half,half]];
+  const out=[];
+  for(const [southDelta,westDelta,northDelta,eastDelta] of steps){
+    const south=CENTER.lat+southDelta,west=CENTER.lng+westDelta,north=CENTER.lat+northDelta,east=CENTER.lng+eastDelta;
+    const url='https://api.openstreetmap.org/api/0.6/map.json?bbox='+[west,south,east,north].join(',');
+    try{
+      const resp=await fetch(url,{headers:{accept:'application/json','user-agent':'ImphalConnect/1.0 (+https://imphal-connect.onrender.com)'},signal:AbortSignal.timeout(12000)});
+      if(!resp.ok)continue;
+      const json=await resp.json();
+      out.push(...(json.elements||[]));
+    }catch{}
+  }
+  return out;
+}
 async function extractImphalSnapshot(){
   // Avoid the previous 18 km [name] dump: it could time out and silently produce a catalog containing only official hotels.
   // These smaller, sequential category queries are much more reliable and stay within Overpass fair-use guidance.
@@ -122,7 +137,12 @@ async function extractImphalSnapshot(){
       elements.push(...(json.elements||[]));
     }catch(e){errors.push(e?.message||'unknown error')}
   }
-  const osmRows=elements.map(osmSnapshotRow).filter(Boolean);
+  let osmRows=elements.map(osmSnapshotRow).filter(Boolean);
+  if(osmRows.length===0){
+    const fallbackElements=await fetchOsmMapFallback();
+    osmRows=fallbackElements.map(osmSnapshotRow).filter(Boolean);
+    if(osmRows.length)console.info('OSM map API fallback supplied '+osmRows.length+' tagged places.');
+  }
   let localRows=[];
   if(admin){
     try{
