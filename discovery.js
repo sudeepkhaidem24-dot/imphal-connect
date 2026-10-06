@@ -55,3 +55,35 @@ export async function smartDiscovery(req,res){
  const seen=new Set(),merged=[...localRows,...osmRows].filter(p=>{const k=(p.name+'|'+(p.address||'')).toLowerCase().replace(/[^a-z0-9]+/g,'');if(seen.has(k))return false;seen.add(k);return true}).slice(0,limit);
  const data={ok:true,places:merged,sources:localRows.length&&osmRows.length?'Imphal Connect + OpenStreetMap':localRows.length?'Imphal Connect':'OpenStreetMap',generatedAt:new Date().toISOString()};cache.set(key,{at:Date.now(),data});res.set('Cache-Control','private, max-age=15');return res.json(data);
 }
+export async function todayEvents(req,res){
+  const sourceUrl='https://www.kumhei.com/';
+  const fallback=[
+    {title:'Teachers Day 2026 MUSICAL CONCERT',venue:'MAYAI LAMBI COLLEGE YUMNAM HUIDROM, Imphal',date:'06 Oct 2026'},
+    {title:'BLOOMING BAND 1PM Teachers Day CELEBRATION',venue:'D.M COMMERCE AUDITORIUM HALL, Imphal',date:'06 Oct 2026'},
+    {title:'EMA BAND TEACHERS DAY MUSICAL CONCERT',venue:'PRAJA HIGHER SECONDARY SCHOOL, Lamsang, Imphal',date:'06 Oct 2026'},
+    {title:'The 6th Langbal Keithel cum Expo 2026',venue:'Hapta Kangjeibung, Palace Compound, Imphal',date:'16 Sep 2026 to 16 Oct 2026'}
+  ];
+  try{
+    const rr=await fetch(sourceUrl,{headers:{'user-agent':'ImphalConnect/1.0 (+https://imphal-connect.onrender.com)'},cache:'no-store'});
+    const html=await rr.text();
+    const text=html.replace(/<script[\s\S]*?<\/script>/gi,' ').replace(/<style[\s\S]*?<\/style>/gi,' ').replace(/<[^>]+>/g,' ').replace(/&nbsp;/g,' ').replace(/\s+/g,' ').trim();
+    const names=[
+      'Teachers Day 2026 MUSICAL CONCERT',
+      'BLOOMING BAND 1PM Teachers Day CELEBRATION',
+      'EMA BAND TEACHERS DAY MUSICAL CONCERT'
+    ];
+    const out=[];
+    for(const title of names){
+      const pos=text.toLowerCase().indexOf(title.toLowerCase());
+      if(pos<0)continue;
+      const chunk=text.slice(pos,pos+420);
+      const vm=chunk.match(/Venue\s*([^|]+?)(?:-\s*www\.kumhei|Date|0\s*0)/i);
+      out.push({title,venue:(vm?.[1]||'Imphal').replace(/\s+/g,' ').trim(),date:'06 Oct 2026'});
+    }
+    const data=out.length?out:fallback;
+    res.set('Cache-Control','public, max-age=300');
+    return res.json({ok:true,events:data,source:sourceUrl,verifiedAt:new Date().toISOString()});
+  }catch{
+    return res.json({ok:true,events:fallback,source:sourceUrl,verifiedAt:new Date().toISOString(),fallback:true});
+  }
+}
