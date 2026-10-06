@@ -418,6 +418,38 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 @media(max-width:700px){.app{padding-left:14px!important;padding-right:14px!important;padding-bottom:104px!important}.section{padding-top:26px!important}.section-head h2,.section-heading h2{font-size:22px!important;letter-spacing:-.8px!important}.card,.feature,.offer,.money-card,.product,.business{border-radius:20px!important}.bottom{height:64px!important}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
 </style>
+<style id="ic-easy-ux">
+/* Plain-language UX pass: fewer choices, clearer labels, stronger hierarchy. */
+.desktop-nav button{font-weight:600}
+.desktop-nav button[data-go="home"]::before{content:"";display:inline-block;width:5px;height:5px;border-radius:50%;background:currentColor;margin:0 7px 2px 0;opacity:.7}
+.hero-copy .kicker{letter-spacing:.12em}
+.hero-copy h1{max-width:720px}
+.hero-dek{max-width:560px!important;font-size:17px!important;line-height:1.55!important}
+.hero-search{min-height:60px!important}
+.hero-search button,.ask-bar button{font-weight:700!important;white-space:nowrap}
+.ask-section .section-intro h2{max-width:520px}
+.collection-card strong{font-size:22px!important}
+.collection-card small{font-size:14px!important;line-height:1.45!important}
+.section-heading .text-link{font-weight:700!important}
+.location-line{font-size:12px!important}
+@media(max-width:700px){
+ .desktop-nav{display:none!important}
+ .brand small{display:none!important}
+ .head-actions .lang-toggle{display:none!important}
+ .hero-copy{padding:22px!important}
+ .hero-copy h1{font-size:44px!important;line-height:.98!important}
+ .hero-dek{font-size:15px!important}
+ .hero-search{min-height:54px!important}
+ .hero-search button span{display:inline!important}
+ .ask-bar{display:grid!important;grid-template-columns:1fr auto!important;gap:8px!important;padding:8px!important}
+ .ask-bar svg{display:none!important}
+ .ask-bar input{min-width:0!important;font-size:14px!important}
+ .ask-bar button{padding:12px 14px!important;font-size:13px!important}
+ .collection-grid{grid-template-columns:1fr!important}
+ .collection-card{min-height:145px!important}
+ .section-heading{align-items:flex-end!important}
+}
+</style>
 </head>
 <body><div class="ambient-orbs"><i></i><i></i><i></i></div>
 <div class="app">
@@ -428,12 +460,11 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
       <span><strong>Imphal Connect</strong><small>THE CITY, CURATED</small></span>
     </a>
     <nav class="desktop-nav" aria-label="Primary">
-      <button data-go="home" onclick="go('home')">Discover</button>
-      <button data-go="explore" onclick="go('explore')">Places</button>
+      <button data-go="home" onclick="go('home')">Home</button>
+      <button data-go="explore" onclick="go('explore')">Explore</button>
       <button data-go="events" onclick="go('events')">Events</button>
-      <button data-go="shop" onclick="go('shop')">Marketplace</button>
+      <button data-go="shop" onclick="go('shop')">Shop</button>
       <button data-go="community" onclick="go('community')">Community</button>
-      <button data-go="business" onclick="go('business')">For businesses</button>
     </nav>
     <div class="head-actions">
       <button class="lang-toggle" type="button" onclick="toggleLanguage()" aria-label="Switch language"><span>EN</span><span>মৈ</span></button>
@@ -441,7 +472,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
       <button class="profile-btn" onclick="openSheet('profile')" aria-label="Account"><span>IC</span></button>
     </div>
   </div>
-  <div class="location-line"><span class="line-icon">⌖</span><span>Exploring</span><strong>Imphal, Manipur</strong></div>
+  <div class="location-line"><span class="line-icon">⌖</span><span>Location</span><strong>Imphal, Manipur</strong></div>
 </header>
 <!-- CINEMATIC HERO MEDIA + IMPHAL AI -->
 <div class="video-stage premium-video-stage">
@@ -470,10 +501,10 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
     <div class="hero-copy">
       <p class="kicker">IMPHAL · MANIPUR</p>
       <h1>Find the city<br><em>worth knowing.</em></h1>
-      <p class="hero-dek">Places to eat. People to meet. Things worth doing — thoughtfully gathered from Imphal.</p>
+      <p class="hero-dek">Find places, food, events and local businesses in Imphal — all in one place.</p>
       <div class="hero-search">
         <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
-        <input id="searchLegacy" aria-label="Search Imphal" placeholder="Search cafés, markets, stays, events…" oninput="searchAll()">
+        <input id="searchLegacy" aria-label="Search Imphal" placeholder="Search places, food, events…" oninput="searchAll()">
         <button onclick="go('explore')" aria-label="Search"><span>Search</span><svg viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg></button>
       </div>
     </div>
@@ -481,40 +512,40 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
   </section>
 
   <section class="editorial-section ask-section">
-    <div class="section-intro"><p class="eyebrow-text">YOUR LOCAL CONCIERGE</p><h2>Ask Imphal.</h2><p>Tell us what you want to do. Get a practical plan grounded in places listed here.</p></div>
+    <div class="section-intro"><p class="eyebrow-text">NEED AN IDEA?</p><h2>What do you want to do?</h2><p>Ask for a place, food, event or simple plan for Imphal.</p></div>
     <div class="ask-bar">
       <svg viewBox="0 0 24 24"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1"/></svg>
-      <input id="aiInput" placeholder="“I have three hours and ₹1,500. What should I do?”">
-      <button onclick="askAI()">Ask Imphal AI</button>
+      <input id="aiInput" placeholder="Try: “Best food near me” or “What can I do today?”">
+      <button onclick="askAI()">Get ideas</button>
     </div>
   </section>
 
   <section class="editorial-section">
-    <div class="section-heading"><div><p class="eyebrow-text">CURATED</p><h2>Start with a feeling.</h2></div><button class="text-link" onclick="go('explore')">See all places</button></div>
+    <div class="section-heading"><div><p class="eyebrow-text">QUICK START</p><h2>What are you looking for?</h2></div><button class="text-link" onclick="go('explore')">See all places</button></div>
     <div class="collection-grid">
-      <button class="collection-card collection-food" onclick="filterCat('Food')"><span>01</span><strong>A good table</strong><small>Cafés, local flavours & late lunches</small></button>
-      <button class="collection-card collection-makers" onclick="filterCat('Shopping')"><span>02</span><strong>Made in Manipur</strong><small>Handloom, craft & independent makers</small></button>
-      <button class="collection-card collection-weekend" onclick="filterCat('Stay')"><span>03</span><strong>Out for the day</strong><small>Stays, escapes & slow weekends</small></button>
+      <button class="collection-card collection-food" onclick="filterCat('Food')"><span>01</span><strong>Food & cafés</strong><small>Eat, drink and discover local flavours</small></button>
+      <button class="collection-card collection-makers" onclick="filterCat('Shopping')"><span>02</span><strong>Local shopping</strong><small>Handloom, crafts and local makers</small></button>
+      <button class="collection-card collection-weekend" onclick="filterCat('Stay')"><span>03</span><strong>Stays & places</strong><small>Relax, explore and plan your day</small></button>
     </div>
   </section>
 
   <section class="editorial-section">
-    <div class="section-heading"><div><p class="eyebrow-text">DISCOVER</p><h2>Places worth knowing.</h2></div><button class="text-link" onclick="go('explore')">Explore directory</button></div>
+    <div class="section-heading"><div><p class="eyebrow-text">LOCAL DIRECTORY</p><h2>Find a place.</h2></div><button class="text-link" onclick="go('explore')">See all</button></div>
     <div class="grid editorial-cards" id="homeCards"></div>
   </section>
 
   <section class="editorial-section map-section">
-    <div class="section-heading"><div><p class="eyebrow-text">THE CITY</p><h2>Everything, on one map.</h2></div><button class="text-link" onclick="go('map')">Open map</button></div>
+    <div class="section-heading"><div><p class="eyebrow-text">MAP</p><h2>See places around Imphal.</h2></div><button class="text-link" onclick="go('map')">Open map</button></div>
     <div class="map editorial-map"><div class="map-grid"></div><div class="map-pin ep1">01</div><div class="map-pin ep2">02</div><div class="map-pin ep3">03</div><div class="map-caption"><strong>Imphal</strong><span>Places, food, stays & experiences</span></div></div>
   </section>
 
   <section class="editorial-section">
-    <div class="section-heading"><div><p class="eyebrow-text">THIS WEEK</p><h2>What's happening.</h2></div><button class="text-link" onclick="go('events')">All events</button></div>
+    <div class="section-heading"><div><p class="eyebrow-text">EVENTS</p><h2>What’s happening?</h2></div><button class="text-link" onclick="go('events')">All events</button></div>
     <div id="homeEventList" class="event-editorial-list"></div>
   </section>
 
   <section class="editorial-section">
-    <div class="section-heading"><div><p class="eyebrow-text">MADE HERE</p><h2>Made in Manipur.</h2><p>Buy directly from local makers and independent businesses.</p></div><button class="text-link" onclick="go('shop')">Visit marketplace</button></div>
+    <div class="section-heading"><div><p class="eyebrow-text">SHOP LOCAL</p><h2>Buy from local makers.</h2><p>Buy directly from local makers and independent businesses.</p></div><button class="text-link" onclick="go('shop')">Visit marketplace</button></div>
     <div class="shop-strip" id="homeProducts"></div>
   </section>
 
