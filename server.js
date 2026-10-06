@@ -147,6 +147,29 @@ async function googlePlacesRequest(body,fieldMask=GOOGLE_FIELD_MASK){
   }
   return data;
 }
+app.get('/api/discovery/fallback',async(req,res)=>{
+  try{
+    const q=String(req.query.q||'').trim().slice(0,60);
+    const category=String(req.query.category||'all').trim().toLowerCase();
+    const catMap={cafes:'cafe',restaurants:'restaurant',shopping:'shop',hardware:'hardware',groceries:'supermarket',fashion:'clothes',electronics:'electronics',pharmacies:'pharmacy',gyms:'fitness_centre',salons:'hairdresser',hotels:'hotel',education:'school',automotive:'car_repair',services:'service',banks:'bank',handloom:'craft',tourism:'tourism',clinics:'clinic',hospitals:'hospital',books:'books'};
+    const tag=catMap[category]||'';
+    const safeQ=q.replace(/["\\\\]/g,' ').slice(0,50);
+    const selector=tag?'["'+tag+'"]':'[name'+(safeQ?'~"'+safeQ+'",i':'')+']';
+    const query='[out:json][timeout:12];area["name"="Imphal"]["boundary"="administrative"]->.a;(nwr(area.a)'+selector+';nwr(area.a)["amenity"]'+(safeQ?'["name"~"'+safeQ+'",i]':'')+';);out center tags 60;';
+    const r=await fetch('https://overpass-api.de/api/interpreter',{method:'POST',headers:{'content-type':'text/plain'},body:query,signal:AbortSignal.timeout(15000)});
+    const data=await r.json().catch(()=>({elements:[]}));
+    if(!r.ok)return res.status(502).json({ok:false,error:'Fallback map data unavailable'});
+    const seen=new Set(),places=[];
+    for(const el of (data.elements||[])){
+      const t=el.tags||{},name=t.name||t['name:en'];if(!name)continue;
+      const id='osm-'+el.type+'-'+el.id;if(seen.has(id))continue;seen.add(id);
+      const lat=el.lat??el.center?.lat,lng=el.lon??el.center?.lon;
+      places.push({placeId:id,name,address:[t['addr:housenumber'],t['addr:street'],t['addr:suburb'],t['addr:city']||'Imphal'].filter(Boolean).join(', '),type:t.amenity||t.shop||t.tourism||t.office||t.leisure||'local business',lat:lat??null,lng:lng??null,rating:null,reviewCount:0,openNow:null,phone:t.phone||t['contact:phone']||'',website:t.website||t['contact:website']||'',mapsUrl:lat&&lng?'https://www.google.com/maps/search/?api=1&query='+lat+','+lng:'#',photos:[]});
+      if(places.length>=60)break;
+    }
+    res.set('Cache-Control','no-store');res.json({ok:true,source:'OpenStreetMap fallback',places});
+  }catch(e){res.status(502).json({ok:false,error:'Fallback discovery unavailable'});}
+});
 app.get('/api/discovery/google',async(req,res)=>{
   try{
     const q=String(req.query.q||'').trim().slice(0,100);
