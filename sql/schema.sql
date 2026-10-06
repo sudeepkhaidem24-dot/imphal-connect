@@ -1,7 +1,9 @@
 create extension if not exists pgcrypto;
 
 create table if not exists public.profiles(id uuid primary key references auth.users(id) on delete cascade,full_name text,phone text,role text not null default 'customer' check(role in('customer','business','admin')),created_at timestamptz not null default now(),updated_at timestamptz not null default now());
-create table if not exists public.businesses(id uuid primary key default gen_random_uuid(),owner_id uuid not null references public.profiles(id) on delete cascade,name text not null,slug text unique not null,category text not null default 'Services',description text,phone text,whatsapp text,address text,city text not null default 'Imphal',latitude double precision,longitude double precision,logo_url text,cover_url text,is_verified boolean not null default false,is_published boolean not null default false,plan text not null default 'free' check(plan in('free','pro','elite')),subscription_status text not null default 'inactive',subscription_id text unique,subscription_current_end timestamptz,created_at timestamptz not null default now(),updated_at timestamptz not null default now());
+create table if not exists public.businesses(id uuid primary key default gen_random_uuid(),owner_id uuid not null references public.profiles(id) on delete cascade,name text not null,slug text unique not null,category text not null default 'Services',description text,phone text,whatsapp text,address text,city text not null default 'Imphal',latitude double precision,longitude double precision,logo_url text,cover_url text,is_verified boolean not null default false,is_published boolean not null default false,plan text not null default 'free' check(plan in('free','owner','pro','elite')),subscription_status text not null default 'inactive',subscription_id text unique,subscription_current_end timestamptz,created_at timestamptz not null default now(),updated_at timestamptz not null default now());
+-- Production lifecycle status: draft → pending_review → published, with suspended/rejected states.
+alter table public.businesses add column if not exists status text not null default 'draft' check(status in('draft','pending_review','published','suspended','rejected'));
 -- Extended business profile fields for production owner editing.
 alter table public.businesses add column if not exists opening_hours jsonb not null default '{}'::jsonb;
 alter table public.businesses add column if not exists website text;
@@ -61,7 +63,7 @@ create table if not exists public.payment_intents(
  id uuid primary key default gen_random_uuid(),
  user_id uuid not null references public.profiles(id) on delete cascade,
  business_id uuid not null references public.businesses(id) on delete cascade,
- plan text not null check(plan in('pro','elite')),
+ plan text not null check(plan in('owner','pro','elite')),
  amount numeric(12,2) not null,
  status text not null default 'pending' check(status in('pending','paid','expired','cancelled')),
  provider_ref text,
