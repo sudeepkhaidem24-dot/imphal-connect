@@ -27,8 +27,11 @@ express.static = function patchedStatic(root, options) {
       const contentType = String(res.getHeader('content-type') || '');
       if (contentType.includes('text/html')) {
         const html = body.toString('utf8');
-        const tag = '<script defer src="/category-icons.js?build=20261006-1"></script><script defer src="/upgrade.js?build=20261006-17"></script><script defer src="/production.js?build=20261006-1"></script><script defer src="/production-fix.js?build=20261006-3"></script><script defer src="/production-final.js?build=20261006-1"></script>';
-        const upgraded = html.includes('/production.js') ? (html.includes('/category-icons.js') ? html : html.replace(/<\/body>/i, '<script defer src="/category-icons.js?build=20261006-1"></script></body>')) : html.replace(/<\/body>/i, tag + '</body>');
+        const scripts = '<script defer src="/category-icons.js?build=20261006-1"></script><script defer src="/weekend-art.js?build=20261006-1"></script><script defer src="/upgrade.js?build=20261006-17"></script><script defer src="/production.js?build=20261006-1"></script><script defer src="/production-fix.js?build=20261006-3"></script><script defer src="/production-final.js?build=20261006-1"></script>';
+        let upgraded = html;
+        if (!upgraded.includes('/category-icons.js')) upgraded = upgraded.replace(/<\/body>/i, '<script defer src="/category-icons.js?build=20261006-1"></script></body>');
+        if (!upgraded.includes('/weekend-art.js')) upgraded = upgraded.replace(/<\/body>/i, '<script defer src="/weekend-art.js?build=20261006-1"></script></body>');
+        if (!upgraded.includes('/production.js')) upgraded = upgraded.replace(/<\/body>/i, scripts + '</body>');
         res.setHeader('content-length', Buffer.byteLength(upgraded));
         return originalEnd(Buffer.from(upgraded), undefined, callback);
       }
