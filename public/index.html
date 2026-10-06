@@ -931,7 +931,7 @@ const IC = (()=>{
     try{
       const b=await ensureBusiness();if(!b)return;
       const cfg=window.__IC_UROPAY__||{};
-      const buttonId=plan==='owner'?cfg.ownerButtonId:plan==='pro'?cfg.proButtonId:plan==='elite'?cfg.eliteButtonId:'';
+      const buttonId=plan==='owner'?(cfg.ownerButtonId||cfg.proButtonId):plan==='pro'?cfg.proButtonId:plan==='elite'?cfg.eliteButtonId:'';
       if(!cfg.apiKey||!buttonId)throw new Error('UPI checkout is not configured yet. Please try again shortly.');
       const amount=plan==='owner'?120:plan==='pro'?499:1499;
       const name=plan==='owner'?'Imphal Connect Business Owner':plan==='pro'?'Imphal Connect Pro':'Imphal Connect Elite';
