@@ -277,10 +277,10 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:999;ba
           <div class="ic-enterprise-mini"><b>Insights</b><span>Analytics and promotional tools.</span></div>
         </div>
         <div class="ic-enterprise-actions">
-          <a class="ic-enterprise-primary" href="/business.html">Business plans · ₹499/mo</a>
+          <a class="ic-enterprise-primary" href="/business.html">Business Owner · ₹120/year</a>
           <a class="ic-enterprise-secondary" href="javascript:IC.openOwner()">Manage my business</a>
         </div>
-        <div class="ic-trust-strip"><span class="ic-trust">Free listing</span><span class="ic-trust">Pro · ₹499/month</span><span class="ic-trust">Elite · ₹1,499/month</span><span class="ic-trust">Secure account</span></div>`;
+        <div class="ic-trust-strip"><span class="ic-trust">₹120/year owner membership</span><span class="ic-trust">No monthly billing</span><span class="ic-trust">Secure account</span><span class="ic-trust">Secure account</span></div>`;
       hero.after(band);
     }
     const h1=document.querySelector('#home .hero h1'), p=document.querySelector('#home .hero p'), eye=document.querySelector('#home .hero .eyebrow');
@@ -931,10 +931,10 @@ const IC = (()=>{
     try{
       const b=await ensureBusiness();if(!b)return;
       const cfg=window.__IC_UROPAY__||{};
-      const buttonId=plan==='pro'?cfg.proButtonId:plan==='elite'?cfg.eliteButtonId:'';
+      const buttonId=plan==='owner'?cfg.ownerButtonId:plan==='pro'?cfg.proButtonId:plan==='elite'?cfg.eliteButtonId:'';
       if(!cfg.apiKey||!buttonId)throw new Error('UPI checkout is not configured yet. Please try again shortly.');
-      const amount=plan==='pro'?499:1499;
-      const name=plan==='pro'?'Imphal Connect Pro':'Imphal Connect Elite';
+      const amount=plan==='owner'?120:plan==='pro'?499:1499;
+      const name=plan==='owner'?'Imphal Connect Business Owner':plan==='pro'?'Imphal Connect Pro':'Imphal Connect Elite';
       const intentRes=await api('/api/payments/uropay/intents',{method:'POST',body:JSON.stringify({plan})});
       const intent=intentRes.intent;
       const modal=document.createElement('div');
@@ -1133,7 +1133,7 @@ window.trackBusinessEvent=async function(businessId,eventType,meta={}){try{await
 
   IC.createBusiness=async function(){
     await ICPRO.refreshMe(); if(ICPRO.P.me?.business){IC.openOwner();return}
-    openCustom('<div class="grab"></div><span class="pill">FREE CONNECT · ACTIVE</span><h2>List your business</h2><p>Start free. Add your public details now; you can upgrade later for products, stories, offers and analytics.</p><form class="ic-launch-form" onsubmit="submitBusiness(event)"><label>Business name *</label><input id="bizName" required maxlength="120" placeholder="e.g. Classic Cafe Imphal"><label>Category *</label><select id="bizCategory"><option>Food & Dining</option><option>Shopping</option><option>Services</option><option>Stay & Tourism</option><option>Health & Wellness</option><option>Events</option><option>Automotive</option><option>Handloom & Crafts</option><option>Education</option><option>Other</option></select><label>Description</label><textarea id="bizDescription" maxlength="4000" placeholder="What do you offer?"></textarea><div class="formgrid"><div><label>Phone</label><input id="bizPhone" maxlength="40" inputmode="tel" placeholder="+91 …"></div><div><label>WhatsApp</label><input id="bizWhatsapp" maxlength="40" inputmode="tel" placeholder="+91 …"></div></div><label>Address</label><input id="bizAddress" maxlength="300" placeholder="Street / locality, Imphal"><label>City</label><input id="bizCity" maxlength="80" value="Imphal"><div class="formgrid"><div><label>Latitude</label><input id="bizLat" type="number" step="any" placeholder="24.8170"></div><div><label>Longitude</label><input id="bizLng" type="number" step="any" placeholder="93.9368"></div></div><button class="primary" type="submit">Create business profile</button></form>');
+    openCustom('<div class="grab"></div><span class="pill">BUSINESS OWNER · ₹120/YEAR</span><h2>List your business</h2><p>Create your business profile, then activate the ₹120/year Business Owner membership to unlock photos, products, services, pricing and publishing.</p><form class="ic-launch-form" onsubmit="submitBusiness(event)"><label>Business name *</label><input id="bizName" required maxlength="120" placeholder="e.g. Classic Cafe Imphal"><label>Category *</label><select id="bizCategory"><option>Food & Dining</option><option>Shopping</option><option>Services</option><option>Stay & Tourism</option><option>Health & Wellness</option><option>Events</option><option>Automotive</option><option>Handloom & Crafts</option><option>Education</option><option>Other</option></select><label>Description</label><textarea id="bizDescription" maxlength="4000" placeholder="What do you offer?"></textarea><div class="formgrid"><div><label>Phone</label><input id="bizPhone" maxlength="40" inputmode="tel" placeholder="+91 …"></div><div><label>WhatsApp</label><input id="bizWhatsapp" maxlength="40" inputmode="tel" placeholder="+91 …"></div></div><label>Address</label><input id="bizAddress" maxlength="300" placeholder="Street / locality, Imphal"><label>City</label><input id="bizCity" maxlength="80" value="Imphal"><div class="formgrid"><div><label>Latitude</label><input id="bizLat" type="number" step="any" placeholder="24.8170"></div><div><label>Longitude</label><input id="bizLng" type="number" step="any" placeholder="93.9368"></div></div><button class="primary" type="submit">Create business profile</button></form>');
   };
   window.submitBusiness=async function(e){
     e.preventDefault();const btn=e.target.querySelector('button');btn.disabled=true;btn.textContent='Creating…';
@@ -1142,7 +1142,7 @@ window.trackBusinessEvent=async function(businessId,eventType,meta={}){try{await
 
   IC.addItem=async function(){
     await ICPRO.refreshMe();const b=ICPRO.P.me?.business;if(!b)return toast('Create your business first');
-    if(!['pro','elite'].includes(b.plan)||b.subscription_status!=='active')return toast('Activate Pro or Elite to publish products');
+    if(!['owner','pro','elite'].includes(b.plan)||b.subscription_status!=='active')return toast('Activate the ₹120/year Business Owner membership first');
     openCustom('<div class="grab"></div><span class="pill">INSTANT STUDIO</span><h2>Add product or service</h2><p>Publish a real item to your public business profile.</p><form class="ic-launch-form" onsubmit="submitItem(event)"><label>Name *</label><input id="itemName" required maxlength="160" placeholder="Product or service"><label>Price / rate</label><input id="itemPrice" type="number" min="0" step="0.01" placeholder="₹"><label>Description</label><textarea id="itemDescription" maxlength="1200" placeholder="Short description"></textarea><label>Photo (optional)</label><input id="itemImage" type="file" accept="image/jpeg,image/png,image/webp"><button class="primary" type="submit">Publish item</button></form>');
   };
   window.submitItem=async function(e){
