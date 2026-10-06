@@ -1,3 +1,4 @@
+await import('dotenv/config');
 const expressModule=await import('express');
 const express=expressModule.default;
 const {smartDiscovery}=await import('./discovery.js');
