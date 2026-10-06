@@ -17,6 +17,7 @@ const CATEGORY={
  education:'["amenity"~"school|college|university|kindergarten"]',automotive:'["shop"~"car|car_repair|motorcycle|tyres"]',
  services:'["office"]',banks:'["amenity"~"bank|atm"]',handloom:'["shop"~"fabric|clothes|tailor|art"]',tourism:'["tourism"]'
 };
+const LOCAL_TERMS={food:['food','restaurant','cafe','bakery','fast food'],shopping:['shop','store','market','shopping'],services:['service','office','repair'],hotels:['hotel','guest','hostel','resort','lodge'],cafes:['cafe','coffee'],restaurants:['restaurant','food'],groceries:['grocery','supermarket','convenience','market'],fashion:['fashion','clothes','tailor','shoe'],electronics:['electronics','computer','mobile','phone','appliance'],hardware:['hardware','building','plumbing','electrical'],books:['book','stationery'],pharmacies:['pharmacy','chemist'],health:['health','clinic','doctor','dentist','pharmacy'],clinics:['clinic','doctor','dentist'],hospitals:['hospital'],gyms:['gym','fitness'],salons:['salon','hair','beauty'],education:['school','college','university','education'],automotive:['car','auto','motor','repair','tyre'],banks:['bank','atm'],handloom:['handloom','fabric','tailor','textile'],tourism:['tourism','travel','attraction']};
 const ALIAS={
  cafe:'amenity="cafe"',cafes:'amenity="cafe"',coffee:'amenity="cafe"',restaurant:'amenity~"restaurant|fast_food"',restaurants:'amenity~"restaurant|fast_food"',food:'amenity~"restaurant|cafe|fast_food"',
  hotel:'tourism~"hotel|guest_house|hostel|resort"',hotels:'tourism~"hotel|guest_house|hostel|resort"',stay:'tourism~"hotel|guest_house|hostel|resort"',
@@ -47,7 +48,7 @@ export async function smartDiscovery(req,res){
  const la=Number.isFinite(lat)?lat:CENTER.lat,lo=Number.isFinite(lng)?lng:CENTER.lng,key='smart:'+la.toFixed(4)+':'+lo.toFixed(4)+':'+category+':'+q.toLowerCase();
  const old=cache.get(key);if(old&&Date.now()-old.at<15000){res.set('Cache-Control','private, max-age=15');return res.json(old.data)}
  let localRows=[];if(admin){try{const x=await admin.from('businesses').select('id,name,category,phone,whatsapp,address,city,latitude,longitude,logo_url,cover_url,is_verified,is_published').eq('is_published',true).limit(120);if(!x.error)localRows=x.data||[]}catch{}}
- const term=q.toLowerCase();localRows=localRows.map(local).filter(p=>{const text=[p.name,p.type,p.address,p.city].join(' ').toLowerCase();return (!term||text.includes(term))&&(!category||category==='all'||text.includes(category)||p.type.toLowerCase().includes(category))});
+ const term=q.toLowerCase(),catTerms=LOCAL_TERMS[category]||[category];localRows=localRows.map(local).filter(p=>{const text=[p.name,p.type,p.address,p.city].join(' ').toLowerCase();const cOk=!category||category==='all'||catTerms.some(k=>text.includes(k));return (!term||text.includes(term))&&cOk});
  if(Number.isFinite(lat)&&Number.isFinite(lng))localRows.forEach(p=>{if(p.latitude!=null&&p.longitude!=null)p.distanceKm=dist(lat,lng,p.latitude,p.longitude)});localRows.sort((a,b)=>(a.distanceKm??999)-(b.distanceKm??999));
  let osmRows=[];try{osmRows=await overpass(q,category,la,lo,radius)}catch(e){console.warn('OSM discovery:',e.message)}
  if(Number.isFinite(lat)&&Number.isFinite(lng))osmRows.forEach(p=>{p.distanceKm=dist(lat,lng,p.latitude,p.longitude)});osmRows.sort((a,b)=>(a.distanceKm??999)-(b.distanceKm??999));
