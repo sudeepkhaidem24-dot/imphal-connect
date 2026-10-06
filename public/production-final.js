@@ -59,13 +59,28 @@
     await paint(cat,q);
   }
 
-  window.renderHome=()=>renderHost('homeCards','Life around you','all','');
-  window.renderExplore=()=>renderHost('exploreCards','Discover Imphal','all',$('exploreSearch')?.value||'');
-  window.searchAll=()=>{const q=String($('search')?.value||'').trim();if(!q){$('search')?.focus();return}if(window.go)window.go('explore');if($('exploreSearch'))$('exploreSearch').value=q;window.renderExplore()};
-  window.filterCat=cat=>{if(window.go)window.go('explore');window.renderExplore().then(()=>{const b=$('exploreCards')?.querySelector('[data-cat="'+String(cat).replace(/"/g,'')+'"]');b?.click()})};
-  window.setExploreCat=()=>window.renderExplore();
+  function localFilterPlaces(places,q){
+  const raw=String(q||'').trim().toLowerCase();
+  if(!raw)return places;
+  const aliases={resturent:'restaurant',restuarant:'restaurant',restraunt:'restaurant',cofee:'cafe',coffie:'cafe',pharmcy:'pharmacy',restuarant:'restaurant',saloon:'salon'};
+  const qx=aliases[raw]||raw;
+  const toks=qx.split(/\\s+/).filter(Boolean);
+  return places.map(p=>{
+    const hay=[p.name,p.type,p.category,p.address,p.city,p.description].join(' ').toLowerCase();
+    let score=0;
+    if(hay.includes(qx))score+=20;
+    if(String(p.name||'').toLowerCase().startsWith(qx))score+=15;
+    toks.forEach(t=>{if(hay.includes(t))score+=5});
+    return {p,score};
+  }).filter(x=>x.score>0).sort((x,y)=>y.score-x.score).map(x=>x.p);
+}
+window.renderHome=()=>renderHost('homeCards','Life around you','all','');
+window.renderExplore=()=>renderHost('exploreCards','Discover Imphal','all',$('exploreSearch')?.value||'');
+window.searchAll=()=>{const q=String($('search')?.value||'').trim();if(!q){$('search')?.focus();return}if(window.go)window.go('explore');if($('exploreSearch'))$('exploreSearch').value=q;window.renderExplore()};
+window.filterCat=cat=>{if(window.go)window.go('explore');window.renderExplore().then(()=>{const b=$('exploreCards')?.querySelector('[data-cat="'+String(cat).replace(/"/g,'')+'"]');b?.click()})};
+window.setExploreCat=()=>window.renderExplore();
 
-  window.renderEvents=async()=>{const h=$('eventList');if(!h)return;h.innerHTML='<div class="ic-final-status">Loading today’s public event listings…</div>';try{const d=await fetch('/api/events/today',{cache:'no-store'}).then(r=>r.json());const a=d.events||[];h.innerHTML=a.length?a.map(e=>'<article class="ic-final-card"><span class="pill">TODAY IN IMPHAL</span><h3>'+esc(e.title)+'</h3><p>'+esc(e.venue||'Imphal')+'</p><small>'+esc(e.date||'Today')+'</small></article>').join(''):'<div class="ic-final-status">No public events found for today.</div>'}catch{h.innerHTML='<div class="ic-final-status err">Today’s event feed is temporarily unavailable.</div>'}};
+window.renderEvents=async()=>{const h=$('eventList');if(!h)return;h.innerHTML='<div class="ic-final-status">Loading today’s public event listings…</div>';try{const d=await fetch('/api/events/today',{cache:'no-store'}).then(r=>r.json());const a=d.events||[];h.innerHTML=a.length?a.map(e=>'<article class="ic-final-card"><span class="pill">TODAY IN IMPHAL</span><h3>'+esc(e.title)+'</h3><p>'+esc(e.venue||'Imphal')+'</p><small>'+esc(e.date||'Today')+'</small></article>').join(''):'<div class="ic-final-status">No public events found for today.</div>'}catch{h.innerHTML='<div class="ic-final-status err">Today’s event feed is temporarily unavailable.</div>'}};
   window.renderDeals=async()=>{const h=$('dealList');if(!h)return;h.innerHTML='<div class="ic-final-status">Checking active offers…</div>';try{const d=await fetch('/api/offers',{cache:'no-store'}).then(r=>r.json());const a=d.offers||[];h.innerHTML=a.length?a.map(o=>'<article class="ic-final-card"><span class="pill">ACTIVE OFFER</span><h3>'+esc(o.title)+'</h3><p>'+esc(o.business?.name||'Local business')+' · '+esc(o.description||o.discount_text||'Local offer')+'</p>'+(o.expires_at?'<small>Valid until '+new Date(o.expires_at).toLocaleDateString('en-IN')+'</small>':'')+'</article>').join(''):'<div class="ic-final-status">No active offers are published yet.</div>'}catch{h.innerHTML='<div class="ic-final-status err">Offers are temporarily unavailable.</div>'}};window.renderCommunity=async()=>{const h=$('communityGrid');if(!h)return;try{const d=await catalog(),a=(d.places||[]).slice(0,12);h.innerHTML=a.length?a.map(card).join(''):'<div class="ic-final-status">No local community listings yet.</div>';bind(h)}catch{h.innerHTML='<div class="ic-final-status err">Local community discovery is temporarily unavailable.</div>'}};
 
   window.openBusinessTab=async function(tab,btn){
