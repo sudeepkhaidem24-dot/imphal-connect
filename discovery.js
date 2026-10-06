@@ -47,6 +47,7 @@ async function overpass(q,category,lat,lng,radius){
 const CATALOG_ID='imphal-city-v1';
 const catalogCache=new Map();
 let catalogBuildPromise=null;
+let localRowsCache={at:0,rows:[]};
 
 const CATEGORY_FROM_TAGS={
   cafe:'Cafes',restaurant:'Restaurants',fast_food:'Restaurants',food_court:'Restaurants',bar:'Food',pub:'Food',ice_cream:'Food',
@@ -136,13 +137,25 @@ async function extractImphalSnapshot(){
 }
 async function getCatalog(){
   const cached=catalogCache.get(CATALOG_ID);
-  if(cached)return cached;
+  async function withCurrentLocal(payload){
+    if(!admin)return payload;
+    if(Date.now()-localRowsCache.at>30000){
+      try{
+        const x=await admin.from('businesses').select('id,name,slug,category,phone,whatsapp,address,city,latitude,longitude,logo_url,cover_url,opening_hours,website,instagram_url,gallery_urls,is_verified,is_published').eq('is_published',true).limit(5000);
+        if(!x.error)localRowsCache={at:Date.now(),rows:(x.data||[]).map(localSnapshotRow)};
+      }catch{}
+    }
+    const localIds=new Set(localRowsCache.rows.map(x=>x.placeId));
+    const base=(payload.places||[]).filter(x=>!localIds.has(x.placeId));
+    return {...payload,places:[...localRowsCache.rows,...base]};
+  }
+  if(cached)return withCurrentLocal(cached);
   if(admin){
     try{
       const {data,error}=await admin.from('discovery_snapshots').select('version,extracted_at,area,record_count,payload_gzip,metadata').eq('id',CATALOG_ID).maybeSingle();
       if(!error&&data?.payload_gzip){
         const payload=JSON.parse(gunzipSync(Buffer.from(data.payload_gzip,'base64')).toString('utf8'));
-        catalogCache.set(CATALOG_ID,payload);return payload;
+        catalogCache.set(CATALOG_ID,payload);return withCurrentLocal(payload);
       }
     }catch(e){console.warn('Snapshot read:',e.message)}
   }
