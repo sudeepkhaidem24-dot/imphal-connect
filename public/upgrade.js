@@ -116,7 +116,7 @@
   'use strict';
   const esc=s=>String(s??'').replace(/[&<>'"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[ch]));
   const categoryMap={
-    All:'all',Cafes:'cafes',Restaurants:'restaurants',Books:'books',Shopping:'shopping',Hardware:'hardware',
+    All:'all',Resorts:'resorts',Hotels:'hotels',Cafes:'cafes',Restaurants:'restaurants',Books:'books',Shopping:'shopping',Hardware:'hardware',
     Clinics:'clinics',Hospitals:'hospitals',Pharmacies:'pharmacies',Gyms:'gyms',Salons:'salons',Electronics:'electronics',
     Fashion:'fashion',Hotels:'hotels',Education:'education',Automotive:'automotive',Services:'services',Banks:'banks',
     Groceries:'groceries',Handloom:'handloom',Tourism:'tourism'
