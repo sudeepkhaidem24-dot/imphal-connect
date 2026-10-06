@@ -165,8 +165,10 @@
   async function renderExplore(){
     const target=document.getElementById('exploreCards');if(!target)return;
     try{
-      const d=await loadCatalog(),q=(document.getElementById('exploreSearch')?.value||'').trim().toLowerCase(),cat=window.exploreCat||'all';
-      const rows=(d.places||[]).filter(p=>{const hay=[p.name,p.type,p.category,p.address,p.city,p.phone].join(' ').toLowerCase();return (!q||hay.includes(q))&&(cat==='all'||String(p.category||'').toLowerCase()===cat)});
+      const d=await loadCatalog(),q=(document.getElementById('exploreSearch')?.value||'').trim().toLowerCase(),cat=String(window.exploreCat||'all').toLowerCase();
+      const groupMap={food:['cafes','restaurants','food'],shopping:['shopping','groceries','fashion','electronics','hardware','books','handloom'],services:['services','clinics','hospitals','pharmacies','salons','gyms','education','automotive','banks'],stay:['hotels'],events:['events'],all:null};
+      const groups=groupMap[cat];
+      const rows=(d.places||[]).filter(p=>{const hay=[p.name,p.type,p.category,p.address,p.city,p.phone].join(' ').toLowerCase();const exact=String(p.category||'').toLowerCase();const categoryOk=!groups||groups.includes(exact)||((cat==='food')&&/(cafe|restaurant|food)/i.test(hay));return (!q||hay.includes(q))&&categoryOk});
       renderCards('exploreCards',rows,80);
       const n=document.getElementById('exploreCatalogMeta');if(n)n.textContent='Stored Imphal catalog · extracted '+new Date(d.extractedAt).toLocaleDateString('en-IN');
     }catch(e){target.innerHTML='<div class="ic-google-error"><b>Search catalog unavailable.</b><br>'+esc(e.message)+'</div>'}
