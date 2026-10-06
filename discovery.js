@@ -41,8 +41,8 @@ async function overpass(q,category,lat,lng,radius){
  const typed=alias?'nwr(around:'+r+','+la+','+lo+')['+alias+'];':'nwr(around:'+r+','+la+','+lo+')'+base+';';
  const query='[out:json][timeout:12];('+name+typed+');out center tags qt;',key='osm:'+la.toFixed(4)+':'+lo.toFixed(4)+':'+r+':'+category+':'+term.toLowerCase();
  const old=cache.get(key);if(old&&Date.now()-old.at<30000)return old.data;
- const resp=await fetch(OVERPASS_URL,{method:'POST',headers:{'content-type':'application/x-www-form-urlencoded;charset=UTF-8','user-agent':'ImphalConnect/1.0 (+https://imphal-connect.onrender.com)'},body:'data='+encodeURIComponent(query)});
- if(!resp.ok)throw new Error('OpenStreetMap HTTP '+resp.status);const json=await resp.json();const data=(json.elements||[]).map(osm).filter(Boolean);cache.set(key,{at:Date.now(),data});return data;
+ for(const endpoint of OVERPASS_URLS){try{const resp=await fetch(endpoint,{method:'POST',headers:{'content-type':'application/x-www-form-urlencoded;charset=UTF-8','user-agent':'ImphalConnect/1.0 (+https://imphal-connect.onrender.com)'},body:'data='+encodeURIComponent(query),signal:AbortSignal.timeout(15000)});if(!resp.ok)continue;const json=await resp.json();const data=(json.elements||[]).map(osm).filter(Boolean);cache.set(key,{at:Date.now(),data});return data}catch{}}
+ throw new Error('Map discovery temporarily unavailable');
 }
 const CATALOG_ID='imphal-city-v1';
 const catalogCache=new Map();
